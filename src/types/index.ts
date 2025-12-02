@@ -28,8 +28,9 @@ export interface Division {
   id: number
   name: string
   description: string
-  manager_id: number
+  manager_id?: number
   manager_name?: string
+  employee_count?: number 
 }
 
 // Auth types
@@ -51,6 +52,10 @@ export interface PerformanceIndicator {
   indicator_type: 'umum' | 'spesifik'
   weight: number
   division_id?: number
+  division?: { 
+    id: number
+    name: string
+  }
 }
 
 export interface Evaluation {
@@ -83,7 +88,6 @@ export interface EvaluationPeriod {
   start_date: string
   end_date: string
   is_active: boolean
-  created_at: string
 }
 
 export interface DivisionDetail {

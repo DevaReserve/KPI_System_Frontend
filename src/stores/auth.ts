@@ -1,55 +1,37 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { User, LoginRequest, LoginResponse } from '../types'
+import { authService } from '../services/api'
+import type { User, LoginRequest } from '../types'
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref<User | null>(null)
+  // State
+  const user = ref<User | null>(localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') as string) : null)
   const token = ref<string | null>(localStorage.getItem('token'))
   const isLoading = ref(false)
+  const error = ref<string | null>(null) // State untuk error global
 
+  // Getters
   const isAuthenticated = computed(() => !!token.value)
   const userRole = computed(() => user.value?.role || null)
 
+  // Actions
   async function login(credentials: LoginRequest) {
+    isLoading.value = true
+    error.value = null
     try {
-      isLoading.value = true
+      const response = await authService.login(credentials)
       
-      // Mock response for development
-      const mockResponse: LoginResponse = {
-        token: 'mock-jwt-token-' + Date.now(),
-        user: {
-          id: 1,
-          username: credentials.username,
-          email: credentials.username + '@company.com',
-          role: credentials.username.includes('admin') ? 'admin' : 
-                credentials.username.includes('manager') ? 'manager' : 'employee',
-          is_active: true,
-          last_login: new Date().toISOString(),
-          created_at: new Date().toISOString(),
-          employee: {
-            id: 1,
-            nip: 'EMP001',
-            name: credentials.username.charAt(0).toUpperCase() + credentials.username.slice(1),
-            email: credentials.username + '@company.com',
-            division_id: 1,
-            position: credentials.username.includes('admin') ? 'Administrator' : 
-                      credentials.username.includes('manager') ? 'Manager' : 'Staff',
-            is_active: true,
-            join_date: new Date().toISOString(),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }
-        }
-      }
+      token.value = response.token
+      user.value = response.user
       
-      token.value = mockResponse.token
-      user.value = mockResponse.user
+      localStorage.setItem('token', response.token)
+      localStorage.setItem('user', JSON.stringify(response.user))
       
-      localStorage.setItem('token', mockResponse.token)
-      
-      return mockResponse
-    } catch (error) {
-      throw error
+      return response // Return data agar bisa dipakai di view jika perlu
+    } catch (err: any) {
+      const msg = err.response?.data?.message || 'Login failed'
+      error.value = msg
+      throw err // Re-throw agar view tau ada error
     } finally {
       isLoading.value = false
     }
@@ -58,13 +40,20 @@ export const useAuthStore = defineStore('auth', () => {
   function logout() {
     token.value = null
     user.value = null
+    error.value = null
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    // Router redirect sebaiknya di handle di component atau router guard, 
+    // tapi window.location.reload() adalah cara brutal untuk reset state.
+    // Kita biarkan view yang handle redirect.
   }
 
+  // PENTING: Semua yang ingin diakses dari luar harus di-return di sini
   return {
     user,
     token,
     isLoading,
+    error,   // <--- INI PERBAIKANNYA (Wajib di-return)
     isAuthenticated,
     userRole,
     login,
