@@ -1,14 +1,24 @@
 <template>
   <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 shadow-sm z-10">
     <h2 class="text-xl font-semibold text-gray-800">
-      </h2>
+    </h2>
 
     <div class="flex items-center space-x-4">
       <div class="text-right hidden sm:block">
-        <div class="text-sm font-bold text-gray-900">{{ authStore.user?.username }}</div>
-        <div class="text-xs text-gray-500 uppercase">{{ authStore.userRole }}</div>
+        <router-link to="/profile" class="group hover:opacity-80 transition-opacity cursor-pointer block">
+          <div class="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+            {{ authStore.user?.username }}
+          </div>
+          <div class="text-xs text-gray-500 uppercase">{{ authStore.userRole }}</div>
+        </router-link>
       </div>
       
+      <button @click="$router.push('/profile')" class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors" title="Profil Saya">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      </button>
+
       <button 
         @click="handleLogout"
         class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"

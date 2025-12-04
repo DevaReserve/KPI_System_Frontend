@@ -72,24 +72,46 @@
             <h3 class="text-lg leading-6 font-bold text-gray-900 mb-6 border-b pb-4">{{ isEditing ? 'Edit Pegawai' : 'Tambah Pegawai' }}</h3>
             <form @submit.prevent="saveEmployee" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
               <div class="sm:col-span-2 pb-1 border-b border-gray-100"><span class="text-xs font-bold text-gray-500 uppercase">Data Pribadi</span></div>
-               <div><label class="block text-sm font-medium mb-1">NIP</label><input v-model="form.nip" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
-               <div><label class="block text-sm font-medium mb-1">Nama</label><input v-model="form.name" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
-               <div><label class="block text-sm font-medium mb-1">Email</label><input v-model="form.email" type="email" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
-               <div><label class="block text-sm font-medium mb-1">Tanggal Gabung</label><input v-model="form.join_date" type="date" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
-               
-               <div class="sm:col-span-2 pb-1 border-b border-gray-100 mt-2"><span class="text-xs font-bold text-gray-500 uppercase">Posisi</span></div>
-               <div><label class="block text-sm font-medium mb-1">Divisi</label><select v-model="form.division_id" class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white" required><option v-for="d in divisions" :key="d.id" :value="d.id">{{d.name}}</option></select></div>
-               <div><label class="block text-sm font-medium mb-1">Jabatan</label><input v-model="form.position" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
-               
-               <div class="sm:col-span-2 pb-1 border-b border-gray-100 mt-2"><span class="text-xs font-bold text-gray-500 uppercase">Akun</span></div>
-               <div><label class="block text-sm font-medium mb-1">Username</label><input v-model="form.username" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
-               <div><label class="block text-sm font-medium mb-1">Role</label><select v-model="form.role" class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white" required><option value="employee">Employee</option><option value="manager">Manager</option><option value="admin">Admin</option></select></div>
-               <div v-if="!isEditing" class="sm:col-span-2"><label class="block text-sm font-medium mb-1">Password</label><input v-model="form.password" type="password" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
+              <div><label class="block text-sm font-medium mb-1">NIP</label><input v-model="form.nip" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
+              <div><label class="block text-sm font-medium mb-1">Nama</label><input v-model="form.name" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
+              <div><label class="block text-sm font-medium mb-1">Email</label><input v-model="form.email" type="email" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
+              <div><label class="block text-sm font-medium mb-1">Tanggal Gabung</label><input v-model="form.join_date" type="date" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
+              
+              <div class="sm:col-span-2 pb-1 border-b border-gray-100 mt-2"><span class="text-xs font-bold text-gray-500 uppercase">Posisi</span></div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Divisi</label>
+                <select v-model="form.division_id" required class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white">
+                  <option value="" disabled>Pilih Divisi</option>
+                  <option v-for="d in divisions" :key="d.id" :value="d.id">{{ d.name }}</option>
+                </select>
+              </div>
 
-               <div class="sm:col-span-2 flex justify-end gap-3 mt-6">
-                  <button type="button" @click="closeModal" class="px-4 py-2 border rounded-lg hover:bg-gray-50">Batal</button>
-                  <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">{{ isProcessing ? 'Menyimpan...' : 'Simpan' }}</button>
-               </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Jabatan</label>
+                <select 
+                  v-model="form.position" 
+                  required 
+                  :disabled="!form.division_id" 
+                  class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="" disabled>
+                    {{ form.division_id ? 'Pilih Jabatan' : 'Pilih Divisi Terlebih Dahulu' }}
+                  </option>
+                  
+                  <option v-for="pos in filteredPositions" :key="pos.id" :value="pos.name">
+                    {{ pos.name }}
+                  </option>
+                </select>
+              </div>           
+              <div class="sm:col-span-2 pb-1 border-b border-gray-100 mt-2"><span class="text-xs font-bold text-gray-500 uppercase">Akun</span></div>
+              <div><label class="block text-sm font-medium mb-1">Username</label><input v-model="form.username" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
+              <div><label class="block text-sm font-medium mb-1">Role</label><select v-model="form.role" class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white" required><option value="employee">Employee</option><option value="manager">Manager</option><option value="admin">Admin</option></select></div>
+              <div v-if="!isEditing" class="sm:col-span-2"><label class="block text-sm font-medium mb-1">Password</label><input v-model="form.password" type="password" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
+
+              <div class="sm:col-span-2 flex justify-end gap-3 mt-6">
+                <button type="button" @click="closeModal" class="px-4 py-2 border rounded-lg hover:bg-gray-50">Batal</button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">{{ isProcessing ? 'Menyimpan...' : 'Simpan' }}</button>
+              </div>
             </form>
           </div>
         </div>
@@ -99,8 +121,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { employeeService, divisionService } from '../../services/api'
+import { ref, reactive, onMounted, computed} from 'vue'
+import { employeeService, divisionService, positionService } from '../../services/api'
 import type { Division } from '../../types'
 import DataTable from '../../components/ui/DataTable.vue'
 
@@ -119,6 +141,8 @@ const showModal = ref(false)
 const isEditing = ref(false)
 const isProcessing = ref(false)
 
+const positions = ref<any[]>([])
+
 const form = reactive({
   id: 0, nip: '', name: '', email: '', join_date: '', 
   division_id: '', position: '', username: '', password: '', 
@@ -130,9 +154,15 @@ onMounted(async () => { await fetchData() })
 async function fetchData() {
   isLoading.value = true
   try {
-    const [emps, divs] = await Promise.all([employeeService.getAll(), divisionService.getAll()])
+    // Ambil data Employees, Divisions, DAN POSITIONS
+    const [emps, divs, pos] = await Promise.all([
+      employeeService.getAll(),
+      divisionService.getAll(),
+      positionService.getAll() // <--- Ambil data jabatan
+    ])
     employees.value = emps
     divisions.value = divs
+    positions.value = pos // <--- Simpan
   } catch (error) { console.error(error) } 
   finally { isLoading.value = false }
 }
@@ -178,4 +208,12 @@ async function toggleStatus(emp: any) {
     } catch (error: any) { alert('Gagal mengubah status') }
   }
 }
+
+const filteredPositions = computed(() => {
+  // Jika belum pilih divisi, return kosong
+  if (!form.division_id) return []
+  
+  // Filter jabatan yang division_id nya sama dengan form.division_id
+  return positions.value.filter(pos => pos.division_id === Number(form.division_id))
+})
 </script>
