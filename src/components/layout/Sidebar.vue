@@ -77,10 +77,11 @@
           </li>
         </template>
 
-        <template v-if="authStore.userRole === 'manager'">
+        <template v-if="authStore.userRole === 'manager' || authStore.userRole === 'admin'">
           <div class="mt-6 mb-2 px-3 text-xs font-bold text-slate-500 uppercase tracking-wider">
             Manajemen Tim
           </div>
+          
           <li>
             <router-link to="/manager/team" class="nav-item" active-class="active-link">
               <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -112,7 +113,6 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '../../stores/auth'
-import { useRoute } from 'vue-router'
 
 const authStore = useAuthStore()
 </script>

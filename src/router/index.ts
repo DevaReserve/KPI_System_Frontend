@@ -5,19 +5,22 @@ import LoginView from '../views/LoginView.vue'
 import MainLayout from '../components/layout/MainLayout.vue'
 import DashboardView from '../views/DashboardView.vue'
 
+// Admin Views
 import DivisionView from '../views/admin/DivisionView.vue'
 import EmployeeView from '../views/admin/EmployeeView.vue'
 import IndicatorView from '../views/admin/IndicatorView.vue'
 import PeriodView from '../views/admin/PeriodView.vue'
 import ReportView from '../views/admin/ReportView.vue'
 
+// Manager Views
 import TeamView from '../views/manager/TeamView.vue'
 
+// Employee Views
 import MyPerformanceView from '../views/employee/MyPerformanceView.vue'
 import MyEvaluationDetail from '../views/employee/MyEvaluationDetail.vue'
 
+// Common Views
 import ProfileView from '../views/ProfileView.vue'
-
 import NotFoundView from '../views/error/NotFoundView.vue'
 import ForbiddenView from '../views/error/ForbiddenView.vue'
 
@@ -50,6 +53,7 @@ const router = createRouter({
           name: 'Dashboard',
           component: DashboardView
         },
+        // --- ADMIN ROUTES ---
         {
           path: 'admin/positions',
           name: 'AdminPositions',
@@ -86,6 +90,8 @@ const router = createRouter({
           component: ReportView,
           meta: { role: 'admin' }
         },
+        
+        // --- MANAGER ROUTES (Accessible by Admin too) ---
         {
           path: 'manager/team',
           name: 'ManagerTeam',
@@ -98,6 +104,8 @@ const router = createRouter({
           component: () => import('../views/manager/AssessmentForm.vue'), 
           meta: { role: 'manager' }
         },
+
+        // --- EMPLOYEE ROUTES ---
         {
           path: 'employee/history',
           name: 'MyHistory',
@@ -111,17 +119,13 @@ const router = createRouter({
           meta: { role: 'employee' }
         },
 
+        // --- COMMON ROUTES ---
         {
           path: 'profile',
           name: 'UserProfile',
           component: ProfileView,
-          // Tidak perlu meta role spesifik karena semua authenticated user boleh akses
         },
       ]
-    },
-    {
-      path: '/:pathMatch(.*)*',
-      redirect: '/'
     }
   ]
 })
@@ -131,31 +135,41 @@ router.beforeEach((to, from, next) => {
   const isAuthenticated = authStore.isAuthenticated
   const userRole = authStore.userRole  
   
-if (to.meta.requiresAuth && !isAuthenticated) {
+  // 1. Cek Login
+  if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
     return
   }
 
+  // 2. Redirect ke Dashboard jika sudah login
   if (to.name === 'Login' && isAuthenticated) {
     next('/')
     return
   }
 
+  // 3. Cek Hak Akses Role
   if (to.meta.role) {
-    if (to.meta.role === 'admin' && userRole !== 'admin') {
-      next('/403') 
-      return
+    
+    // Logic Khusus: Route 'manager' boleh diakses Admin
+    if (to.meta.role === 'manager') {
+      if (userRole !== 'manager' && userRole !== 'admin') {
+        next('/403')
+        return
+      }
     }
-    if (to.meta.role === 'manager' && userRole !== 'manager') {
+    // Logic Standard: Admin Only
+    else if (to.meta.role === 'admin' && userRole !== 'admin') {
       next('/403')
       return
     }
-    if (to.meta.role === 'employee' && userRole !== 'employee') {
+    // Logic Standard: Employee Only
+    else if (to.meta.role === 'employee' && userRole !== 'employee') {
       next('/403')
       return
     }
   }
 
-  next()})
+  next()
+})
 
 export default router

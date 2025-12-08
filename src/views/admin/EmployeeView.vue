@@ -53,13 +53,22 @@
       </template>
 
       <template #actions="{ item }">
-        <button @click="openModal(item)" class="text-indigo-600 hover:text-indigo-900 font-medium transition-colors">Edit</button>
-        <button 
-          v-if="item.is_active" @click="toggleStatus(item)" 
-          class="text-red-600 hover:text-red-900 font-medium transition-colors">Non-Aktifkan</button>
-        <button 
-          v-else @click="toggleStatus(item)" 
-          class="text-green-600 hover:text-green-900 font-bold transition-colors">Aktifkan</button>
+      <button @click="openModal(item)" class="text-indigo-600 hover:text-indigo-900 font-medium transition-colors">Edit</button>
+      <button 
+        v-if="item.is_active" @click="toggleStatus(item)" 
+        class="text-red-600 hover:text-red-900 font-medium transition-colors">Non-Aktifkan</button>
+      <button 
+        v-else @click="toggleStatus(item)" 
+        class="text-green-600 hover:text-green-900 font-bold transition-colors">Aktifkan</button>
+      <button 
+        @click="handleResetPassword(item)" 
+        class="text-yellow-600 hover:text-yellow-800 font-medium transition-colors"
+        title="Reset Password ke Default"
+      >
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+        </svg>
+      </button>
       </template>
 
     </DataTable>
@@ -206,6 +215,18 @@ async function toggleStatus(emp: any) {
       }
       await fetchData()
     } catch (error: any) { alert('Gagal mengubah status') }
+  }
+}
+
+async function handleResetPassword(emp: any) {
+  const confirm = window.confirm(`Reset password untuk ${emp.name} menjadi "cakra123"?`)
+  if (confirm) {
+    try {
+      await employeeService.resetPassword(emp.id)
+      alert(`Password ${emp.name} berhasil direset!`)
+    } catch (error: any) {
+      alert('Gagal mereset password')
+    }
   }
 }
 

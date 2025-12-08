@@ -94,6 +94,10 @@ export const employeeService = {
 
   async delete(id: number): Promise<void> {
     await api.delete(`/admin/employees/${id}`)
+  },
+  
+  async resetPassword(id: number): Promise<void> {
+    await api.patch(`/admin/employees/${id}/reset-password`)
   }
 }
 

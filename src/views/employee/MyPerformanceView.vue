@@ -1,4 +1,3 @@
-<!-- D:\Deva\Documents\GitHub\KPI_System_Frontend\src\views\employee\MyPerformanceView.vue -->
 <template>
   <div>
     <div class="mb-6">
@@ -39,7 +38,7 @@ import { ref, onMounted } from 'vue'
 import { myPerformanceService } from '../../services/api'
 import DataTable from '../../components/ui/DataTable.vue'
 
-// PERBAIKAN: Gunakan ref<any[]>
+// FIX: Gunakan ref<any[]>
 const history = ref<any[]>([]) 
 const isLoading = ref(true)
 
