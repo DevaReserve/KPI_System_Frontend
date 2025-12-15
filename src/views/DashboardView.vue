@@ -64,6 +64,56 @@
           </div>
         </div>
       </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-100 bg-green-50">
+            <h3 class="font-bold text-green-800 flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 3.214L18 21l-5.714-3.214L6.571 21l5.714-6.857L6.571 12l5.714-3.214L10 3h4z" /></svg>
+              Top 5 Performers
+            </h3>
+          </div>
+          <table class="min-w-full">
+            <tbody class="divide-y divide-gray-100">
+              <tr v-for="(p, idx) in adminStats.topPerformers" :key="idx" class="hover:bg-gray-50 transition">
+                <td class="px-6 py-3 text-sm text-gray-700 font-medium flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold">{{ idx + 1 }}</span>
+                  {{ p.employee_name }}
+                </td>
+                <td class="px-6 py-3 text-sm text-right font-bold text-green-600">{{ p.total_score.toFixed(2) }}</td>
+              </tr>
+              <tr v-if="adminStats.topPerformers.length === 0">
+                <td colspan="2" class="px-6 py-8 text-center text-sm text-gray-400">Belum ada data penilaian.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-100 bg-red-50">
+            <h3 class="font-bold text-red-800 flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>
+              Perlu Pembinaan (Low 5)
+            </h3>
+          </div>
+          <table class="min-w-full">
+            <tbody class="divide-y divide-gray-100">
+              <tr v-for="(p, idx) in adminStats.lowPerformers" :key="idx" class="hover:bg-gray-50 transition">
+                <td class="px-6 py-3 text-sm text-gray-700 font-medium flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-red-100 text-red-700 flex items-center justify-center text-xs font-bold">{{ idx + 1 }}</span>
+                  {{ p.employee_name }}
+                </td>
+                <td class="px-6 py-3 text-sm text-right font-bold text-red-600">{{ p.total_score.toFixed(2) }}</td>
+              </tr>
+              <tr v-if="adminStats.lowPerformers.length === 0">
+                <td colspan="2" class="px-6 py-8 text-center text-sm text-gray-400">Belum ada data penilaian.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
     </div>
 
     <div v-else-if="authStore.userRole === 'manager'" class="space-y-6">
@@ -88,24 +138,31 @@
             <div class="text-right text-xs font-bold text-blue-600">{{ managerStats.percentage.toFixed(0) }}% Tuntas</div>
           </div>
 
-          <div v-if="managerStats.pending > 0" class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r-lg flex justify-between items-center">
+          <div v-if="managerStats.pending > 0" class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r-lg flex justify-between items-center shadow-sm">
             <div>
-              <p class="font-bold text-orange-800">Tugas Menunggu!</p>
-              <p class="text-sm text-orange-700">Anda memiliki {{ managerStats.pending }} pegawai yang belum selesai dinilai.</p>
+              <p class="font-bold text-orange-800 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                Tugas Menunggu!
+              </p>
+              <p class="text-sm text-orange-700 mt-1">Anda memiliki <span class="font-bold">{{ managerStats.pending }}</span> pegawai yang belum selesai dinilai.</p>
             </div>
-            <button @click="$router.push('/manager/team')" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition">
+            <button @click="$router.push('/manager/team')" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition transform hover:scale-105">
               Lanjut Menilai
             </button>
           </div>
-          <div v-else class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
-            <p class="font-bold text-green-800">Semua Selesai!</p>
-            <p class="text-sm text-green-700">Terima kasih telah menyelesaikan penilaian periode ini.</p>
+          
+          <div v-else class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg shadow-sm">
+            <p class="font-bold text-green-800 flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              Semua Selesai!
+            </p>
+            <p class="text-sm text-green-700 mt-1">Terima kasih telah menyelesaikan penilaian periode ini.</p>
           </div>
 
         </div>
 
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h3 class="text-lg font-bold text-gray-800 mb-4">Statistik Penilaian</h3>
+          <h3 class="text-lg font-bold text-gray-800 mb-4">Statistik Status Penilaian</h3>
           <div class="flex items-center justify-center">
             <apexchart type="donut" width="100%" :options="managerCharts.options" :series="managerCharts.series"></apexchart>
           </div>
@@ -115,29 +172,33 @@
 
     <div v-else-if="authStore.userRole === 'employee'" class="space-y-6">
       
-      <div v-if="employeeStats.hasData" class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
+      <div v-if="employeeStats.hasData" class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden transition-all hover:shadow-2xl">
         <div class="absolute -right-10 -top-10 h-64 w-64 bg-white opacity-10 rounded-full blur-3xl"></div>
+        <div class="absolute left-10 bottom-10 h-32 w-32 bg-purple-400 opacity-20 rounded-full blur-2xl"></div>
         
         <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div>
-            <h2 class="text-lg font-medium opacity-90 mb-1">Nilai Kinerja Terakhir</h2>
-            <p class="text-sm opacity-75 mb-6">{{ employeeStats.periodName }}</p>
+            <h2 class="text-lg font-medium opacity-90 mb-1 flex items-center">
+              <svg class="w-5 h-5 mr-2 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+              Nilai Kinerja Terakhir
+            </h2>
+            <p class="text-sm opacity-75 mb-6 pl-7">{{ employeeStats.periodName }}</p>
             
-            <div class="flex items-end gap-4">
+            <div class="flex items-end gap-4 pl-2">
               <div class="text-7xl font-bold tracking-tighter">{{ employeeStats.score.toFixed(1) }}</div>
-              <div class="mb-2 bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-lg font-bold text-lg border border-white/30">
+              <div class="mb-4 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-lg font-bold text-lg border border-white/30 shadow-lg">
                 Grade {{ employeeStats.grade }}
               </div>
             </div>
             
-            <div class="mt-8">
-              <button @click="$router.push('/employee/history')" class="bg-white text-indigo-700 px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg hover:bg-gray-50 transition">
+            <div class="mt-8 pl-2">
+              <button @click="$router.push('/employee/history')" class="bg-white text-indigo-700 px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg hover:bg-gray-50 transition transform hover:-translate-y-0.5">
                 Lihat Rapor Lengkap
               </button>
             </div>
           </div>
 
-          <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm border border-white/20">
+          <div class="bg-white/10 rounded-xl p-4 backdrop-blur-md border border-white/20 shadow-inner">
             <h4 class="text-sm font-semibold mb-2 opacity-90">Tren Kinerja Saya</h4>
             <apexchart type="area" height="150" :options="employeeCharts.options" :series="employeeCharts.series"></apexchart>
           </div>
@@ -145,22 +206,22 @@
       </div>
 
       <div v-else class="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
-        <div class="bg-gray-50 h-20 w-20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="bg-gray-50 h-24 w-24 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+          <svg class="w-12 h-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         </div>
         <h3 class="text-lg font-bold text-gray-800">Belum Ada Data Penilaian</h3>
         <p class="text-gray-500 mt-2 max-w-sm mx-auto">
-          Hasil penilaian kinerja Anda untuk periode ini belum tersedia.
+          Hasil penilaian kinerja Anda untuk periode ini belum tersedia. Silakan cek kembali nanti atau hubungi atasan Anda.
         </p>
       </div>
     </div>
 
-    <div v-if="isLoading" class="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50">
+    <div v-if="isLoading" class="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50 rounded-xl">
       <div class="flex flex-col items-center">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-3"></div>
-        <p class="text-gray-500 font-medium">Memuat Dashboard...</p>
+        <p class="text-gray-500 font-medium animate-pulse">Memuat Dashboard...</p>
       </div>
     </div>
 
@@ -175,7 +236,8 @@ import {
   divisionService, 
   periodService, 
   managerService, 
-  myPerformanceService 
+  myPerformanceService,
+  reportService
 } from '../services/api'
 
 const authStore = useAuthStore()
@@ -186,20 +248,22 @@ const currentDate = computed(() => {
 })
 
 // --- STATE ADMIN ---
-const adminStats = reactive({ totalEmployees: 0, totalDivisions: 0, activePeriod: '' })
+const adminStats = reactive({ totalEmployees: 0, totalDivisions: 0, activePeriod: '', topPerformers: [] as any[], lowPerformers: [] as any[] })
 const adminCharts = reactive({
   divisionSeries: [] as any[],
   divisionOptions: {
-    chart: { id: 'division-bar' },
+    chart: { id: 'division-bar', fontFamily: 'inherit' },
     xaxis: { categories: [] as string[] },
-    plotOptions: { bar: { borderRadius: 4, horizontal: true } },
-    colors: ['#3b82f6']
+    plotOptions: { bar: { borderRadius: 4, horizontal: true, barHeight: '50%' } },
+    colors: ['#3b82f6'],
+    grid: { borderColor: '#f3f4f6' }
   },
   statusSeries: [] as number[],
   statusOptions: {
     labels: ['Aktif', 'Non-Aktif'],
     colors: ['#10b981', '#ef4444'],
-    legend: { position: 'bottom' }
+    legend: { position: 'bottom' },
+    plotOptions: { pie: { donut: { size: '55%' } } }
   }
 })
 
@@ -209,9 +273,10 @@ const managerCharts = reactive({
   series: [] as number[],
   options: {
     labels: ['Selesai', 'Draft', 'Belum Dinilai'],
-    colors: ['#10b981', '#f59e0b', '#9ca3af'],
+    colors: ['#10b981', '#f59e0b', '#e5e7eb'],
     legend: { position: 'bottom' },
-    plotOptions: { pie: { donut: { size: '65%' } } }
+    plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total Tim', color: '#374151' } } } } },
+    dataLabels: { enabled: false }
   }
 })
 
@@ -220,11 +285,12 @@ const employeeStats = reactive({ hasData: false, score: 0, grade: '', periodName
 const employeeCharts = reactive({
   series: [] as any[],
   options: {
-    chart: { toolbar: { show: false }, sparkline: { enabled: true } }, // Sparkline mode (minimalis)
+    chart: { toolbar: { show: false }, sparkline: { enabled: true } }, 
     stroke: { curve: 'smooth', width: 2 },
-    colors: ['#ffffff'], // Putih karena di atas background gelap
-    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.1, stops: [0, 90, 100] } },
-    tooltip: { theme: 'dark', fixed: { enabled: false }, x: { show: false } }
+    colors: ['#ffffff'], 
+    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.05, stops: [0, 90, 100] } },
+    tooltip: { theme: 'dark', fixed: { enabled: false }, x: { show: false }, marker: { show: false } },
+    markers: { size: 0 }
   }
 })
 
@@ -248,10 +314,11 @@ async function loadAdminData() {
   
   adminStats.totalEmployees = emps.length
   adminStats.totalDivisions = divs.length
+  
   const active = periods.find((p: any) => p.is_active)
   adminStats.activePeriod = active ? active.name : 'Tidak Ada'
 
-  // Chart 1: Pegawai per Divisi
+  // Chart 1: Distribusi Pegawai
   const divCounts = divs.map((d: any) => {
     return emps.filter((e: any) => e.division_id === d.id).length
   })
@@ -261,6 +328,21 @@ async function loadAdminData() {
     xaxis: { categories: divs.map((d: any) => d.name) }
   }
   adminCharts.divisionSeries = [{ name: 'Jumlah Pegawai', data: divCounts }]
+
+  // 5. LOGIC TOP 5 & LOW 5
+  if (active) {
+    try {
+      const reports = await reportService.getEvaluationReport(active.id)
+      const sorted = [...reports].sort((a: any, b: any) => b.total_score - a.total_score)
+      adminStats.topPerformers = sorted.slice(0, 5)
+      adminStats.lowPerformers = [...sorted].reverse().slice(0, 5)
+    } catch (e) {
+      console.warn("Gagal load top performers", e)
+    }
+  } else {
+    adminStats.topPerformers = []
+    adminStats.lowPerformers = []
+  }
 
   // Chart 2: Status Aktif
   const activeCount = emps.filter((e: any) => e.is_active).length
@@ -286,17 +368,27 @@ async function loadManagerData() {
 
 // --- LOAD DATA EMPLOYEE ---
 async function loadEmployeeData() {
-  const history = await myPerformanceService.getHistory()
-  if (history && history.length > 0) {
-    const latest = history[0]
-    employeeStats.hasData = true
-    employeeStats.score = latest.total_score
-    employeeStats.periodName = latest.period_name || 'Periode Terakhir'
-    employeeStats.grade = getGrade(latest.total_score)
+  try {
+    const history = await myPerformanceService.getHistory()
+    
+    if (history && history.length > 0) {
+      // Data terbaru (index 0 karena sort desc di backend)
+      const latest = history[0]
+      
+      employeeStats.hasData = true
+      employeeStats.score = latest.total_score
+      employeeStats.periodName = latest.period_name || 'Periode Terakhir'
+      employeeStats.grade = getGrade(latest.total_score)
 
-    // Siapkan data untuk grafik tren (Balik urutan agar dari lama ke baru)
-    const trendData = [...history].reverse().map((h: any) => h.total_score)
-    employeeCharts.series = [{ name: 'Skor', data: trendData }]
+      // Grafik Tren (Reverse agar chronological order: lama -> baru)
+      const trendData = [...history].reverse().map((h: any) => h.total_score)
+      employeeCharts.series = [{ name: 'Skor Kinerja', data: trendData }]
+    } else {
+        employeeStats.hasData = false
+    }
+  } catch (e) {
+      console.warn("Failed to load employee data", e)
+      employeeStats.hasData = false
   }
 }
 

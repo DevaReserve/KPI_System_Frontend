@@ -91,26 +91,28 @@ const router = createRouter({
           meta: { role: 'admin' }
         },
         
-        // --- MANAGER ROUTES (Accessible by Admin too) ---
+        // --- MANAGER ROUTES (Menilai Tim) ---
+        // Diakses oleh Manager & Admin (untuk menilai Manager)
         {
           path: 'manager/team',
           name: 'ManagerTeam',
           component: TeamView,
-          meta: { role: 'manager' }
+          meta: { role: 'manager_access' } // Custom meta role
         },
         {
           path: 'manager/assessment/:id', 
           name: 'ManagerAssessmentForm',
           component: () => import('../views/manager/AssessmentForm.vue'), 
-          meta: { role: 'manager' }
+          meta: { role: 'manager_access' }
         },
 
-        // --- EMPLOYEE ROUTES ---
+        // --- EMPLOYEE ROUTES (Lihat Nilai Sendiri) ---
+        // Diakses oleh Employee & Manager (karena Manager juga dinilai)
         {
           path: 'employee/history',
           name: 'MyHistory',
           component: MyPerformanceView,
-          meta: { role: 'employee' }
+          meta: { role: 'employee' } // Tetap 'employee', tapi logic di guard kita ubah
         },
         {
           path: 'employee/evaluation/:id',
@@ -135,37 +137,36 @@ router.beforeEach((to, from, next) => {
   const isAuthenticated = authStore.isAuthenticated
   const userRole = authStore.userRole  
   
-  // 1. Cek Login
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
     return
   }
 
-  // 2. Redirect ke Dashboard jika sudah login
   if (to.name === 'Login' && isAuthenticated) {
     next('/')
     return
   }
 
-  // 3. Cek Hak Akses Role
   if (to.meta.role) {
-    
-    // Logic Khusus: Route 'manager' boleh diakses Admin
+    // 1. MANAGER ROUTE: Admin & Manager Boleh
     if (to.meta.role === 'manager') {
       if (userRole !== 'manager' && userRole !== 'admin') {
         next('/403')
         return
       }
     }
-    // Logic Standard: Admin Only
+    // 2. ADMIN ROUTE: Hanya Admin
     else if (to.meta.role === 'admin' && userRole !== 'admin') {
       next('/403')
       return
     }
-    // Logic Standard: Employee Only
-    else if (to.meta.role === 'employee' && userRole !== 'employee') {
-      next('/403')
-      return
+    // 3. EMPLOYEE ROUTE: Employee & Manager Boleh
+    // (FIX: Tambahkan izin untuk Manager agar bisa lihat raport dirinya)
+    else if (to.meta.role === 'employee') {
+      if (userRole !== 'employee' && userRole !== 'manager') {
+        next('/403')
+        return
+      }
     }
   }
 

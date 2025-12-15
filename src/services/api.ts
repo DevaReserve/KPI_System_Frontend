@@ -150,26 +150,16 @@ export const periodService = {
 
 // MANAGER SERVICES
 export const managerService = {
-  async getTeamStatus(): Promise<any[]> {
-    const response = await api.get<ApiResponse<any[]>>('/manager/team-status')
-    return response.data.data
+  async getMyTeam() { return (await api.get('/manager/my-team')).data.data },
+  async getTeamStatus() { return (await api.get('/manager/team-status')).data.data },
+  
+  // PERBAIKAN: Ubah parameter jadi 'data: any' (bukan id: number)
+ async startEvaluation(data: any) { 
+    return (await api.post('/manager/evaluations/start', data)).data.data 
   },
-
-  async startEvaluation(employeeId: number): Promise<{ evaluation_id: number }> {
-    const response = await api.post<ApiResponse<any>>('/manager/evaluations/start', { employee_id: employeeId })
-    return response.data.data
-  },
-
-  async getEvaluationDetail(id: number): Promise<any> {
-    const response = await api.get<ApiResponse<any>>(`/manager/evaluations/${id}`)
-    return response.data.data
-  },
-
-  // Kirim penilaian akhir
-  async submitEvaluation(id: number, data: { feedback: string, scores: any[] }): Promise<any> {
-    const response = await api.put<ApiResponse<any>>(`/manager/evaluations/${id}/submit`, data)
-    return response.data.data
-  }
+  
+  async getEvaluationDetail(id: number) { return (await api.get(`/manager/evaluations/${id}`)).data.data },
+  async submitEvaluation(id: number, data: any) { return (await api.put(`/manager/evaluations/${id}/submit`, data)).data }
 }
 
 export const myPerformanceService = {

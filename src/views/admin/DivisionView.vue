@@ -37,14 +37,28 @@
           <div class="bg-white px-6 pt-6 pb-4">
             <h3 class="text-lg leading-6 font-bold text-gray-900 mb-5">{{ isEditing ? 'Edit Divisi' : 'Tambah Divisi Baru' }}</h3>
             <form @submit.prevent="saveDivision">
+              
               <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Nama Divisi</label>
                 <input v-model="form.name" type="text" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
               </div>
+              
               <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
                 <textarea v-model="form.description" rows="3" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
               </div>
+
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Kepala Divisi (Manager)</label>
+                <select v-model="form.manager_id" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option :value="null">-- Belum Ada --</option>
+                  <option v-for="emp in potentialManagers" :key="emp.id" :value="emp.id">
+                    {{ emp.name }}
+                  </option>
+                </select>
+                <p class="text-xs text-gray-500 mt-1">Hanya pegawai dengan jabatan 'Manager' yang muncul disini.</p>
+              </div>
+
               <div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-end sm:gap-3">
                 <button type="button" @click="closeModal" class="w-full sm:w-auto inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:text-sm">Batal</button>
                 <button type="submit" class="mt-3 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 sm:text-sm">{{ isProcessing ? 'Menyimpan...' : 'Simpan' }}</button>
@@ -58,42 +72,70 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { divisionService } from '../../services/api'
-import type { Division } from '../../types'
-import DataTable from '../../components/ui/DataTable.vue' // Import Component Baru
+import { ref, reactive, onMounted, computed } from 'vue'
+import { divisionService, employeeService } from '../../services/api' // Import employeeService juga
+import DataTable from '../../components/ui/DataTable.vue'
 
-// Definisi Kolom Tabel
 const tableColumns = [
   { key: 'name', label: 'Nama Divisi' },
   { key: 'description', label: 'Deskripsi' },
   { key: 'manager_name', label: 'Manager' },
 ]
 
-const divisions = ref<Division[]>([])
+const divisions = ref<any[]>([])
+const allEmployees = ref<any[]>([]) // Simpan semua pegawai
 const isLoading = ref(true)
 const showModal = ref(false)
 const isEditing = ref(false)
 const isProcessing = ref(false)
-const form = reactive({ id: 0, name: '', description: '' })
 
-onMounted(async () => { await fetchDivisions() })
+const form = reactive({ id: 0, name: '', description: '', manager_id: null as number | null })
 
-async function fetchDivisions() {
+// Computed: Filter pegawai yang cocok jadi Manager
+const potentialManagers = computed(() => {
+  return allEmployees.value.filter(e => 
+    // Filter berdasarkan role manager ATAU posisi yang mengandung kata "Manager"
+    e.role === 'manager' || (e.position && e.position.toLowerCase().includes('manager'))
+  )
+})
+
+onMounted(async () => { await fetchData() })
+
+async function fetchData() {
   try {
     isLoading.value = true
-    divisions.value = await divisionService.getAll()
-  } catch (error) { alert('Gagal mengambil data divisi') } 
+    // Ambil data Divisi DAN Pegawai secara paralel
+    const [divData, empData] = await Promise.all([
+      divisionService.getAll(),
+      employeeService.getAll()
+    ])
+    
+    divisions.value = divData
+    allEmployees.value = empData
+
+    // Mapping nama manager ke data divisi (karena backend mungkin cuma kirim ID)
+    divisions.value = divisions.value.map(div => {
+      const mgr = allEmployees.value.find(e => e.id === div.manager_id)
+      return {
+        ...div,
+        manager_name: mgr ? mgr.name : null
+      }
+    })
+
+  } catch (error) { alert('Gagal mengambil data') } 
   finally { isLoading.value = false }
 }
 
-function openModal(division?: Division) {
+function openModal(division?: any) {
   if (division) {
     isEditing.value = true
-    Object.assign(form, division)
+    form.id = division.id
+    form.name = division.name
+    form.description = division.description
+    form.manager_id = division.manager_id || null
   } else {
     isEditing.value = false
-    Object.assign(form, { id: 0, name: '', description: '' })
+    Object.assign(form, { id: 0, name: '', description: '', manager_id: null })
   }
   showModal.value = true
 }
@@ -103,17 +145,33 @@ function closeModal() { showModal.value = false }
 async function saveDivision() {
   try {
     isProcessing.value = true
-    const payload = { name: form.name, description: form.description }
-    isEditing.value ? await divisionService.update(form.id, payload) : await divisionService.create(payload)
-    await fetchDivisions()
+    
+    const payload = { 
+      name: form.name, 
+      description: form.description,
+      manager_id: form.manager_id ? Number(form.manager_id) : undefined 
+    }
+    
+    if (isEditing.value) {
+      // Gunakan 'as any' jika TypeScript masih rewel soal tipe data Partial<Division>
+      await divisionService.update(form.id, payload as any)
+    } else {
+      await divisionService.create(payload as any)
+    }
+    
+    await fetchData() // Refresh data
     closeModal()
-  } catch (error: any) { alert(error.response?.data?.message || 'Gagal menyimpan data') } 
-  finally { isProcessing.value = false }
+  } catch (error: any) { 
+    console.error(error)
+    alert(error.response?.data?.message || 'Gagal menyimpan data') 
+  } finally { 
+    isProcessing.value = false 
+  }
 }
 
 async function deleteDivision(id: number) {
   if (confirm('Hapus divisi ini?')) {
-    try { await divisionService.delete(id); await fetchDivisions() } 
+    try { await divisionService.delete(id); await fetchData() } 
     catch (error: any) { alert('Gagal menghapus data') }
   }
 }

@@ -114,7 +114,23 @@
               </div>           
               <div class="sm:col-span-2 pb-1 border-b border-gray-100 mt-2"><span class="text-xs font-bold text-gray-500 uppercase">Akun</span></div>
               <div><label class="block text-sm font-medium mb-1">Username</label><input v-model="form.username" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
-              <div><label class="block text-sm font-medium mb-1">Role</label><select v-model="form.role" class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white" required><option value="employee">Employee</option><option value="manager">Manager</option><option value="admin">Admin</option></select></div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-1">Role</label>
+                <select 
+                  v-model="form.role" 
+                  class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white" 
+                  required
+                >
+                  <option value="employee">Employee</option>
+                  <option value="manager" :disabled="isInternPosition">Manager</option>
+                  <option value="admin" :disabled="isInternPosition">Admin</option>
+                </select>
+                <p v-if="isInternPosition" class="text-xs text-orange-500 mt-1">
+                  Posisi Intern/Magang hanya boleh memiliki role Employee.
+                </p>
+              </div>
+
               <div v-if="!isEditing" class="sm:col-span-2"><label class="block text-sm font-medium mb-1">Password</label><input v-model="form.password" type="password" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
 
               <div class="sm:col-span-2 flex justify-end gap-3 mt-6">
@@ -130,7 +146,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed} from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue' // Tambahkan watch
 import { employeeService, divisionService, positionService } from '../../services/api'
 import type { Division } from '../../types'
 import DataTable from '../../components/ui/DataTable.vue'
@@ -163,15 +179,14 @@ onMounted(async () => { await fetchData() })
 async function fetchData() {
   isLoading.value = true
   try {
-    // Ambil data Employees, Divisions, DAN POSITIONS
     const [emps, divs, pos] = await Promise.all([
       employeeService.getAll(),
       divisionService.getAll(),
-      positionService.getAll() // <--- Ambil data jabatan
+      positionService.getAll()
     ])
     employees.value = emps
     divisions.value = divs
-    positions.value = pos // <--- Simpan
+    positions.value = pos
   } catch (error) { console.error(error) } 
   finally { isLoading.value = false }
 }
@@ -209,7 +224,6 @@ async function toggleStatus(emp: any) {
     try {
       if (emp.is_active) { await employeeService.delete(emp.id) } 
       else { 
-        // Payload lengkap untuk update
         const payload = { ...emp, is_active: true } 
         await employeeService.update(emp.id, payload) 
       }
@@ -231,10 +245,22 @@ async function handleResetPassword(emp: any) {
 }
 
 const filteredPositions = computed(() => {
-  // Jika belum pilih divisi, return kosong
   if (!form.division_id) return []
-  
-  // Filter jabatan yang division_id nya sama dengan form.division_id
   return positions.value.filter(pos => pos.division_id === Number(form.division_id))
+})
+
+// --- LOGIKA BARU: DETEKSI INTERN ---
+const isInternPosition = computed(() => {
+  if (!form.position) return false
+  const posLower = form.position.toLowerCase()
+  // Cek apakah mengandung kata 'intern' atau 'magang'
+  return posLower.includes('intern') || posLower.includes('magang')
+})
+
+// Watcher untuk memaksa role jadi 'employee' jika posisi berubah jadi intern
+watch(() => form.position, () => {
+  if (isInternPosition.value) {
+    form.role = 'employee'
+  }
 })
 </script>

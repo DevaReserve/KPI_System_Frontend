@@ -1,131 +1,150 @@
 <template>
-  <div class="max-w-4xl mx-auto pb-20">
+  <div class="max-w-5xl mx-auto pb-20 print:pb-0 print:max-w-full">
     
-    <div v-if="isLoading" class="flex flex-col items-center justify-center min-h-[60vh]">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-      <p class="text-gray-500">Memuat formulir penilaian...</p>
+    <div class="flex items-center justify-between mb-6 no-print">
+      <div>
+        <button @click="$router.back()" class="text-gray-500 hover:text-gray-700 flex items-center text-sm font-medium transition-colors mb-2">
+          <svg class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+          Kembali
+        </button>
+        <h1 class="text-2xl font-bold text-gray-800">
+          {{ isReadOnly ? 'Rincian Penilaian' : 'Form Penilaian Kinerja' }}
+        </h1>
+        <p class="text-gray-600 text-sm mt-1">
+          Pegawai: <span class="font-semibold">{{ employeeName }}</span> | Periode: {{ periodName }}
+        </p>
+      </div>
+      
+      <div class="flex gap-3">
+        <button v-if="isReadOnly" @click="printReport" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm">
+          <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+          Cetak Laporan
+        </button>
+
+        <div v-if="evaluationStatus" :class="`px-3 py-2 rounded-full text-xs font-bold uppercase flex items-center ${statusColor}`">
+          {{ evaluationStatus }}
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden print-block mb-8 border-b-2 border-black pb-4">
+      <div class="flex items-center justify-between">
+        <div class="text-left">
+          <h1 class="text-2xl font-bold uppercase">PT. Cakra Media Data</h1>
+          <p class="text-sm">Jalan Teknologi No. 123, Denpasar, Bali</p>
+          <p class="text-sm">Telp: (0361) 123456 | Email: hr@cakramedia.com</p>
+        </div>
+        <div class="text-right">
+          <h2 class="text-xl font-bold text-gray-600">LAPORAN HASIL PENILAIAN</h2>
+          <p class="text-sm">Periode: {{ periodName }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6 print:border-black print:shadow-none">
+      <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2 print:text-black">Data Pegawai</h3>
+      <div class="grid grid-cols-2 gap-4 text-sm">
+        <div><span class="text-gray-500 print:text-black font-semibold w-24 inline-block">Nama:</span> {{ employeeName }}</div>
+        <div><span class="text-gray-500 print:text-black font-semibold w-24 inline-block">Divisi:</span> {{ divisionName || '-' }}</div>
+        <div><span class="text-gray-500 print:text-black font-semibold w-24 inline-block">Jabatan:</span> {{ positionName || '-' }}</div>
+        <div><span class="text-gray-500 print:text-black font-semibold w-24 inline-block">Penilai:</span> {{ evaluatorName }}</div>
+      </div>
+    </div>
+
+    <div v-if="isLoading" class="flex justify-center py-12 no-print">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
     </div>
 
     <div v-else>
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6 sticky top-4 z-20">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          
-          <div class="flex items-center">
-            <div class="h-14 w-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xl mr-4 shadow-md">
-              {{ evaluationData.employee_detail.name.charAt(0) }}
-            </div>
-            <div>
-              <h1 class="text-xl font-bold text-gray-900">{{ evaluationData.employee_detail.name }}</h1>
-              <p class="text-sm text-gray-500">
-                {{ evaluationData.employee_detail.position }} &bull; {{ evaluationData.employee_detail.division_name }}
-              </p>
-              <div class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
-                Periode: {{ evaluationData.period_detail.name }}
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-slate-900 text-white rounded-lg p-4 min-w-[180px] text-center shadow-lg">
-            <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Prediksi Nilai Akhir</p>
-            <div class="text-3xl font-mono font-bold">{{ calculatedTotal.toFixed(2) }}</div>
-            <div class="text-xs font-bold mt-1" :class="getScoreColor(calculatedTotal)">
-              Predikat: {{ getGrade(calculatedTotal) }}
-            </div>
-          </div>
+      <div v-if="isReadOnly" class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 no-print">
+        <div class="flex">
+          <div class="flex-shrink-0"><svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg></div>
+          <div class="ml-3"><p class="text-sm text-yellow-700">Penilaian ini sudah disubmit (Final). Anda hanya dapat melihat rinciannya.</p></div>
         </div>
       </div>
 
-      <form @submit.prevent="submitAssessment">
-        <div class="space-y-6">
+      <div class="space-y-6">
+        <div v-for="(score, index) in form.scores" :key="score.score_id" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 print:border-black print:shadow-none print:break-inside-avoid">
+          <div class="flex justify-between items-start mb-3">
+            <div>
+              <h3 class="text-lg font-bold text-gray-800 print:text-black">
+                {{ index + 1 }}. {{ score.indicator_name }}
+              </h3>
+              <p class="text-sm text-gray-500 mt-1 italic no-print">{{ score.indicator_desc || 'Tidak ada deskripsi detail.' }}</p>
+            </div>
+            <div class="bg-blue-50 text-blue-700 px-3 py-1 rounded text-xs font-bold print:bg-gray-100 print:text-black">
+              Bobot: {{ score.weight }}%
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mt-4 no-print-flex">
+            <div class="md:col-span-3">
+              <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Skor (1-5)</label>
+              <select v-model="score.score" :disabled="isReadOnly" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 bg-white disabled:bg-gray-100 disabled:text-gray-500">
+                <option :value="0" disabled>Pilih Nilai</option>
+                <option :value="1">1 - Sangat Kurang</option>
+                <option :value="2">2 - Kurang</option>
+                <option :value="3">3 - Cukup</option>
+                <option :value="4">4 - Baik</option>
+                <option :value="5">5 - Sangat Baik</option>
+              </select>
+            </div>
+            <div class="md:col-span-9">
+              <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Catatan / Bukti Dukung</label>
+              <textarea v-model="score.notes" :disabled="isReadOnly" rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 text-sm disabled:bg-gray-100 disabled:text-gray-500" placeholder="Berikan alasan penilaian..."></textarea>
+            </div>
+          </div>
+
+          <div class="hidden print-block mt-2 border-t border-gray-300 pt-2 text-sm">
+            <div class="flex justify-between mb-1">
+              <span><strong>Nilai:</strong> {{ score.score }} / 5</span>
+              <span><strong>Nilai Terkonversi:</strong> {{ (score.score / 5 * 100).toFixed(0) }}</span>
+            </div>
+            <div><strong>Catatan:</strong> {{ score.notes || '-' }}</div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mt-6 print:border-black print:shadow-none print:break-inside-avoid">
+          <h3 class="text-lg font-bold text-gray-800 mb-4 print:text-black">Kesimpulan Akhir</h3>
           
-          <div 
-            v-for="(item, index) in form.scores" 
-            :key="item.score_id"
-            class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all hover:shadow-md"
-          >
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-              <div>
-                <h3 class="font-bold text-gray-800 text-lg">{{ item.indicator_name }}</h3>
-                <p class="text-sm text-gray-500 mt-1">{{ item.indicator_desc }}</p>
-              </div>
-              <div class="shrink-0 ml-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200">
-                  Bobot: {{ item.indicator_weight }}%
-                </span>
-              </div>
-            </div>
-
-            <div class="p-6">
-              
-              <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-3">Berikan Nilai (Skala 1 - 5)</label>
-                <div class="flex gap-2 sm:gap-4">
-                  <button 
-                    v-for="score in 5" 
-                    :key="score"
-                    type="button"
-                    @click="item.score = score"
-                    class="flex-1 py-3 rounded-lg border-2 font-bold text-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    :class="item.score === score 
-                      ? 'border-blue-600 bg-blue-600 text-white shadow-md transform scale-105' 
-                      : 'border-gray-200 text-gray-400 hover:border-blue-300 hover:text-blue-500 bg-white'"
-                  >
-                    {{ score }}
-                  </button>
-                </div>
-                <div class="flex justify-between mt-2 text-xs text-gray-400 px-1">
-                  <span>Sangat Kurang</span>
-                  <span>Sangat Baik</span>
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Catatan / Alasan (Opsional)</label>
-                <textarea 
-                  v-model="item.notes" 
-                  rows="2"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-3 border"
-                  placeholder="Berikan alasan atau contoh perilaku..."
-                ></textarea>
-              </div>
-
+          <div class="mb-4 p-4 bg-blue-50 rounded-lg print:bg-white print:border print:border-black">
+            <div class="flex justify-between items-center">
+              <span class="text-lg font-bold text-blue-900 print:text-black">TOTAL SKOR AKHIR</span>
+              <span class="text-3xl font-extrabold text-blue-600 print:text-black">{{ calculateTotalScore }}</span>
             </div>
           </div>
 
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <label class="block text-lg font-bold text-gray-800 mb-2">Umpan Balik Keseluruhan (Feedback)</label>
-            <p class="text-sm text-gray-500 mb-4">Berikan kesimpulan, apresiasi, atau saran pengembangan untuk pegawai ini.</p>
-            <textarea 
-              v-model="form.feedback" 
-              rows="4"
-              required
-              class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-3"
-              placeholder="Tuliskan umpan balik Anda di sini..."
-            ></textarea>
-          </div>
-
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1 no-print">Umpan Balik</label>
+          <textarea v-model="form.feedback" :disabled="isReadOnly" rows="4" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500 print:border-none print:bg-transparent print:p-0 print:resize-none" placeholder="Tuliskan masukan untuk pengembangan pegawai ke depan..."></textarea>
         </div>
+      </div>
 
-        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-30">
-          <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <button 
-              type="button" 
-              @click="$router.back()"
-              class="px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              Batal
+      <div class="hidden print-flex mt-16 justify-between text-center px-10">
+        <div>
+          <p class="mb-16">Dinilai Oleh,</p>
+          <p class="font-bold underline">{{ evaluatorName }}</p>
+          <p class="text-sm">Evaluator</p>
+        </div>
+        <div>
+          <p class="mb-16">Mengetahui,</p>
+          <p class="font-bold underline">{{ employeeName }}</p>
+          <p class="text-sm">Pegawai</p>
+        </div>
+      </div>
+
+      <div v-if="!isReadOnly" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-10 no-print">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+          <div class="text-sm text-gray-500">Pastikan semua indikator telah dinilai sebelum finalisasi.</div>
+          <div class="flex gap-3">
+            <button @click="saveDraft" :disabled="isProcessing" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition disabled:opacity-50">
+              {{ isProcessing ? 'Menyimpan...' : 'Simpan Draft' }}
             </button>
-            <button 
-              type="submit" 
-              :disabled="isSubmitting"
-              class="px-8 py-2.5 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-            >
-              <span v-if="isSubmitting">Mengirim...</span>
-              <span v-else>Kirim Penilaian</span>
+            <button @click="submitFinal" :disabled="isProcessing || !isFormComplete" class="px-6 py-2 bg-blue-600 rounded-lg text-white font-bold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg">
+              {{ isProcessing ? 'Memproses...' : 'Kirim Finalisasi' }}
             </button>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </template>
@@ -137,104 +156,193 @@ import { managerService } from '../../services/api'
 
 const route = useRoute()
 const router = useRouter()
-const evaluationId = Number(route.params.id)
-
 const isLoading = ref(true)
-const isSubmitting = ref(false)
-const evaluationData = ref<any>(null)
+const isProcessing = ref(false)
 
-// Struktur Form
+// State Data
+const employeeName = ref('')
+const divisionName = ref('') // Tambahan untuk print
+const positionName = ref('') // Tambahan untuk print
+const evaluatorName = ref('') // Tambahan untuk print
+const periodName = ref('')
+const evaluationStatus = ref('')
+
 const form = reactive({
+  evaluation_id: 0,
   feedback: '',
   scores: [] as any[]
 })
 
-// Load Data
+const isReadOnly = computed(() => evaluationStatus.value === 'submitted')
+
+const statusColor = computed(() => {
+  if (evaluationStatus.value === 'submitted') return 'bg-green-100 text-green-800'
+  return 'bg-yellow-100 text-yellow-800'
+})
+
+const isFormComplete = computed(() => {
+  return form.scores.length > 0 && form.scores.every(s => s.score > 0)
+})
+
+const calculateTotalScore = computed(() => {
+  let total = 0
+  form.scores.forEach(s => {
+    // Rumus: (Skor / 5) * Bobot
+    total += (s.score / 5) * s.weight
+  })
+  return total.toFixed(2)
+})
+
 onMounted(async () => {
   try {
-    const data = await managerService.getEvaluationDetail(evaluationId)
-    evaluationData.value = data
+    const evalId = Number(route.params.id)
+    if (isNaN(evalId)) throw new Error("ID Evaluasi tidak valid")
+
+    const data = await managerService.getEvaluationDetail(evalId)
     
-    // Mapping data skor dari backend ke form state
+    if (!data || !data.evaluation_header) throw new Error("Data evaluasi kosong")
+
+    form.evaluation_id = data.evaluation_header.id
     form.feedback = data.evaluation_header.feedback || ''
-    form.scores = data.scores.map((s: any) => ({
-      score_id: s.id,
-      indicator_name: s.indicator.name,
-      indicator_desc: s.indicator.description,
-      indicator_weight: s.indicator.weight,
-      score: s.score || 0, // Default 0 jika belum dinilai
-      notes: s.notes || ''
-    }))
-  } catch (error) {
-    alert('Gagal memuat data evaluasi')
-    router.back()
+    evaluationStatus.value = data.evaluation_header.status
+    
+    // Mapping Data Detail (Pastikan backend kirim ini di field employee_detail)
+    employeeName.value = data.employee_detail?.name || '-'
+    divisionName.value = data.employee_detail?.division?.name || '-' 
+    positionName.value = data.employee_detail?.position || '-'
+    evaluatorName.value = data.evaluator_name || 'Admin/Manager'
+    periodName.value = data.period_detail?.name || '-'
+
+    if (data.scores && Array.isArray(data.scores)) {
+      form.scores = data.scores.map((s: any) => {
+        const ind = s.Indicator || s.indicator || {} 
+        return {
+          score_id: s.id,
+          indicator_name: ind.name || 'Indikator', 
+          indicator_desc: ind.description || '', 
+          weight: ind.weight || 0,
+          score: s.score || 0,
+          notes: s.notes || ''
+        }
+      })
+    }
+  } catch (error: any) {
+    alert('Gagal memuat data penilaian')
+    router.push('/manager/team')
   } finally {
     isLoading.value = false
   }
 })
 
-// --- Computed: Hitung Total Skor Real-time ---
-const calculatedTotal = computed(() => {
-  if (!form.scores.length) return 0
-  
-  return form.scores.reduce((total, item) => {
-    // Rumus: (Skor 1-5 dikali 20 untuk jadi 100) * (Bobot / 100)
-    const convertedScore = item.score * 20
-    const weightedScore = convertedScore * (item.indicator_weight / 100)
-    return total + weightedScore
-  }, 0)
-})
-
-// Helper Predikat
-function getGrade(score: number) {
-  if (score >= 86) return 'A (Sangat Baik)'
-  if (score >= 71) return 'B (Baik)'
-  if (score >= 56) return 'C (Cukup)'
-  if (score >= 41) return 'D (Kurang)'
-  return 'E (Sangat Kurang)'
+async function saveDraft() {
+  if (isReadOnly.value) return
+  await sendData(false)
 }
 
-function getScoreColor(score: number) {
-  if (score >= 86) return 'text-green-400'
-  if (score >= 71) return 'text-blue-400'
-  if (score >= 56) return 'text-yellow-400'
-  return 'text-red-400'
+async function submitFinal() {
+  if (isReadOnly.value) return
+  if (confirm("Kirim nilai final? Data tidak bisa diubah lagi.")) {
+    await sendData(true)
+  }
 }
 
-// Submit Logic
-async function submitAssessment() {
-  // Validasi: Pastikan semua indikator sudah dinilai (score > 0)
-  const unrated = form.scores.find(s => s.score === 0)
-  if (unrated) {
-    alert(`Mohon berikan nilai untuk indikator: "${unrated.indicator_name}"`)
-    return
-  }
-
-  if (!confirm('Apakah Anda yakin ingin mengirim penilaian ini? Data tidak dapat diubah setelah dikirim.')) {
-    return
-  }
-
+async function sendData(isFinal: boolean) {
   try {
-    isSubmitting.value = true
-    
-    // Siapkan payload sesuai format backend
+    isProcessing.value = true
     const payload = {
       feedback: form.feedback,
       scores: form.scores.map(s => ({
         score_id: s.score_id,
-        score: s.score,
+        score: Number(s.score),
         notes: s.notes
       }))
     }
-
-    await managerService.submitEvaluation(evaluationId, payload)
-    alert('Penilaian berhasil dikirim!')
-    router.push('/manager/team')
+    await managerService.submitEvaluation(form.evaluation_id, payload)
     
+    if(isFinal) {
+        alert('Penilaian berhasil dikirim!')
+        router.push('/manager/team')
+    } else {
+        alert('Draft tersimpan (Simulasi)')
+    }
   } catch (error: any) {
-    alert(error.response?.data?.message || 'Gagal mengirim penilaian')
+    alert(error.response?.data?.message || 'Gagal menyimpan')
   } finally {
-    isSubmitting.value = false
+    isProcessing.value = false
   }
 }
+
+function printReport() {
+  window.print()
+}
 </script>
+
+<style scoped>
+/* CSS KHUSUS UNTUK CETAK/PRINT */
+@media print {
+  /* Sembunyikan elemen navigasi dan tombol */
+  .no-print, nav, aside, .sidebar {
+    display: none !important;
+  }
+  
+  /* Tampilkan elemen khusus print */
+  .print-block {
+    display: block !important;
+  }
+  
+  .print-flex {
+    display: flex !important;
+  }
+
+  /* Reset layout agar full width kertas */
+  .max-w-5xl {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Warna text hitam pekat agar jelas */
+  body, p, h1, h2, h3, div, span {
+    color: #000 !important;
+  }
+
+  /* Border tabel/kotak lebih tegas */
+  .border {
+    border-color: #000 !important;
+  }
+  
+  /* Hilangkan background warna warni */
+  .bg-blue-50, .bg-yellow-50, .bg-green-100 {
+    background-color: transparent !important;
+  }
+  
+  /* Hapus shadow */
+  .shadow-sm, .shadow-lg {
+    box-shadow: none !important;
+  }
+  
+  /* Form input jadi text biasa */
+  select, textarea {
+    border: none !important;
+    background: transparent !important;
+    resize: none;
+    padding: 0;
+  }
+  
+  /* Sembunyikan dropdown arrow */
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  
+  /* Agar halaman tidak terpotong jelek */
+  .break-inside-avoid {
+    page-break-inside: avoid;
+  }
+}
+
+/* Helper untuk menyembunyikan elemen print di layar biasa */
+.hidden {
+  display: none;
+}
+</style>
