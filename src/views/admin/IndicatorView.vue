@@ -1,5 +1,33 @@
 <template>
   <div>
+    <Toast />
+    
+    <ConfirmDialog group="headless">
+        <template #container="{ message, acceptCallback, rejectCallback }">
+            <div class="flex flex-col items-center p-8 bg-white rounded-xl shadow-2xl border border-gray-200 max-w-sm w-full">
+                <div class="rounded-full bg-blue-50 text-blue-500 inline-flex justify-center items-center h-24 w-24 -mt-20 border-4 border-white shadow-sm">
+                    <i class="pi pi-question text-5xl"></i>
+                </div>
+                <span class="font-bold text-2xl block mb-2 mt-6 text-gray-800">{{ message.header }}</span>
+                <p class="mb-6 text-gray-500 text-center" v-html="message.message"></p>
+                <div class="flex items-center gap-3 w-full">
+                    <button 
+                        @click="rejectCallback"
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                    >
+                        Batal
+                    </button>
+                    <button 
+                        @click="acceptCallback"
+                        class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-md"
+                    >
+                        Ya, Lanjutkan
+                    </button>
+                </div>
+            </div>
+        </template>
+    </ConfirmDialog>
+
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold text-gray-800">Manajemen Indikator KPI</h1>
       <button @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm">
@@ -89,16 +117,16 @@
       </template>
       
       <template #actions="{ item }">
-        <div class="flex items-center gap-3">
-          <button @click="openModal(item)" class="text-indigo-600 hover:text-indigo-900 font-medium text-sm">Edit</button>
-          <button @click="deleteInd(item.id)" class="text-red-600 hover:text-red-900 font-medium text-sm">Hapus</button>
+        <div class="flex items-center gap-3 text-sm">
+          <button @click="openModal(item)" class="text-indigo-600 hover:text-indigo-900 font-medium transition-colors">Edit</button>
+          <button @click="confirmDelete(item)" class="text-red-600 hover:text-red-900 font-medium transition-colors">Hapus</button>
         </div>
       </template>
     </DataTable>
 
     <div v-if="showModal" class="fixed inset-0 z-50 overflow-y-auto">
       <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="showModal = false"></div>
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeModal"></div>
         <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
           <div class="bg-white px-6 pt-6 pb-4">
             <h3 class="text-lg leading-6 font-bold text-gray-900 mb-5 border-b pb-3">{{ isEditing ? 'Edit Indikator' : 'Tambah Indikator' }}</h3>
@@ -125,7 +153,7 @@
                 </div>
                 
                 <div>
-                  <label class="block text-sm font-medium mb-1 flex items-center group relative cursor-help w-fit">
+                  <label class="text-sm font-medium mb-1 flex items-center group relative cursor-help w-fit">
                     Bobot (%) 
                     <svg class="w-4 h-4 ml-1 text-gray-400 hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 text-center">
@@ -145,7 +173,7 @@
               </div>
 
               <div class="mt-6 flex justify-end gap-3 pt-3 border-t">
-                <button type="button" @click="showModal = false" class="px-4 py-2 border rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700 transition">Batal</button>
+                <button type="button" @click="closeModal" class="px-4 py-2 border rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700 transition">Batal</button>
                 <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-sm transition">Simpan</button>
               </div>
             </form>
@@ -160,6 +188,15 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { indicatorService, divisionService } from '../../services/api'
 import DataTable from '../../components/ui/DataTable.vue'
+
+// PrimeVue Logic
+import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
+import Toast from 'primevue/toast'
+import ConfirmDialog from 'primevue/confirmdialog'
+
+const toast = useToast()
+const confirm = useConfirm()
 
 const indicators = ref<any[]>([])
 const divisions = ref<any[]>([])
@@ -178,25 +215,22 @@ const columns = [
   { key: 'weight', label: 'Bobot' }
 ]
 
-// --- LOGIC CALCULATOR (DIPERBAIKI UNTUK SKIP BoD) ---
+// --- LOGIC CALCULATOR ---
 const weightSummary = computed(() => {
   let general = 0
   const divs: Record<string, number> = {}
 
-  // 1. Inisialisasi Divisi (KECUALI Board of Directors)
   divisions.value.forEach(d => {
     if (d.name !== 'Board of Directors') {
       divs[d.name] = 0
     }
   })
 
-  // 2. Hitung Bobot
   indicators.value.forEach(ind => {
     if (ind.indicator_type === 'umum') {
       general += ind.weight
     } else if (ind.division && ind.division.name) {
       const dName = ind.division.name
-      // Hanya jumlahkan jika divisi tersebut ada di daftar pantauan (bukan BoD)
       if (divs[dName] !== undefined) {
         divs[dName] += ind.weight
       }
@@ -231,7 +265,9 @@ async function fetchData() {
     ])
     indicators.value = indData
     divisions.value = divData
-  } catch (e) { console.error(e) } 
+  } catch (e) { 
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Gagal mengambil data', life: 3000 })
+  } 
   finally { isLoading.value = false }
 }
 
@@ -249,19 +285,45 @@ function openModal(item?: any) {
   }
 }
 
+function closeModal() {
+    showModal.value = false
+}
+
 async function saveInd() {
   try {
     const payload = { ...form }
     if (payload.indicator_type === 'umum') payload.division_id = null
     else payload.division_id = Number(payload.division_id)
 
-    isEditing.value ? await indicatorService.update(form.id, payload) : await indicatorService.create(payload)
-    fetchData(); showModal.value = false
-  } catch (e) { alert('Gagal menyimpan') }
+    if (isEditing.value) {
+      await indicatorService.update(form.id, payload)
+      toast.add({ severity: 'success', summary: 'Sukses', detail: 'Indikator diperbarui', life: 3000 })
+    } else {
+      await indicatorService.create(payload)
+      toast.add({ severity: 'success', summary: 'Sukses', detail: 'Indikator ditambahkan', life: 3000 })
+    }
+    fetchData()
+    showModal.value = false
+  } catch (e) { 
+    toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal menyimpan indikator', life: 3000 })
+  }
 }
 
-async function deleteInd(id: number) {
-  if (confirm('Hapus indikator?')) { await indicatorService.delete(id); fetchData() }
+function confirmDelete(item: any) {
+  confirm.require({
+    group: 'headless',
+    message: `Hapus indikator <strong>${item.name}</strong>? Data tidak dapat dikembalikan.`,
+    header: 'Hapus Indikator?',
+    accept: async () => {
+      try {
+        await indicatorService.delete(item.id)
+        await fetchData()
+        toast.add({ severity: 'success', summary: 'Terhapus', detail: 'Indikator berhasil dihapus', life: 3000 })
+      } catch (error) {
+        toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal menghapus indikator', life: 3000 })
+      }
+    }
+  })
 }
 </script>
 

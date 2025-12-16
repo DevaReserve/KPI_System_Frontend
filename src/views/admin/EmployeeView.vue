@@ -1,5 +1,36 @@
 <template>
   <div>
+    <Toast />
+    
+    <ConfirmDialog group="headless">
+        <template #container="{ message, acceptCallback, rejectCallback }">
+            <div class="flex flex-col items-center p-8 bg-white rounded-xl shadow-2xl border border-gray-100 w-full max-w-sm">
+                <div class="rounded-full bg-blue-600 text-white inline-flex justify-center items-center h-20 w-20 -mt-16 border-4 border-white shadow-lg">
+                    <i class="pi pi-question text-4xl"></i>
+                </div>
+                
+                <span class="font-bold text-2xl block mb-2 mt-6 text-gray-800">{{ message.header }}</span>
+                
+                <p class="mb-6 text-gray-500 text-center leading-relaxed" v-html="message.message"></p>
+                
+                <div class="flex items-center gap-3 w-full">
+                    <button 
+                        @click="rejectCallback"
+                        class="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                    >
+                        Batal
+                    </button>
+                    <button 
+                        @click="acceptCallback"
+                        class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-md"
+                    >
+                        Ya, Lanjutkan
+                    </button>
+                </div>
+            </div>
+        </template>
+    </ConfirmDialog>
+
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold text-gray-800">Manajemen Pegawai</h1>
       <button @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm">
@@ -53,22 +84,26 @@
       </template>
 
       <template #actions="{ item }">
-      <button @click="openModal(item)" class="text-indigo-600 hover:text-indigo-900 font-medium transition-colors">Edit</button>
-      <button 
-        v-if="item.is_active" @click="toggleStatus(item)" 
-        class="text-red-600 hover:text-red-900 font-medium transition-colors">Non-Aktifkan</button>
-      <button 
-        v-else @click="toggleStatus(item)" 
-        class="text-green-600 hover:text-green-900 font-bold transition-colors">Aktifkan</button>
-      <button 
-        @click="handleResetPassword(item)" 
-        class="text-yellow-600 hover:text-yellow-800 font-medium transition-colors"
-        title="Reset Password ke Default"
-      >
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-        </svg>
-      </button>
+        <div class="flex items-center gap-3 text-sm">
+            <button @click="openModal(item)" class="text-indigo-600 hover:text-indigo-900 font-medium transition-colors">Edit</button>
+            
+            <button 
+              v-if="item.is_active" @click="confirmStatusChange(item)" 
+              class="text-red-600 hover:text-red-900 font-medium transition-colors">Non-Aktifkan</button>
+            <button 
+              v-else @click="confirmStatusChange(item)" 
+              class="text-green-600 hover:text-green-900 font-bold transition-colors">Aktifkan</button>
+            
+            <button 
+              @click="confirmResetPassword(item)" 
+              class="text-yellow-600 hover:text-yellow-800 font-medium transition-colors"
+              title="Reset Password ke Default"
+            >
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+              </svg>
+            </button>
+        </div>
       </template>
 
     </DataTable>
@@ -117,11 +152,7 @@
               
               <div>
                 <label class="block text-sm font-medium mb-1">Role</label>
-                <select 
-                  v-model="form.role" 
-                  class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white" 
-                  required
-                >
+                <select v-model="form.role" class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white" required>
                   <option value="employee">Employee</option>
                   <option value="manager" :disabled="isInternPosition">Manager</option>
                   <option value="admin" :disabled="isInternPosition">Admin</option>
@@ -134,8 +165,8 @@
               <div v-if="!isEditing" class="sm:col-span-2"><label class="block text-sm font-medium mb-1">Password</label><input v-model="form.password" type="password" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
 
               <div class="sm:col-span-2 flex justify-end gap-3 mt-6">
-                <button type="button" @click="closeModal" class="px-4 py-2 border rounded-lg hover:bg-gray-50">Batal</button>
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">{{ isProcessing ? 'Menyimpan...' : 'Simpan' }}</button>
+                <button type="button" @click="closeModal" class="px-4 py-2 border rounded-lg hover:bg-gray-50 text-sm">Batal</button>
+                <button type="submit" :disabled="isProcessing" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm disabled:opacity-50">{{ isProcessing ? 'Menyimpan...' : 'Simpan' }}</button>
               </div>
             </form>
           </div>
@@ -146,12 +177,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, watch } from 'vue' // Tambahkan watch
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { employeeService, divisionService, positionService } from '../../services/api'
 import type { Division } from '../../types'
 import DataTable from '../../components/ui/DataTable.vue'
 
-// Definisi Kolom Tabel (Kunci utama untuk Datatable)
+// PrimeVue Logic
+import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
+import Toast from 'primevue/toast'
+import ConfirmDialog from 'primevue/confirmdialog'
+
+const toast = useToast()
+const confirm = useConfirm()
+
 const tableColumns = [
   { key: 'name', label: 'Pegawai' },
   { key: 'position', label: 'Divisi & Jabatan' },
@@ -165,7 +204,6 @@ const isLoading = ref(true)
 const showModal = ref(false)
 const isEditing = ref(false)
 const isProcessing = ref(false)
-
 const positions = ref<any[]>([])
 
 const form = reactive({
@@ -187,7 +225,9 @@ async function fetchData() {
     employees.value = emps
     divisions.value = divs
     positions.value = pos
-  } catch (error) { console.error(error) } 
+  } catch (error) { 
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Gagal memuat data', life: 3000 })
+  } 
   finally { isLoading.value = false }
 }
 
@@ -212,36 +252,64 @@ async function saveEmployee() {
   try {
     isProcessing.value = true
     const payload = { ...form, division_id: Number(form.division_id), join_date: new Date(form.join_date).toISOString() }
-    isEditing.value ? await employeeService.update(form.id, payload) : await employeeService.create(payload)
+    
+    if (isEditing.value) {
+      await employeeService.update(form.id, payload)
+      toast.add({ severity: 'success', summary: 'Sukses', detail: 'Data pegawai diperbarui', life: 3000 })
+    } else {
+      await employeeService.create(payload)
+      toast.add({ severity: 'success', summary: 'Sukses', detail: 'Pegawai berhasil ditambahkan', life: 3000 })
+    }
+    
     await fetchData()
     closeModal()
-  } catch (error: any) { alert(error.response?.data?.message || 'Gagal menyimpan data') } 
-  finally { isProcessing.value = false }
+  } catch (error: any) { 
+    toast.add({ severity: 'error', summary: 'Gagal', detail: error.response?.data?.message || 'Gagal menyimpan data', life: 3000 })
+  } finally { 
+    isProcessing.value = false 
+  }
 }
 
-async function toggleStatus(emp: any) {
-  if (confirm(`Ubah status ${emp.name}?`)) {
-    try {
-      if (emp.is_active) { await employeeService.delete(emp.id) } 
-      else { 
-        const payload = { ...emp, is_active: true } 
-        await employeeService.update(emp.id, payload) 
+function confirmStatusChange(emp: any) {
+  const isDeactivating = emp.is_active
+  const actionLabel = isDeactivating ? 'Non-Aktifkan' : 'Aktifkan'
+  const messageText = `Ubah status <strong>${emp.name}</strong> menjadi ${actionLabel}?`
+  
+  confirm.require({
+    group: 'headless',
+    message: messageText,
+    header: 'Konfirmasi Status',
+    accept: async () => {
+      try {
+        if (isDeactivating) { 
+          await employeeService.delete(emp.id) 
+        } else { 
+          const payload = { ...emp, is_active: true } 
+          await employeeService.update(emp.id, payload) 
+        }
+        await fetchData()
+        toast.add({ severity: 'success', summary: 'Sukses', detail: `Status ${emp.name} berhasil diubah`, life: 3000 })
+      } catch (error: any) { 
+        toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal mengubah status', life: 3000 })
       }
-      await fetchData()
-    } catch (error: any) { alert('Gagal mengubah status') }
-  }
+    }
+  })
 }
 
-async function handleResetPassword(emp: any) {
-  const confirm = window.confirm(`Reset password untuk ${emp.name} menjadi "cakra123"?`)
-  if (confirm) {
-    try {
-      await employeeService.resetPassword(emp.id)
-      alert(`Password ${emp.name} berhasil direset!`)
-    } catch (error: any) {
-      alert('Gagal mereset password')
+function confirmResetPassword(emp: any) {
+  confirm.require({
+    group: 'headless',
+    message: `Reset password untuk <strong>${emp.name}</strong> menjadi "cakra123"?`,
+    header: 'Reset Password',
+    accept: async () => {
+      try {
+        await employeeService.resetPassword(emp.id)
+        toast.add({ severity: 'success', summary: 'Sukses', detail: `Password ${emp.name} berhasil direset`, life: 3000 })
+      } catch (error: any) {
+        toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal mereset password', life: 3000 })
+      }
     }
-  }
+  })
 }
 
 const filteredPositions = computed(() => {
@@ -249,15 +317,12 @@ const filteredPositions = computed(() => {
   return positions.value.filter(pos => pos.division_id === Number(form.division_id))
 })
 
-// --- LOGIKA BARU: DETEKSI INTERN ---
 const isInternPosition = computed(() => {
   if (!form.position) return false
   const posLower = form.position.toLowerCase()
-  // Cek apakah mengandung kata 'intern' atau 'magang'
   return posLower.includes('intern') || posLower.includes('magang')
 })
 
-// Watcher untuk memaksa role jadi 'employee' jika posisi berubah jadi intern
 watch(() => form.position, () => {
   if (isInternPosition.value) {
     form.role = 'employee'

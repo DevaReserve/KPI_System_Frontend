@@ -1,5 +1,7 @@
 <template>
   <div>
+    <Toast />
+
     <div class="mb-6">
       <h1 class="text-2xl font-bold text-gray-800">Laporan & Rekapitulasi</h1>
       <p class="text-gray-600 text-sm mt-1">Unduh data hasil penilaian kinerja pegawai untuk periode tertentu.</p>
@@ -83,7 +85,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { periodService, reportService } from '../../services/api'
+import { useToast } from 'primevue/usetoast'
+import Toast from 'primevue/toast'
 
+const toast = useToast()
 const periods = ref<any[]>([])
 const selectedPeriodId = ref('')
 const reportData = ref<any[]>([])
@@ -91,10 +96,12 @@ const isLoading = ref(false)
 const hasSearched = ref(false)
 
 onMounted(async () => {
-  // Load daftar periode untuk dropdown
   try {
     periods.value = await periodService.getAll()
-  } catch (e) { console.error(e) }
+  } catch (e) { 
+    console.error(e)
+    toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal memuat daftar periode', life: 3000 })
+  }
 })
 
 async function fetchReport() {
@@ -103,50 +110,52 @@ async function fetchReport() {
   hasSearched.value = true
   try {
     reportData.value = await reportService.getEvaluationReport(Number(selectedPeriodId.value))
+    if (reportData.value.length > 0) {
+        toast.add({ severity: 'success', summary: 'Berhasil', detail: 'Data laporan berhasil dimuat', life: 3000 })
+    } else {
+        toast.add({ severity: 'info', summary: 'Info', detail: 'Tidak ada data untuk periode ini', life: 3000 })
+    }
   } catch (error) {
-    alert('Gagal mengambil data laporan')
+    toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal mengambil data laporan', life: 3000 })
   } finally {
     isLoading.value = false
   }
 }
 
-// Logic Export ke CSV (Bisa dibuka Excel)
 function exportToCSV() {
   if (reportData.value.length === 0) return
 
-  // 1. Header CSV
-  const headers = ['NIP,Nama Pegawai,Divisi,Jabatan,Penilai,Total Skor,Grade,Feedback']
-  
-  // 2. Data Rows
-  const rows = reportData.value.map(row => {
-    // Bungkus string dengan quote "..." untuk menangani koma di dalam teks (misal feedback)
-    return [
-      `"${row.nip}"`,
-      `"${row.employee_name}"`,
-      `"${row.division}"`,
-      `"${row.position}"`,
-      `"${row.evaluator}"`,
-      row.total_score.toFixed(2),
-      row.grade,
-      `"${(row.feedback || '').replace(/"/g, '""')}"` // Escape double quotes
-    ].join(',')
-  })
+  try {
+    const headers = ['NIP,Nama Pegawai,Divisi,Jabatan,Penilai,Total Skor,Grade,Feedback']
+    const rows = reportData.value.map(row => {
+        return [
+        `"${row.nip}"`,
+        `"${row.employee_name}"`,
+        `"${row.division}"`,
+        `"${row.position}"`,
+        `"${row.evaluator}"`,
+        row.total_score.toFixed(2),
+        row.grade,
+        `"${(row.feedback || '').replace(/"/g, '""')}"`
+        ].join(',')
+    })
 
-  // 3. Gabungkan Header & Rows
-  const csvContent = headers.concat(rows).join('\n')
+    const csvContent = headers.concat(rows).join('\n')
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.setAttribute('href', url)
+    
+    const periodName = periods.value.find(p => p.id === Number(selectedPeriodId.value))?.name || 'Report'
+    link.setAttribute('download', `Laporan_KPI_${periodName}.csv`)
+    
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
 
-  // 4. Buat Blob & Trigger Download
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.setAttribute('href', url)
-  
-  // Nama file dinamis
-  const periodName = periods.value.find(p => p.id === Number(selectedPeriodId.value))?.name || 'Report'
-  link.setAttribute('download', `Laporan_KPI_${periodName}.csv`)
-  
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+    toast.add({ severity: 'success', summary: 'Terkirim', detail: 'File Excel berhasil diunduh', life: 3000 })
+  } catch (e) {
+    toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal mengunduh file', life: 3000 })
+  }
 }
 </script>

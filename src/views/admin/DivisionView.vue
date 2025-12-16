@@ -1,5 +1,36 @@
 <template>
   <div>
+    <Toast />
+    
+    <ConfirmDialog group="headless">
+        <template #container="{ message, acceptCallback, rejectCallback }">
+            <div class="flex flex-col items-center p-8 bg-white rounded-xl shadow-2xl border border-gray-100 w-full max-w-sm">
+                <div class="rounded-full bg-blue-600 text-white inline-flex justify-center items-center h-20 w-20 -mt-16 border-4 border-white shadow-lg">
+                    <i class="pi pi-question text-4xl"></i>
+                </div>
+                
+                <span class="font-bold text-2xl block mb-2 mt-6 text-gray-800">{{ message.header }}</span>
+                
+                <p class="mb-6 text-gray-500 text-center leading-relaxed" v-html="message.message"></p>
+                
+                <div class="flex items-center gap-3 w-full">
+                    <button 
+                        @click="rejectCallback"
+                        class="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                    >
+                        Batal
+                    </button>
+                    <button 
+                        @click="acceptCallback"
+                        class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-md"
+                    >
+                        Ya, Lanjutkan
+                    </button>
+                </div>
+            </div>
+        </template>
+    </ConfirmDialog>
+
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold text-gray-800">Manajemen Divisi</h1>
       <button @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm">
@@ -24,8 +55,10 @@
       </template>
 
       <template #actions="{ item }">
-        <button @click="openModal(item)" class="text-indigo-600 hover:text-indigo-900 font-medium transition-colors">Edit</button>
-        <button @click="deleteDivision(item.id)" class="text-red-600 hover:text-red-900 font-medium transition-colors">Hapus</button>
+        <div class="flex gap-3">
+            <button @click="openModal(item)" class="text-indigo-600 hover:text-indigo-900 font-medium transition-colors text-sm">Edit</button>
+            <button @click="confirmDelete(item)" class="text-red-600 hover:text-red-900 font-medium transition-colors text-sm">Hapus</button>
+        </div>
       </template>
 
     </DataTable>
@@ -61,7 +94,7 @@
 
               <div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-end sm:gap-3">
                 <button type="button" @click="closeModal" class="w-full sm:w-auto inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:text-sm">Batal</button>
-                <button type="submit" class="mt-3 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 sm:text-sm">{{ isProcessing ? 'Menyimpan...' : 'Simpan' }}</button>
+                <button type="submit" :disabled="isProcessing" class="mt-3 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 sm:text-sm disabled:opacity-50">{{ isProcessing ? 'Menyimpan...' : 'Simpan' }}</button>
               </div>
             </form>
           </div>
@@ -73,8 +106,17 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
-import { divisionService, employeeService } from '../../services/api' // Import employeeService juga
+import { divisionService, employeeService } from '../../services/api'
 import DataTable from '../../components/ui/DataTable.vue'
+
+// PrimeVue Logic
+import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
+import Toast from 'primevue/toast'
+import ConfirmDialog from 'primevue/confirmdialog'
+
+const toast = useToast()
+const confirm = useConfirm()
 
 const tableColumns = [
   { key: 'name', label: 'Nama Divisi' },
@@ -83,7 +125,7 @@ const tableColumns = [
 ]
 
 const divisions = ref<any[]>([])
-const allEmployees = ref<any[]>([]) // Simpan semua pegawai
+const allEmployees = ref<any[]>([])
 const isLoading = ref(true)
 const showModal = ref(false)
 const isEditing = ref(false)
@@ -91,10 +133,8 @@ const isProcessing = ref(false)
 
 const form = reactive({ id: 0, name: '', description: '', manager_id: null as number | null })
 
-// Computed: Filter pegawai yang cocok jadi Manager
 const potentialManagers = computed(() => {
   return allEmployees.value.filter(e => 
-    // Filter berdasarkan role manager ATAU posisi yang mengandung kata "Manager"
     e.role === 'manager' || (e.position && e.position.toLowerCase().includes('manager'))
   )
 })
@@ -104,7 +144,6 @@ onMounted(async () => { await fetchData() })
 async function fetchData() {
   try {
     isLoading.value = true
-    // Ambil data Divisi DAN Pegawai secara paralel
     const [divData, empData] = await Promise.all([
       divisionService.getAll(),
       employeeService.getAll()
@@ -113,17 +152,16 @@ async function fetchData() {
     divisions.value = divData
     allEmployees.value = empData
 
-    // Mapping nama manager ke data divisi (karena backend mungkin cuma kirim ID)
     divisions.value = divisions.value.map(div => {
       const mgr = allEmployees.value.find(e => e.id === div.manager_id)
-      return {
-        ...div,
-        manager_name: mgr ? mgr.name : null
-      }
+      return { ...div, manager_name: mgr ? mgr.name : null }
     })
 
-  } catch (error) { alert('Gagal mengambil data') } 
-  finally { isLoading.value = false }
+  } catch (error) { 
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Gagal mengambil data', life: 3000 })
+  } finally { 
+    isLoading.value = false 
+  }
 }
 
 function openModal(division?: any) {
@@ -145,7 +183,6 @@ function closeModal() { showModal.value = false }
 async function saveDivision() {
   try {
     isProcessing.value = true
-    
     const payload = { 
       name: form.name, 
       description: form.description,
@@ -153,26 +190,37 @@ async function saveDivision() {
     }
     
     if (isEditing.value) {
-      // Gunakan 'as any' jika TypeScript masih rewel soal tipe data Partial<Division>
       await divisionService.update(form.id, payload as any)
+      toast.add({ severity: 'success', summary: 'Sukses', detail: 'Data divisi diperbarui', life: 3000 })
     } else {
       await divisionService.create(payload as any)
+      toast.add({ severity: 'success', summary: 'Sukses', detail: 'Divisi baru ditambahkan', life: 3000 })
     }
     
-    await fetchData() // Refresh data
+    await fetchData()
     closeModal()
   } catch (error: any) { 
-    console.error(error)
-    alert(error.response?.data?.message || 'Gagal menyimpan data') 
+    toast.add({ severity: 'error', summary: 'Gagal', detail: error.response?.data?.message || 'Gagal menyimpan data', life: 3000 })
   } finally { 
     isProcessing.value = false 
   }
 }
 
-async function deleteDivision(id: number) {
-  if (confirm('Hapus divisi ini?')) {
-    try { await divisionService.delete(id); await fetchData() } 
-    catch (error: any) { alert('Gagal menghapus data') }
-  }
+function confirmDelete(item: any) {
+  confirm.require({
+    group: 'headless',
+    header: 'Konfirmasi Hapus',
+    message: `Apakah Anda yakin ingin menghapus divisi <strong>${item.name}</strong>? Data tidak dapat dikembalikan.`,
+    accept: async () => {
+      try { 
+        await divisionService.delete(item.id)
+        await fetchData() 
+        toast.add({ severity: 'success', summary: 'Terhapus', detail: 'Divisi berhasil dihapus', life: 3000 })
+      } 
+      catch (error: any) { 
+        toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal menghapus. Pastikan divisi kosong.', life: 3000 })
+      }
+    }
+  })
 }
 </script>

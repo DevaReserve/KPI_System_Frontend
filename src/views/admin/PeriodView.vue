@@ -1,5 +1,39 @@
 <template>
   <div>
+    <Toast />
+    
+    <ConfirmDialog group="headless">
+        <template #container="{ message, acceptCallback, rejectCallback }">
+            <div class="flex flex-col items-center p-8 bg-white rounded-xl shadow-2xl border border-gray-200 max-w-sm w-full">
+                <div 
+                  class="rounded-full inline-flex justify-center items-center h-24 w-24 -mt-20 border-4 border-white shadow-sm"
+                  :class="message.acceptSeverity === 'danger' ? 'bg-red-50 text-red-500' : 'bg-blue-50 text-blue-500'"
+                >
+                    <i :class="[message.icon, 'text-5xl']"></i>
+                </div>
+                
+                <span class="font-bold text-2xl block mb-2 mt-6 text-gray-800">{{ message.header }}</span>
+                <p class="mb-6 text-gray-500 text-center leading-relaxed" v-html="message.message"></p>
+                
+                <div class="flex items-center gap-3 w-full">
+                    <button 
+                        @click="rejectCallback"
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                    >
+                        Batal
+                    </button>
+                    <button 
+                        @click="acceptCallback"
+                        class="flex-1 px-4 py-2 text-white rounded-lg font-medium transition-colors shadow-md"
+                        :class="message.acceptSeverity === 'danger' ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'"
+                    >
+                        {{ message.acceptLabel || 'Ya, Lanjutkan' }}
+                    </button>
+                </div>
+            </div>
+        </template>
+    </ConfirmDialog>
+
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold text-gray-800">Periode Evaluasi</h1>
       <button 
@@ -37,17 +71,18 @@
       </template>
 
       <template #actions="{ item }">
-        
-        <button 
-          v-if="!item.is_active" 
-          @click="activatePeriod(item.id)" 
-          class="text-green-600 hover:text-green-900 font-bold transition-colors text-xs uppercase tracking-wide border border-green-200 px-2 py-1 rounded bg-green-50 hover:bg-green-100"
-        >
-          Set Aktif
-        </button>
+        <div class="flex items-center gap-2">
+            <button 
+              v-if="!item.is_active" 
+              @click="confirmActivate(item)" 
+              class="text-green-600 hover:text-green-900 font-bold transition-colors text-xs uppercase tracking-wide border border-green-200 px-2 py-1 rounded bg-green-50 hover:bg-green-100 mr-2"
+            >
+              Set Aktif
+            </button>
 
-        <button @click="openModal(item)" class="text-indigo-600 hover:text-indigo-900 font-medium transition-colors">Edit</button>
-        <button @click="deletePeriod(item.id)" class="text-red-600 hover:text-red-900 font-medium transition-colors">Hapus</button>
+            <button @click="openModal(item)" class="text-indigo-600 hover:text-indigo-900 font-medium transition-colors text-sm mr-2">Edit</button>
+            <button @click="confirmDelete(item)" class="text-red-600 hover:text-red-900 font-medium transition-colors text-sm">Hapus</button>
+        </div>
       </template>
 
     </DataTable>
@@ -90,7 +125,7 @@
                 <button type="button" @click="closeModal" class="w-full sm:w-auto inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:text-sm">
                   Batal
                 </button>
-                <button type="submit" class="mt-3 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:text-sm">
+                <button type="submit" :disabled="isProcessing" class="mt-3 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:text-sm disabled:opacity-50">
                   {{ isProcessing ? 'Menyimpan...' : 'Simpan' }}
                 </button>
               </div>
@@ -108,6 +143,15 @@ import { ref, reactive, onMounted } from 'vue'
 import { periodService } from '../../services/api'
 import DataTable from '../../components/ui/DataTable.vue'
 import type { EvaluationPeriod } from '../../types'
+
+// PrimeVue Logic
+import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
+import Toast from 'primevue/toast'
+import ConfirmDialog from 'primevue/confirmdialog'
+
+const toast = useToast()
+const confirm = useConfirm()
 
 // Setup Table
 const tableColumns = [
@@ -139,7 +183,7 @@ async function fetchPeriods() {
   try {
     periods.value = await periodService.getAll()
   } catch (error) {
-    console.error(error)
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Gagal mengambil data periode', life: 3000 })
   } finally {
     isLoading.value = false
   }
@@ -160,8 +204,8 @@ function openModal(item?: any) {
     form.id = item.id
     form.name = item.name
     // Format tanggal agar masuk ke input type="date" (YYYY-MM-DD)
-    form.start_date = item.start_date.split('T')[0]
-    form.end_date = item.end_date.split('T')[0]
+    form.start_date = item.start_date ? item.start_date.split('T')[0] : ''
+    form.end_date = item.end_date ? item.end_date.split('T')[0] : ''
   } else {
     isEditing.value = false
     Object.assign(form, { id: 0, name: '', start_date: '', end_date: '' })
@@ -186,38 +230,58 @@ async function savePeriod() {
 
     if (isEditing.value) {
       await periodService.update(form.id, payload)
+      toast.add({ severity: 'success', summary: 'Sukses', detail: 'Periode berhasil diperbarui', life: 3000 })
     } else {
       await periodService.create(payload)
+      toast.add({ severity: 'success', summary: 'Sukses', detail: 'Periode baru berhasil dibuat', life: 3000 })
     }
     
     await fetchPeriods()
     closeModal()
   } catch (error: any) {
-    alert(error.response?.data?.message || 'Gagal menyimpan periode')
+    toast.add({ severity: 'error', summary: 'Gagal', detail: error.response?.data?.message || 'Gagal menyimpan periode', life: 3000 })
   } finally {
     isProcessing.value = false
   }
 }
 
-async function activatePeriod(id: number) {
-  if (confirm('Aktifkan periode ini? Periode lain yang sedang aktif akan otomatis dinonaktifkan.')) {
-    try {
-      await periodService.activate(id)
-      await fetchPeriods() // Refresh untuk melihat perubahan status
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Gagal mengaktifkan periode')
+function confirmActivate(item: any) {
+  confirm.require({
+    group: 'headless',
+    header: 'Aktifkan Periode?',
+    message: `Aktifkan periode <strong>${item.name}</strong>? <br><br> <span class="text-red-500 text-sm">Peringatan: Periode lain yang sedang aktif akan otomatis dinonaktifkan.</span>`,
+    icon: 'pi pi-calendar-plus', // Ikon Kalender
+    acceptLabel: 'Ya, Aktifkan',
+    acceptClass: 'p-button-primary', // Tombol Biru
+    accept: async () => {
+      try {
+        await periodService.activate(item.id)
+        await fetchPeriods() 
+        toast.add({ severity: 'success', summary: 'Sukses', detail: `Periode ${item.name} kini aktif`, life: 3000 })
+      } catch (error: any) {
+        toast.add({ severity: 'error', summary: 'Gagal', detail: error.response?.data?.message || 'Gagal mengaktifkan periode', life: 3000 })
+      }
     }
-  }
+  })
 }
 
-async function deletePeriod(id: number) {
-  if (confirm('Hapus periode ini? Data penilaian di dalamnya mungkin akan hilang.')) {
-    try {
-      await periodService.delete(id)
-      await fetchPeriods()
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Gagal menghapus periode')
+function confirmDelete(item: any) {
+  confirm.require({
+    group: 'headless',
+    header: 'Hapus Periode?',
+    message: `Hapus periode <strong>${item.name}</strong>? <br> Data penilaian di dalamnya mungkin akan hilang.`,
+    icon: 'pi pi-trash',
+    acceptLabel: 'Hapus',
+    acceptSeverity: 'danger', 
+    accept: async () => {
+      try {
+        await periodService.delete(item.id)
+        await fetchPeriods()
+        toast.add({ severity: 'success', summary: 'Terhapus', detail: 'Periode berhasil dihapus', life: 3000 })
+      } catch (error: any) {
+        toast.add({ severity: 'error', summary: 'Gagal', detail: error.response?.data?.message || 'Gagal menghapus periode', life: 3000 })
+      }
     }
-  }
+  } as any)
 }
 </script>
