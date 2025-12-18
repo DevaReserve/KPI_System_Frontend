@@ -4,20 +4,27 @@
       <div>
         <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
         <p class="text-gray-600 mt-1">
-          Ringkasan aktivitas dan performa di <span class="font-semibold text-blue-600">PT. Cakra Media Data</span>.
+          Selamat datang kembali, <span class="font-semibold text-blue-600">{{ authStore.user?.employee?.name || authStore.user?.username || 'User' }}</span>.
         </p>
       </div>
       <div class="text-right">
-        <span class="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 shadow-sm">
+        <span class="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 shadow-sm flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           {{ currentDate }}
         </span>
       </div>
     </div>
 
-    <div v-if="authStore.userRole === 'admin'" class="space-y-6">
+    <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
+        <div class="h-32 bg-gray-200 rounded-xl"></div>
+        <div class="h-32 bg-gray-200 rounded-xl"></div>
+        <div class="h-32 bg-gray-200 rounded-xl"></div>
+    </div>
+
+    <div v-else-if="authStore.userRole === 'admin'" class="space-y-6">
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500 relative overflow-hidden">
+        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500 relative overflow-hidden transition hover:shadow-md">
           <div>
             <p class="text-sm font-medium text-gray-500 uppercase">Total Pegawai</p>
             <p class="text-3xl font-bold text-gray-800 mt-2">{{ adminStats.totalEmployees }}</p>
@@ -27,7 +34,7 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500 relative overflow-hidden">
+        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500 relative overflow-hidden transition hover:shadow-md">
           <div>
             <p class="text-sm font-medium text-gray-500 uppercase">Total Divisi</p>
             <p class="text-3xl font-bold text-gray-800 mt-2">{{ adminStats.totalDivisions }}</p>
@@ -37,7 +44,7 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500 relative overflow-hidden">
+        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500 relative overflow-hidden transition hover:shadow-md">
           <div>
             <p class="text-sm font-medium text-gray-500 uppercase">Periode Aktif</p>
             <p class="text-lg font-bold text-green-600 mt-2 truncate">{{ adminStats.activePeriod || 'Tidak Ada' }}</p>
@@ -46,6 +53,21 @@
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           </div>
         </div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+         <button @click="$router.push('/admin/employees')" class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50 text-left transition">
+            <div class="font-bold text-gray-700">+ Pegawai Baru</div>
+            <div class="text-xs text-gray-500">Kelola data karyawan</div>
+         </button>
+         <button @click="$router.push('/admin/periods')" class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50 text-left transition">
+            <div class="font-bold text-gray-700">+ Periode Baru</div>
+            <div class="text-xs text-gray-500">Buka evaluasi baru</div>
+         </button>
+         <button @click="$router.push('/admin/reports')" class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50 text-left transition">
+            <div class="font-bold text-gray-700">Lihat Laporan</div>
+            <div class="text-xs text-gray-500">Rekapitulasi nilai</div>
+         </button>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -215,13 +237,6 @@
         <p class="text-gray-500 mt-2 max-w-sm mx-auto">
           Hasil penilaian kinerja Anda untuk periode ini belum tersedia. Silakan cek kembali nanti atau hubungi atasan Anda.
         </p>
-      </div>
-    </div>
-
-    <div v-if="isLoading" class="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50 rounded-xl">
-      <div class="flex flex-col items-center">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-3"></div>
-        <p class="text-gray-500 font-medium animate-pulse">Memuat Dashboard...</p>
       </div>
     </div>
 

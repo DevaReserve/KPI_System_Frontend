@@ -5,7 +5,7 @@
     <ConfirmDialog group="headless">
         <template #container="{ message, acceptCallback, rejectCallback }">
             <div class="flex flex-col items-center p-8 bg-white rounded-xl shadow-2xl border border-gray-100 w-full max-w-sm">
-                <div class="rounded-full bg-blue-600 text-white inline-flex justify-center items-center h-20 w-20 -mt-16 border-4 border-white shadow-lg">
+                <div class="rounded-full bg-red-100 text-red-600 inline-flex justify-center items-center h-20 w-20 -mt-16 border-4 border-white shadow-lg">
                     <i class="pi pi-question text-4xl"></i>
                 </div>
                 
@@ -22,7 +22,7 @@
                     </button>
                     <button 
                         @click="acceptCallback"
-                        class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-md"
+                        class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition-colors shadow-md"
                     >
                         Ya, Lanjutkan
                     </button>

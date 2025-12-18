@@ -1,5 +1,7 @@
 <template>
   <div>
+    <Toast />
+
     <div class="mb-6">
       <h1 class="text-2xl font-bold text-gray-800">Tim Saya</h1>
       <p class="text-gray-600 text-sm mt-1">Daftar pegawai di bawah supervisi Anda.</p>
@@ -62,8 +64,12 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { managerService } from '../../services/api'
 import DataTable from '../../components/ui/DataTable.vue'
+import { useToast } from 'primevue/usetoast'
+import Toast from 'primevue/toast'
 
-// Interface agar TypeScript aman
+const toast = useToast()
+const router = useRouter()
+
 interface TeamMember {
   employee_id: number
   employee_name: string
@@ -71,8 +77,6 @@ interface TeamMember {
   evaluation_status: string 
 }
 
-const router = useRouter()
-// FIX: Definisikan tipe array
 const teamMembers = ref<TeamMember[]>([]) 
 const isLoading = ref(true)
 
@@ -92,6 +96,7 @@ async function fetchTeam() {
     teamMembers.value = response
   } catch (error: any) {
     console.error(error)
+    toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal memuat data tim', life: 3000 })
   } finally {
     isLoading.value = false
   }
@@ -100,13 +105,10 @@ async function fetchTeam() {
 async function handleAssess(item: TeamMember) {
   try {
     if (item.evaluation_status === 'draft' && item.evaluation_id) {
-       // Lanjut draft yang ada
        router.push(`/manager/assessment/${item.evaluation_id}`)
     } else {
-       // Mulai baru: Karena api.ts sudah diubah jadi 'any', ini valid
        const res = await managerService.startEvaluation({ employee_id: item.employee_id })
        
-       // Handle respon backend (kadang dibungkus dalam .data lagi tergantung controller)
        const evalId = res.evaluation_id || res.data?.evaluation_id
        
        if (evalId) {
@@ -116,7 +118,7 @@ async function handleAssess(item: TeamMember) {
        }
     }
   } catch (error: any) {
-    alert(error.response?.data?.message || "Gagal memulai penilaian")
+    toast.add({ severity: 'error', summary: 'Gagal', detail: error.response?.data?.message || "Gagal memulai penilaian", life: 3000 })
   }
 }
 

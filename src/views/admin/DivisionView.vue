@@ -3,32 +3,31 @@
     <Toast />
     
     <ConfirmDialog group="headless">
-        <template #container="{ message, acceptCallback, rejectCallback }">
-            <div class="flex flex-col items-center p-8 bg-white rounded-xl shadow-2xl border border-gray-100 w-full max-w-sm">
-                <div class="rounded-full bg-blue-600 text-white inline-flex justify-center items-center h-20 w-20 -mt-16 border-4 border-white shadow-lg">
-                    <i class="pi pi-question text-4xl"></i>
-                </div>
-                
-                <span class="font-bold text-2xl block mb-2 mt-6 text-gray-800">{{ message.header }}</span>
-                
-                <p class="mb-6 text-gray-500 text-center leading-relaxed" v-html="message.message"></p>
-                
-                <div class="flex items-center gap-3 w-full">
-                    <button 
-                        @click="rejectCallback"
-                        class="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
-                    >
-                        Batal
-                    </button>
-                    <button 
-                        @click="acceptCallback"
-                        class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-md"
-                    >
-                        Ya, Lanjutkan
-                    </button>
-                </div>
-            </div>
-        </template>
+      <template #container="{ message, acceptCallback, rejectCallback }">
+          <div class="flex flex-col items-center p-8 bg-white rounded-xl shadow-2xl border border-gray-200 max-w-sm w-full">
+              <div class="rounded-full inline-flex justify-center items-center h-24 w-24 -mt-20 border-4 border-white shadow-sm bg-red-50 text-red-500">
+                  <i :class="[message.icon, 'text-5xl']"></i>
+              </div>
+              
+              <span class="font-bold text-2xl block mb-2 mt-6 text-gray-800">{{ message.header }}</span>
+              <p class="mb-6 text-gray-500 text-center leading-relaxed" v-html="message.message"></p>
+              
+              <div class="flex items-center gap-3 w-full">
+                  <button 
+                      @click="rejectCallback"
+                      class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                  >
+                      Batal
+                  </button>
+                  <button 
+                      @click="acceptCallback"
+                      class="flex-1 px-4 py-2 text-white rounded-lg font-medium transition-colors shadow-md bg-red-600 hover:bg-red-700"
+                  >
+                      {{ message.acceptLabel || 'Ya, Hapus' }} 
+                  </button>
+              </div>
+          </div>
+      </template>
     </ConfirmDialog>
 
     <div class="flex justify-between items-center mb-6">
@@ -211,6 +210,7 @@ function confirmDelete(item: any) {
     group: 'headless',
     header: 'Konfirmasi Hapus',
     message: `Apakah Anda yakin ingin menghapus divisi <strong>${item.name}</strong>? Data tidak dapat dikembalikan.`,
+    icon: 'pi pi-trash',
     accept: async () => {
       try { 
         await divisionService.delete(item.id)

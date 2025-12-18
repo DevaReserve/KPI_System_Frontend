@@ -1,6 +1,35 @@
 <template>
   <div class="max-w-5xl mx-auto pb-20 print:pb-0 print:max-w-full">
+    <Toast />
     
+    <ConfirmDialog group="headless">
+        <template #container="{ message, acceptCallback, rejectCallback }">
+            <div class="flex flex-col items-center p-8 bg-white rounded-xl shadow-2xl border border-gray-200 max-w-sm w-full">
+                <div class="rounded-full bg-blue-50 text-blue-500 inline-flex justify-center items-center h-24 w-24 -mt-20 border-4 border-white shadow-sm">
+                    <i class="pi pi-question text-5xl"></i>
+                </div>
+                
+                <span class="font-bold text-2xl block mb-2 mt-6 text-gray-800">{{ message.header }}</span>
+                <p class="mb-6 text-gray-500 text-center leading-relaxed" v-html="message.message"></p>
+                
+                <div class="flex items-center gap-3 w-full">
+                    <button 
+                        @click="rejectCallback"
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                    >
+                        Batal
+                    </button>
+                    <button 
+                        @click="acceptCallback"
+                        class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-md"
+                    >
+                        Ya, Lanjutkan
+                    </button>
+                </div>
+            </div>
+        </template>
+    </ConfirmDialog>
+
     <div class="flex items-center justify-between mb-6 no-print">
       <div>
         <button @click="$router.back()" class="text-gray-500 hover:text-gray-700 flex items-center text-sm font-medium transition-colors mb-2">
@@ -154,6 +183,15 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { managerService } from '../../services/api'
 
+// PrimeVue Logic
+import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
+import Toast from 'primevue/toast'
+import ConfirmDialog from 'primevue/confirmdialog'
+
+const toast = useToast()
+const confirm = useConfirm()
+
 const route = useRoute()
 const router = useRouter()
 const isLoading = ref(true)
@@ -161,9 +199,9 @@ const isProcessing = ref(false)
 
 // State Data
 const employeeName = ref('')
-const divisionName = ref('') // Tambahan untuk print
-const positionName = ref('') // Tambahan untuk print
-const evaluatorName = ref('') // Tambahan untuk print
+const divisionName = ref('')
+const positionName = ref('')
+const evaluatorName = ref('')
 const periodName = ref('')
 const evaluationStatus = ref('')
 
@@ -206,7 +244,7 @@ onMounted(async () => {
     form.feedback = data.evaluation_header.feedback || ''
     evaluationStatus.value = data.evaluation_header.status
     
-    // Mapping Data Detail (Pastikan backend kirim ini di field employee_detail)
+    // Mapping Data Detail
     employeeName.value = data.employee_detail?.name || '-'
     divisionName.value = data.employee_detail?.division?.name || '-' 
     positionName.value = data.employee_detail?.position || '-'
@@ -227,7 +265,7 @@ onMounted(async () => {
       })
     }
   } catch (error: any) {
-    alert('Gagal memuat data penilaian')
+    toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal memuat data penilaian', life: 3000 })
     router.push('/manager/team')
   } finally {
     isLoading.value = false
@@ -239,11 +277,17 @@ async function saveDraft() {
   await sendData(false)
 }
 
-async function submitFinal() {
+function submitFinal() {
   if (isReadOnly.value) return
-  if (confirm("Kirim nilai final? Data tidak bisa diubah lagi.")) {
-    await sendData(true)
-  }
+  
+  confirm.require({
+    group: 'dialog-assessment', 
+    header: 'Kirim Penilaian?',
+    message: `Anda yakin ingin mengirim nilai untuk <strong>${employeeName.value}</strong>?<br><br><span class="text-red-500 font-bold">Data tidak dapat diubah lagi setelah dikirim (Final).</span>`,
+    accept: async () => {
+        await sendData(true)
+    }
+  })
 }
 
 async function sendData(isFinal: boolean) {
@@ -260,13 +304,16 @@ async function sendData(isFinal: boolean) {
     await managerService.submitEvaluation(form.evaluation_id, payload)
     
     if(isFinal) {
-        alert('Penilaian berhasil dikirim!')
-        router.push('/manager/team')
+        toast.add({ severity: 'success', summary: 'Terkirim', detail: 'Penilaian berhasil dikirim!', life: 3000 })
+        // Beri sedikit waktu agar toast terbaca sebelum redirect
+        setTimeout(() => {
+            router.push('/manager/team')
+        }, 1500)
     } else {
-        alert('Draft tersimpan (Simulasi)')
+        toast.add({ severity: 'info', summary: 'Tersimpan', detail: 'Draft berhasil disimpan', life: 3000 })
     }
   } catch (error: any) {
-    alert(error.response?.data?.message || 'Gagal menyimpan')
+    toast.add({ severity: 'error', summary: 'Gagal', detail: error.response?.data?.message || 'Gagal menyimpan', life: 3000 })
   } finally {
     isProcessing.value = false
   }
@@ -280,69 +327,17 @@ function printReport() {
 <style scoped>
 /* CSS KHUSUS UNTUK CETAK/PRINT */
 @media print {
-  /* Sembunyikan elemen navigasi dan tombol */
-  .no-print, nav, aside, .sidebar {
-    display: none !important;
-  }
-  
-  /* Tampilkan elemen khusus print */
-  .print-block {
-    display: block !important;
-  }
-  
-  .print-flex {
-    display: flex !important;
-  }
-
-  /* Reset layout agar full width kertas */
-  .max-w-5xl {
-    max-width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  /* Warna text hitam pekat agar jelas */
-  body, p, h1, h2, h3, div, span {
-    color: #000 !important;
-  }
-
-  /* Border tabel/kotak lebih tegas */
-  .border {
-    border-color: #000 !important;
-  }
-  
-  /* Hilangkan background warna warni */
-  .bg-blue-50, .bg-yellow-50, .bg-green-100 {
-    background-color: transparent !important;
-  }
-  
-  /* Hapus shadow */
-  .shadow-sm, .shadow-lg {
-    box-shadow: none !important;
-  }
-  
-  /* Form input jadi text biasa */
-  select, textarea {
-    border: none !important;
-    background: transparent !important;
-    resize: none;
-    padding: 0;
-  }
-  
-  /* Sembunyikan dropdown arrow */
-  select {
-    appearance: none;
-    -webkit-appearance: none;
-  }
-  
-  /* Agar halaman tidak terpotong jelek */
-  .break-inside-avoid {
-    page-break-inside: avoid;
-  }
+  .no-print, nav, aside, .sidebar { display: none !important; }
+  .print-block { display: block !important; }
+  .print-flex { display: flex !important; }
+  .max-w-5xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+  body, p, h1, h2, h3, div, span { color: #000 !important; }
+  .border { border-color: #000 !important; }
+  .bg-blue-50, .bg-yellow-50, .bg-green-100 { background-color: transparent !important; }
+  .shadow-sm, .shadow-lg { box-shadow: none !important; }
+  select, textarea { border: none !important; background: transparent !important; resize: none; padding: 0; }
+  select { appearance: none; -webkit-appearance: none; }
+  .break-inside-avoid { page-break-inside: avoid; }
 }
-
-/* Helper untuk menyembunyikan elemen print di layar biasa */
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 </style>
