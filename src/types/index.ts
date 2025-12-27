@@ -22,6 +22,17 @@ export interface Employee {
   join_date: string
   created_at: string
   updated_at: string
+  profile_picture_url?: string;
+}
+
+export interface Achievement {
+  id: number;
+  employee_id: number;
+  title: string;
+  description: string;
+  date: string;     // Format YYYY-MM-DD
+  file_url: string;
+  created_at: string;
 }
 
 export interface Division {

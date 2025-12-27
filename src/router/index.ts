@@ -90,6 +90,12 @@ const router = createRouter({
           component: ReportView,
           meta: { role: 'admin' }
         },
+        {
+          path: '/admin/employees/:id', // URL dinamis dengan ID
+          name: 'AdminEmployeeDetail',
+          component: () => import('../views/admin/EmployeeDetailView.vue'),
+          meta: { requiresAuth: true, role: 'admin', title: 'Detail Pegawai' }
+        },
         
         // --- MANAGER ROUTES (Menilai Tim) ---
         // Diakses oleh Manager & Admin (untuk menilai Manager)

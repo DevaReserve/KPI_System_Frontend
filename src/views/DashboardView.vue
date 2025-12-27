@@ -93,7 +93,7 @@
           <div class="px-6 py-4 border-b border-gray-100 bg-green-50">
             <h3 class="font-bold text-green-800 flex items-center">
               <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 3.214L18 21l-5.714-3.214L6.571 21l5.714-6.857L6.571 12l5.714-3.214L10 3h4z" /></svg>
-              Top 5 Performers
+              Top Performers (>80)
             </h3>
           </div>
           <table class="min-w-full">
@@ -106,7 +106,7 @@
                 <td class="px-6 py-3 text-sm text-right font-bold text-green-600">{{ p.total_score.toFixed(2) }}</td>
               </tr>
               <tr v-if="adminStats.topPerformers.length === 0">
-                <td colspan="2" class="px-6 py-8 text-center text-sm text-gray-400">Belum ada data penilaian.</td>
+                <td colspan="2" class="px-6 py-8 text-center text-sm text-gray-400">Belum ada pegawai dengan nilai > 80.</td>
               </tr>
             </tbody>
           </table>
@@ -116,7 +116,7 @@
           <div class="px-6 py-4 border-b border-gray-100 bg-red-50">
             <h3 class="font-bold text-red-800 flex items-center">
               <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>
-              Perlu Pembinaan (Low 5)
+              Perlu Pembinaan (&lt;60)
             </h3>
           </div>
           <table class="min-w-full">
@@ -129,7 +129,7 @@
                 <td class="px-6 py-3 text-sm text-right font-bold text-red-600">{{ p.total_score.toFixed(2) }}</td>
               </tr>
               <tr v-if="adminStats.lowPerformers.length === 0">
-                <td colspan="2" class="px-6 py-8 text-center text-sm text-gray-400">Belum ada data penilaian.</td>
+                <td colspan="2" class="px-6 py-8 text-center text-sm text-gray-400">Tidak ada pegawai di bawah standar.</td>
               </tr>
             </tbody>
           </table>
@@ -139,10 +139,8 @@
     </div>
 
     <div v-else-if="authStore.userRole === 'manager'" class="space-y-6">
-      
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 space-y-6">
-          
           <div class="bg-white rounded-xl shadow-sm p-8 border border-gray-100">
             <div class="flex justify-between items-end mb-4">
               <div>
@@ -180,7 +178,6 @@
             </p>
             <p class="text-sm text-green-700 mt-1">Terima kasih telah menyelesaikan penilaian periode ini.</p>
           </div>
-
         </div>
 
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
@@ -193,7 +190,6 @@
     </div>
 
     <div v-else-if="authStore.userRole === 'employee'" class="space-y-6">
-      
       <div v-if="employeeStats.hasData" class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden transition-all hover:shadow-2xl">
         <div class="absolute -right-10 -top-10 h-64 w-64 bg-white opacity-10 rounded-full blur-3xl"></div>
         <div class="absolute left-10 bottom-10 h-32 w-32 bg-purple-400 opacity-20 rounded-full blur-2xl"></div>
@@ -267,7 +263,21 @@ const adminStats = reactive({ totalEmployees: 0, totalDivisions: 0, activePeriod
 const adminCharts = reactive({
   divisionSeries: [] as any[],
   divisionOptions: {
-    chart: { id: 'division-bar', fontFamily: 'inherit' },
+    chart: { 
+        id: 'division-bar', 
+        fontFamily: 'inherit',
+        toolbar: { show: true } // Toolbar harus TRUE untuk download
+    },
+    // Menambahkan Judul untuk Export
+    title: {
+        text: 'Distribusi Pegawai per Divisi',
+        align: 'center',
+        style: { fontSize: '16px', fontWeight: 'bold', fontFamily: 'inherit' }
+    },
+    subtitle: {
+        text: 'PT. Cakra Media Data',
+        align: 'center',
+    },
     xaxis: { categories: [] as string[] },
     plotOptions: { bar: { borderRadius: 4, horizontal: true, barHeight: '50%' } },
     colors: ['#3b82f6'],
@@ -275,6 +285,15 @@ const adminCharts = reactive({
   },
   statusSeries: [] as number[],
   statusOptions: {
+    chart: { 
+        type: 'pie', 
+        toolbar: { show: true } 
+    },
+    title: {
+        text: 'Status Keaktifan Akun',
+        align: 'center',
+        style: { fontSize: '16px', fontWeight: 'bold', fontFamily: 'inherit' }
+    },
     labels: ['Aktif', 'Non-Aktif'],
     colors: ['#10b981', '#ef4444'],
     legend: { position: 'bottom' },
@@ -344,13 +363,24 @@ async function loadAdminData() {
   }
   adminCharts.divisionSeries = [{ name: 'Jumlah Pegawai', data: divCounts }]
 
-  // 5. LOGIC TOP 5 & LOW 5
+  // LOGIC TOP 5 & LOW 5 (DIPERBAIKI DENGAN FILTER)
   if (active) {
     try {
       const reports = await reportService.getEvaluationReport(active.id)
-      const sorted = [...reports].sort((a: any, b: any) => b.total_score - a.total_score)
-      adminStats.topPerformers = sorted.slice(0, 5)
-      adminStats.lowPerformers = [...sorted].reverse().slice(0, 5)
+      
+      // Top 5: Hanya ambil Nilai >= 80, Sortir Tertinggi -> Terendah
+      adminStats.topPerformers = reports
+        .filter((r: any) => r.total_score >= 80) 
+        .sort((a: any, b: any) => b.total_score - a.total_score)
+        .slice(0, 5)
+
+      // Low 5 (Pembinaan): Hanya ambil Nilai < 60, Sortir Terendah -> Tertinggi
+      // Logic: Pegawai dengan nilai 100 tidak akan masuk sini
+      adminStats.lowPerformers = reports
+        .filter((r: any) => r.total_score < 60)
+        .sort((a: any, b: any) => a.total_score - b.total_score)
+        .slice(0, 5)
+
     } catch (e) {
       console.warn("Gagal load top performers", e)
     }

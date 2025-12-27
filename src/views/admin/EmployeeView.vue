@@ -44,13 +44,21 @@
     <DataTable :columns="tableColumns" :data="employees" :loading="isLoading">
       
       <template #name="{ item }">
-        <div class="flex items-center">
-          <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 mr-4"
+        <div class="flex items-center cursor-pointer group" @click="$router.push(`/admin/employees/${item.id}`)">
+          <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 mr-4 overflow-hidden"
             :class="item.is_active ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-500'">
-            {{ item.name.charAt(0) }}
+            
+            <img 
+                v-if="item.profile_picture_url" 
+                :src="getProfilePictureUrl(item.profile_picture_url)" 
+                class="w-full h-full object-cover"
+            >
+            <span v-else>{{ item.name.charAt(0) }}</span>
           </div>
           <div>
-            <div class="text-sm font-medium" :class="item.is_active ? 'text-gray-900' : 'text-gray-400'">{{ item.name }}</div>
+            <div class="text-sm font-medium group-hover:text-blue-600 transition-colors" :class="item.is_active ? 'text-gray-900' : 'text-gray-400'">
+                {{ item.name }}
+            </div>
             <div class="text-sm text-gray-500">{{ item.email }}</div>
             <div class="text-xs text-gray-400">NIP: {{ item.nip }}</div>
           </div>
@@ -310,6 +318,14 @@ function confirmResetPassword(emp: any) {
       }
     }
   })
+}
+
+function getProfilePictureUrl(url: string) {
+    if (!url) return ''
+    if (url.startsWith('http')) return url
+    
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080' 
+    return `${baseUrl.replace('/api', '')}${url}`
 }
 
 const filteredPositions = computed(() => {
