@@ -154,7 +154,38 @@
                     {{ pos.name }}
                   </option>
                 </select>
-              </div>           
+              </div>
+              <div class="sm:col-span-2 mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-sm">
+                <label class="block text-sm font-bold text-blue-800 mb-2">
+                  <i class="pi pi-users mr-1"></i> Dinilai Oleh Siapa? (Atasan Langsung)
+                </label>
+                
+                <select 
+                  v-model="form.direct_supervisor_id" 
+                  class="w-full rounded-lg border border-blue-300 px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                >
+                  <option :value="null">-- Tidak Ada / Saya adalah CEO --</option>
+                  <option v-for="boss in potentialSupervisors" :key="boss.id" :value="boss.id">
+                    {{ boss.name }} ({{ boss.position }})
+                  </option>
+                </select>
+
+                <div class="mt-2 text-xs flex items-start gap-2">
+                  <i class="pi pi-info-circle text-blue-600 mt-0.5"></i>
+                  <div>
+                    <span v-if="form.direct_supervisor_id === 1" class="text-blue-700 font-semibold">
+                      Atasan otomatis diatur ke <strong>CEO</strong> (Cocok untuk level Manager).
+                    </span>
+                    <span v-else-if="form.direct_supervisor_id" class="text-green-700 font-semibold">
+                      Atasan otomatis diatur ke <strong>Manager Divisi</strong>.
+                    </span>
+                    <span v-else class="text-gray-500">
+                      Sistem akan mencoba mengisi otomatis berdasarkan Jabatan & Divisi. Kosongkan hanya untuk CEO.
+                    </span>
+                  </div>
+                </div>
+              </div>
+                         
               <div class="sm:col-span-2 pb-1 border-b border-gray-100 mt-2"><span class="text-xs font-bold text-gray-500 uppercase">Akun</span></div>
               <div><label class="block text-sm font-medium mb-1">Username</label><input v-model="form.username" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
               
@@ -215,11 +246,59 @@ const isProcessing = ref(false)
 const positions = ref<any[]>([])
 
 const form = reactive({
-  id: 0, nip: '', name: '', email: '', join_date: '', 
-  division_id: '', position: '', username: '', password: '', 
-  role: 'employee', is_active: true
+  id: 0, 
+  nip: '', 
+  name: '', 
+  email: '', 
+  join_date: '', 
+  division_id: '' as string | number, // Update tipe agar aman
+  position: '', 
+  username: '', 
+  password: '', 
+  role: 'employee', 
+  is_active: true,
+  direct_supervisor_id: null as number | null // <--- TAMBAHAN PENTING
 })
 
+const potentialSupervisors = computed(() => {
+  return employees.value.filter(e => 
+    e.id !== form.id && // Jangan tampilkan diri sendiri saat edit
+    (e.role === 'manager' || e.role === 'admin') // Hanya Manager & CEO yang boleh jadi atasan
+  );
+});
+
+// 2. Watcher: Memantau perubahan Divisi & Jabatan untuk auto-fill atasan
+watch(() => [form.division_id, form.position], ([newDivId, newPos]) => {
+  // Jika sedang mode edit dan data baru dimuat, jangan timpa data lama dulu (opsional)
+  // Tapi untuk memudahkan, kita biarkan logic ini jalan agar "Smart".
+  
+  if (!newDivId || !newPos) return;
+
+  const posName = String(newPos).toLowerCase();
+  
+  // SKENARIO A: Jika Jabatan adalah MANAGER / HEAD
+  if (posName.includes('manager') || posName.includes('head') || posName.includes('senior')) {
+     // Otomatis set atasan ke CEO (Asumsi ID CEO = 1)
+     // Jika ID CEO di database Anda bukan 1, ganti angka ini.
+     form.direct_supervisor_id = 1; 
+  } 
+  
+  // SKENARIO B: Jika Jabatan adalah STAFF / INTERN / JUNIOR
+  else {
+     // Cari Manager dari Divisi yang dipilih
+     const managerInDivision = employees.value.find(e => 
+        e.division_id === Number(newDivId) && 
+        e.role === 'manager'
+     );
+
+     if (managerInDivision) {
+        form.direct_supervisor_id = managerInDivision.id;
+     } else {
+        // Jika belum ada manager di divisi itu, kosongkan
+        form.direct_supervisor_id = null; 
+     }
+  }
+}); 
 onMounted(async () => { await fetchData() })
 
 async function fetchData() {
@@ -241,17 +320,33 @@ async function fetchData() {
 
 function openModal(emp?: any) {
   if (emp) {
-    isEditing.value = true
-    form.id = emp.id; form.nip = emp.nip; form.name = emp.name; form.email = emp.email;
+    isEditing.value = true;
+    form.id = emp.id;
+    form.nip = emp.nip;
+    form.name = emp.name;
+    form.email = emp.email;
     form.join_date = emp.join_date ? emp.join_date.split('T')[0] : '';
-    form.division_id = emp.division_id; form.position = emp.position;
-    form.username = emp.username || ''; form.role = emp.role || 'employee';
-    form.is_active = emp.is_active; form.password = ''
+    form.division_id = emp.division_id;
+    form.position = emp.position;
+    form.username = emp.username || '';
+    form.role = emp.role || 'employee';
+    form.is_active = emp.is_active;
+    form.password = '';
+    
+    // PENTING: Load atasan yang sudah tersimpan
+    // Kita gunakan 'any' casting jika direct_supervisor_id error tipe data
+    form.direct_supervisor_id = (emp as any).direct_supervisor_id || null;
+    
   } else {
-    isEditing.value = false
-    Object.assign(form, { id: 0, nip: '', name: '', email: '', join_date: '', division_id: '', position: '', username: '', password: '', role: 'employee', is_active: true })
+    isEditing.value = false;
+    Object.assign(form, { 
+        id: 0, nip: '', name: '', email: '', join_date: '', 
+        division_id: '', position: '', username: '', password: '', 
+        role: 'employee', is_active: true,
+        direct_supervisor_id: null // Reset
+    });
   }
-  showModal.value = true
+  showModal.value = true;
 }
 
 function closeModal() { showModal.value = false }
@@ -259,7 +354,13 @@ function closeModal() { showModal.value = false }
 async function saveEmployee() {
   try {
     isProcessing.value = true
-    const payload = { ...form, division_id: Number(form.division_id), join_date: new Date(form.join_date).toISOString() }
+    const payload = { 
+        ...form, 
+        division_id: Number(form.division_id), 
+        join_date: new Date(form.join_date).toISOString(),
+        // Tambahkan baris ini agar data atasan terkirim
+        direct_supervisor_id: form.direct_supervisor_id ? Number(form.direct_supervisor_id) : null 
+    }
     
     if (isEditing.value) {
       await employeeService.update(form.id, payload)
