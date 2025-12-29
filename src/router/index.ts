@@ -96,7 +96,13 @@ const router = createRouter({
           component: () => import('../views/admin/EmployeeDetailView.vue'),
           meta: { requiresAuth: true, role: 'admin', title: 'Detail Pegawai' }
         },
-        
+        {
+            path: '/admin/logs',
+            name: 'ActivityLogs',
+            component: () => import('../views/admin/ActivityLogView.vue'),
+            meta: { requiresAuth: true, role: 'admin', title: 'Audit Trail' }
+        },
+                
         // --- MANAGER ROUTES (Menilai Tim) ---
         // Diakses oleh Manager & Admin (untuk menilai Manager)
         {

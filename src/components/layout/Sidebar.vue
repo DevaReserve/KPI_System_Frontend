@@ -41,6 +41,16 @@
           
           <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Laporan</div>
           <li><router-link to="/admin/reports" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')"><svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Rekapitulasi Nilai</router-link></li>
+
+          <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Sistem & Keamanan</div>
+          <li>
+            <router-link to="/admin/logs" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')">
+              <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Audit Trail
+            </router-link>
+          </li>
         </template>
 
         <template v-if="authStore.userRole === 'manager' || authStore.userRole === 'admin'">
@@ -63,14 +73,10 @@
 </template>
 
 <script setup lang="ts">
-// HAPUS: import { defineProps, defineEmits } from 'vue' 
-// Cukup import store saja
 import { useAuthStore } from '../../stores/auth'
 
 const authStore = useAuthStore()
 
-// Props dan Emits sudah otomatis tersedia di <script setup>
-// Gunakan langsung seperti ini:
 defineProps({
   isOpen: Boolean
 })

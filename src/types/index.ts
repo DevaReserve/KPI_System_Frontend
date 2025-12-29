@@ -124,6 +124,19 @@ export interface EmployeeDetail {
   join_date: string
 }
 
+export interface ActivityLog {
+  id: number
+  user_id: number
+  action: string
+  description: string
+  ip_address: string
+  created_at: string
+  user?: {
+    username: string
+    role: string
+  }
+}
+
 // API Response types
 export interface ApiResponse<T = any> {
   status: number

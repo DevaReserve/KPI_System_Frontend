@@ -224,4 +224,17 @@ export const reportService = {
   }
 }
 
+export const adminService = {
+  // Update fungsi ini untuk menerima parameter opsional
+  async getActivityLogs(startDate?: string, endDate?: string): Promise<any[]> {
+    // Buat Query String
+    const params = new URLSearchParams()
+    if (startDate) params.append('start_date', startDate)
+    if (endDate) params.append('end_date', endDate)
+
+    const response = await api.get<ApiResponse<any[]>>(`/admin/activity-logs?${params.toString()}`)
+    return response.data.data
+  }
+}
+
 export default api
