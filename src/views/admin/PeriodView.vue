@@ -20,22 +20,45 @@
         </template>
     </ConfirmDialog>
 
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">Periode Evaluasi</h1>
-      <button @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
-        Buat Periode Baru
-      </button>
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Periode Evaluasi</h1>
+        <p class="text-gray-500 text-sm">Atur jadwal penilaian kinerja pegawai.</p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <div class="relative">
+          <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input 
+            v-model="searchQuery" 
+            type="text" 
+            placeholder="Cari Periode..." 
+            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full sm:w-64 transition-all shadow-sm"
+          >
+        </div>
+
+        <button @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center transition-colors shadow-sm shrink-0">
+          <i class="pi pi-plus mr-2"></i>
+          Buat Periode Baru
+        </button>
+      </div>
     </div>
 
-    <DataTable :columns="tableColumns" :data="periods" :loading="isLoading">
-      <template #name="{ item }"><span class="font-bold text-gray-900">{{ item.name }}</span></template>
+    <DataTable :columns="tableColumns" :data="filteredPeriods" :loading="isLoading">
+      
+      <template #name="{ item }">
+        <span class="font-bold text-gray-900">{{ item.name }}</span>
+      </template>
+      
       <template #start_date="{ value }">{{ formatDate(value) }}</template>
+      
       <template #end_date="{ value }">{{ formatDate(value) }}</template>
+      
       <template #is_active="{ value }">
         <span v-if="value" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">SEDANG AKTIF</span>
         <span v-else class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-500 border border-gray-200">Tidak Aktif</span>
       </template>
+      
       <template #actions="{ item }">
         <div class="flex items-center gap-2">
             <button v-if="!item.is_active" @click="confirmActivate(item)" class="text-green-600 hover:text-green-900 font-bold transition-colors text-xs uppercase tracking-wide border border-green-200 px-2 py-1 rounded bg-green-50 hover:bg-green-100 mr-2">Set Aktif</button>
@@ -52,7 +75,10 @@
                 <div class="bg-white px-6 pt-6 pb-4">
                     <h3 class="text-lg leading-6 font-bold text-gray-900 mb-6 border-b pb-4">{{ isEditing ? 'Edit Periode' : 'Buat Periode Baru' }}</h3>
                     <form @submit.prevent="savePeriod">
-                        <div class="mb-4"><label class="block text-sm font-medium text-gray-700 mb-1">Nama Periode</label><input v-model="form.name" type="text" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Penilaian Q1 2025"></div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Periode</label>
+                            <input v-model="form.name" type="text" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Penilaian Q1 2025">
+                        </div>
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div><label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label><input v-model="form.start_date" type="date" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
                             <div><label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Selesai</label><input v-model="form.end_date" type="date" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
@@ -71,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue' // Tambahkan computed
 import { periodService } from '../../services/api'
 import DataTable from '../../components/ui/DataTable.vue'
 import type { EvaluationPeriod } from '../../types'
@@ -90,6 +116,16 @@ const showModal = ref(false)
 const isEditing = ref(false)
 const isProcessing = ref(false)
 const form = reactive({ id: 0, name: '', start_date: '', end_date: '' })
+const searchQuery = ref('') // State Pencarian
+
+// Logic Filter Search
+const filteredPeriods = computed(() => {
+  if (!searchQuery.value) {
+    return periods.value
+  }
+  const query = searchQuery.value.toLowerCase()
+  return periods.value.filter(p => p.name.toLowerCase().includes(query))
+})
 
 onMounted(async () => { await fetchPeriods() })
 
@@ -129,10 +165,9 @@ async function savePeriod() {
   finally { isProcessing.value = false }
 }
 
-// UPDATE NAMA GROUP DI SINI
 function confirmActivate(item: any) {
   confirm.require({
-    group: 'dialog-period', // <--- PENTING
+    group: 'dialog-period',
     header: 'Aktifkan Periode?',
     message: `Aktifkan periode <strong>${item.name}</strong>? <br><br> <span class="text-red-500 text-sm">Peringatan: Periode lain yang sedang aktif akan otomatis dinonaktifkan.</span>`,
     icon: 'pi pi-calendar-plus',
@@ -146,7 +181,7 @@ function confirmActivate(item: any) {
 
 function confirmDelete(item: any) {
   confirm.require({
-    group: 'dialog-period', // <--- PENTING
+    group: 'dialog-period',
     header: 'Hapus Periode?',
     message: `Hapus periode <strong>${item.name}</strong>? <br> Data penilaian di dalamnya mungkin akan hilang.`,
     icon: 'pi pi-trash',

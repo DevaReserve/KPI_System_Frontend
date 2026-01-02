@@ -108,7 +108,8 @@ async function fetchReport() {
   isLoading.value = true
   hasSearched.value = true
   try {
-    reportData.value = await reportService.getEvaluationReport(Number(selectedPeriodId.value))
+    const data = await reportService.getEvaluationReport(Number(selectedPeriodId.value))
+    reportData.value = data || []
     if (reportData.value.length > 0) {
         toast.add({ severity: 'success', summary: 'Berhasil', detail: 'Data dimuat', life: 3000 })
     } else {
@@ -125,37 +126,102 @@ function exportToPDF() {
   if (reportData.value.length === 0) return
 
   try {
-    const doc = new jsPDF()
+    // 1. Setup Dokumen (Landscape, A4)
+    const doc = new jsPDF('l', 'mm', 'a4')
+    const pageWidth = doc.internal.pageSize.width
+    const pageHeight = doc.internal.pageSize.height
+    
+    // --- A. KOP SURAT (Header) ---
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(18)
+    doc.text('PT. CAKRA MEDIA DATA', pageWidth / 2, 15, { align: 'center' })
+    
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(10)
+    doc.text('Jl. Raya Mambal Ubud - Br. Sigaran Desa Mekar Bhuana – Abiansemal, Mekar Bhuwana, Kec. Abiansemal, Kabupaten Badung, Bali 80352', pageWidth / 2, 21, { align: 'center' })
+    doc.text('Telp: 081241078377 | Email: info@cakrasoft.net', pageWidth / 2, 26, { align: 'center' })
+    
+    // Garis Pemisah Kop Surat
+    doc.setLineWidth(0.5)
+    doc.line(10, 30, pageWidth - 10, 30)
+
+    // --- B. JUDUL LAPORAN ---
     const periodName = periods.value.find(p => p.id === Number(selectedPeriodId.value))?.name || '-'
+    const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
 
-    // 1. Header PDF
-    doc.setFontSize(16)
-    doc.text('LAPORAN REKAPITULASI PENILAIAN KINERJA', 14, 20)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(14)
+    doc.text('LAPORAN REKAPITULASI PENILAIAN KINERJA', pageWidth / 2, 42, { align: 'center' })
+    
     doc.setFontSize(11)
-    doc.text(`Periode: ${periodName}`, 14, 28)
-    doc.text(`Tanggal Cetak: ${new Date().toLocaleDateString('id-ID')}`, 14, 34)
+    doc.setFont('helvetica', 'normal')
+    doc.text(`Periode Evaluasi: ${periodName}`, pageWidth / 2, 49, { align: 'center' })
 
-    // 2. Persiapan Data Tabel
-    const tableBody = reportData.value.map(row => [
+    // --- C. TABEL DATA ---
+    const tableBody = reportData.value.map((row, index) => [
+      index + 1, // No Urut
       row.nip,
       row.employee_name,
       row.division,
       row.position,
       row.evaluator,
-      row.total_score.toFixed(2),
+      row.total_score.toFixed(2), // Format 2 desimal
       row.grade
     ])
 
     autoTable(doc, {
-      startY: 40,
-      head: [['NIP', 'Nama Pegawai', 'Divisi', 'Jabatan', 'Penilai', 'Skor', 'Grade']],
+      startY: 55,
+      head: [['No', 'NIP', 'Nama Pegawai', 'Divisi', 'Jabatan', 'Penilai', 'Skor', 'Grade']],
       body: tableBody,
-      theme: 'grid',
-      headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' }, // Warna Header Biru
-      styles: { fontSize: 9 },
-      alternateRowStyles: { fillColor: [245, 245, 245] }
+      theme: 'grid', // Tema Grid agar tegas
+      styles: { 
+        fontSize: 9, 
+        cellPadding: 3,
+        valign: 'middle'
+      },
+      headStyles: { 
+        fillColor: [44, 62, 80], // Warna Biru Tua Elegan (Midnight Blue)
+        textColor: 255, 
+        fontStyle: 'bold',
+        halign: 'center' // Header rata tengah
+      },
+      columnStyles: {
+        0: { halign: 'center', cellWidth: 10 }, // No
+        1: { halign: 'center' }, // NIP
+        6: { halign: 'center', fontStyle: 'bold' }, // Skor (Bold)
+        7: { halign: 'center', fontStyle: 'bold' }  // Grade (Bold)
+      },
+      alternateRowStyles: { 
+        fillColor: [245, 245, 245] // Warna selang-seling abu muda
+      }
     })
 
+    // --- D. TANDA TANGAN (Footer) ---
+    // Mengambil posisi Y terakhir setelah tabel selesai
+    let finalY = (doc as any).lastAutoTable.finalY + 20
+    
+    // Cek jika tidak cukup ruang di halaman ini, buat halaman baru
+    if (finalY > pageHeight - 50) {
+      doc.addPage()
+      finalY = 30
+    }
+
+    // Posisi Tanda Tangan (Kanan Bawah)
+    const signX = pageWidth - 60
+    
+    doc.setFontSize(10)
+    doc.setFont('helvetica', 'normal')
+    doc.text(`Denpasar, ${today}`, signX, finalY, { align: 'center' })
+    doc.text('Mengetahui,', signX, finalY + 6, { align: 'center' })
+    doc.text('CEO PT. Cakra Media Data', signX, finalY + 11, { align: 'center' })
+    
+    // Ruang Tanda Tangan
+    doc.setFont('helvetica', 'bold')
+    doc.text('Bapak Khalil', signX, finalY + 40, { align: 'center' }) // Nama CEO
+    doc.setLineWidth(0.2)
+    doc.line(signX - 25, finalY + 41, signX + 25, finalY + 41) // Garis bawah nama
+
+    // --- E. SAVE FILE ---
     doc.save(`Laporan_KPI_${periodName.replace(/\s+/g, '_')}.pdf`)
     toast.add({ severity: 'success', summary: 'Sukses', detail: 'Laporan PDF berhasil diunduh', life: 3000 })
 

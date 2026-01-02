@@ -11,9 +11,19 @@
       
       <template #employee_name="{ item }">
         <div class="flex items-center">
-          <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm mr-3">
-            {{ item.employee_name.charAt(0) }}
+          
+          <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm mr-3 overflow-hidden border border-gray-200"
+               :class="item.profile_picture_url ? 'bg-white' : 'bg-indigo-100 text-indigo-600'">
+            
+            <img 
+               v-if="item.profile_picture_url" 
+               :src="getProfilePictureUrl(item.profile_picture_url)" 
+               class="w-full h-full object-cover"
+            >
+            <span v-else>{{ item.employee_name.charAt(0) }}</span>
+          
           </div>
+
           <div>
             <div class="text-sm font-bold text-gray-900">{{ item.employee_name }}</div>
             <div class="text-xs text-gray-500">ID: {{ item.employee_id }}</div>
@@ -70,9 +80,11 @@ import Toast from 'primevue/toast'
 const toast = useToast()
 const router = useRouter()
 
+// Update Interface TypeScript
 interface TeamMember {
   employee_id: number
   employee_name: string
+  profile_picture_url?: string // <--- TAMBAHKAN INI
   evaluation_id?: number | null
   evaluation_status: string 
 }
@@ -100,6 +112,14 @@ async function fetchTeam() {
   } finally {
     isLoading.value = false
   }
+}
+
+// Fungsi Helper untuk URL Gambar
+function getProfilePictureUrl(url: string) {
+    if (!url) return ''
+    if (url.startsWith('http')) return url
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080' 
+    return `${baseUrl.replace('/api', '')}${url}`
 }
 
 async function handleAssess(item: TeamMember) {
