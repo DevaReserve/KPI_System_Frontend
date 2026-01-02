@@ -50,7 +50,7 @@
         <span v-if="value" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
           {{ value }}
         </span>
-        <span v-else class="text-gray-400 italic text-xs">Belum ada</span>
+        <span v-else class="text-gray-400 italic text-xs">Tidak Ada</span>
       </template>
 
       <template #actions="{ item }">
