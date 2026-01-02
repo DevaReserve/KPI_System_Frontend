@@ -9,7 +9,7 @@
                     <i class="pi pi-question text-4xl"></i>
                 </div>
                 
-                <span class="font-bold text-2xl block mb-2 mt-6 text-gray-800">{{ message.header }}</span>
+                <span class="font-bold text-xl block mb-2 mt-6 text-gray-800">{{ message.header }}</span>
                 
                 <p class="mb-6 text-gray-500 text-center leading-relaxed" v-html="message.message"></p>
                 
@@ -44,8 +44,8 @@
     <DataTable :columns="tableColumns" :data="employees" :loading="isLoading">
       
       <template #name="{ item }">
-        <div class="flex items-center cursor-pointer group" @click="$router.push(`/admin/employees/${item.id}`)">
-          <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 mr-4 overflow-hidden"
+        <div class="flex items-center cursor-pointer group" @click="$router.push(`/admin/employees/${item.id}`)" title="Klik untuk lihat Detail, Prestasi, & SP">
+          <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 mr-4 overflow-hidden border border-gray-200"
             :class="item.is_active ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-500'">
             
             <img 
@@ -72,13 +72,13 @@
 
       <template #username="{ item }">
         <div class="text-sm text-gray-900 mb-1">@{{ item.username }}</div>
-        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" 
+        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full uppercase tracking-wider" 
           :class="{
             'bg-purple-100 text-purple-800': item.role === 'admin',
             'bg-green-100 text-green-800': item.role === 'manager',
             'bg-gray-100 text-gray-800': item.role === 'employee'
           }">
-          {{ item.role ? item.role.toUpperCase() : '-' }}
+          {{ item.role ? item.role : '-' }}
         </span>
       </template>
 
@@ -108,7 +108,7 @@
               title="Reset Password ke Default"
             >
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
               </svg>
             </button>
         </div>
@@ -123,6 +123,7 @@
           <div class="bg-white px-6 pt-6 pb-4">
             <h3 class="text-lg leading-6 font-bold text-gray-900 mb-6 border-b pb-4">{{ isEditing ? 'Edit Pegawai' : 'Tambah Pegawai' }}</h3>
             <form @submit.prevent="saveEmployee" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+              
               <div class="sm:col-span-2 pb-1 border-b border-gray-100"><span class="text-xs font-bold text-gray-500 uppercase">Data Pribadi</span></div>
               <div><label class="block text-sm font-medium mb-1">NIP</label><input v-model="form.nip" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
               <div><label class="block text-sm font-medium mb-1">Nama</label><input v-model="form.name" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
@@ -155,6 +156,7 @@
                   </option>
                 </select>
               </div>
+
               <div class="sm:col-span-2 mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-sm">
                 <label class="block text-sm font-bold text-blue-800 mb-2">
                   <i class="pi pi-users mr-1"></i> Dinilai Oleh Siapa? (Atasan Langsung)
@@ -185,7 +187,7 @@
                   </div>
                 </div>
               </div>
-                         
+                           
               <div class="sm:col-span-2 pb-1 border-b border-gray-100 mt-2"><span class="text-xs font-bold text-gray-500 uppercase">Akun</span></div>
               <div><label class="block text-sm font-medium mb-1">Username</label><input v-model="form.username" class="w-full rounded-lg border border-gray-300 px-3 py-2" required></div>
               
@@ -216,7 +218,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, watch } from 'vue'
+import { ref, reactive, onMounted, computed, watch, nextTick } from 'vue'
 import { employeeService, divisionService, positionService } from '../../services/api'
 import type { Division } from '../../types'
 import DataTable from '../../components/ui/DataTable.vue'
@@ -251,54 +253,53 @@ const form = reactive({
   name: '', 
   email: '', 
   join_date: '', 
-  division_id: '' as string | number, // Update tipe agar aman
+  division_id: '' as string | number, 
   position: '', 
   username: '', 
   password: '', 
   role: 'employee', 
   is_active: true,
-  direct_supervisor_id: null as number | null // <--- TAMBAHAN PENTING
+  direct_supervisor_id: null as number | null 
 })
 
+// Daftar pegawai yang bisa jadi atasan (Selain diri sendiri)
 const potentialSupervisors = computed(() => {
   return employees.value.filter(e => 
-    e.id !== form.id && // Jangan tampilkan diri sendiri saat edit
-    (e.role === 'manager' || e.role === 'admin') // Hanya Manager & CEO yang boleh jadi atasan
+    e.id !== form.id && 
+    (e.role === 'manager' || e.role === 'admin') 
   );
 });
 
-// 2. Watcher: Memantau perubahan Divisi & Jabatan untuk auto-fill atasan
+// Watcher Smart Supervisor
 watch(() => [form.division_id, form.position], ([newDivId, newPos]) => {
-  // Jika sedang mode edit dan data baru dimuat, jangan timpa data lama dulu (opsional)
-  // Tapi untuk memudahkan, kita biarkan logic ini jalan agar "Smart".
-  
+  if (!showModal.value) return; // Jangan jalan kalau modal tutup
   if (!newDivId || !newPos) return;
 
+  // Jika sedang edit dan data sudah ada (user belum ubah apapun), skip logic auto-fill ini
+  // Namun ini agak tricky, jadi kita biarkan logic "saran" ini berjalan,
+  // user bisa menggantinya manual jika salah.
+  
   const posName = String(newPos).toLowerCase();
   
-  // SKENARIO A: Jika Jabatan adalah MANAGER / HEAD
-  if (posName.includes('manager') || posName.includes('head') || posName.includes('senior')) {
-     // Otomatis set atasan ke CEO (Asumsi ID CEO = 1)
-     // Jika ID CEO di database Anda bukan 1, ganti angka ini.
-     form.direct_supervisor_id = 1; 
+  // LOGIKA 1: Manager dinilai oleh CEO
+  if (posName.includes('manager') || posName.includes('head')) {
+      // Coba cari pegawai dengan role Admin (biasanya CEO)
+      const ceo = employees.value.find(e => e.role === 'admin');
+      if (ceo) form.direct_supervisor_id = ceo.id;
+      else form.direct_supervisor_id = 1; // Fallback ID 1
   } 
-  
-  // SKENARIO B: Jika Jabatan adalah STAFF / INTERN / JUNIOR
+  // LOGIKA 2: Staff dinilai oleh Manager Divisinya
   else {
-     // Cari Manager dari Divisi yang dipilih
-     const managerInDivision = employees.value.find(e => 
-        e.division_id === Number(newDivId) && 
-        e.role === 'manager'
-     );
+      const managerInDivision = employees.value.find(e => 
+        e.division_id === Number(newDivId) && e.role === 'manager'
+      );
 
-     if (managerInDivision) {
+      if (managerInDivision) {
         form.direct_supervisor_id = managerInDivision.id;
-     } else {
-        // Jika belum ada manager di divisi itu, kosongkan
-        form.direct_supervisor_id = null; 
-     }
+      }
   }
 }); 
+
 onMounted(async () => { await fetchData() })
 
 async function fetchData() {
@@ -326,16 +327,21 @@ function openModal(emp?: any) {
     form.name = emp.name;
     form.email = emp.email;
     form.join_date = emp.join_date ? emp.join_date.split('T')[0] : '';
-    form.division_id = emp.division_id;
-    form.position = emp.position;
+    
     form.username = emp.username || '';
     form.role = emp.role || 'employee';
     form.is_active = emp.is_active;
     form.password = '';
     
-    // PENTING: Load atasan yang sudah tersimpan
-    // Kita gunakan 'any' casting jika direct_supervisor_id error tipe data
-    form.direct_supervisor_id = (emp as any).direct_supervisor_id || null;
+    // Set Divisi & Posisi dulu
+    form.division_id = emp.division_id;
+    form.position = emp.position;
+
+    // Tunggu Vue merender ulang (agar watcher tidak menimpa nilai database)
+    nextTick(() => {
+         // Load atasan yang tersimpan di database
+         form.direct_supervisor_id = emp.direct_supervisor_id || null;
+    });
     
   } else {
     isEditing.value = false;
@@ -343,7 +349,7 @@ function openModal(emp?: any) {
         id: 0, nip: '', name: '', email: '', join_date: '', 
         division_id: '', position: '', username: '', password: '', 
         role: 'employee', is_active: true,
-        direct_supervisor_id: null // Reset
+        direct_supervisor_id: null 
     });
   }
   showModal.value = true;
@@ -358,7 +364,6 @@ async function saveEmployee() {
         ...form, 
         division_id: Number(form.division_id), 
         join_date: new Date(form.join_date).toISOString(),
-        // Tambahkan baris ini agar data atasan terkirim
         direct_supervisor_id: form.direct_supervisor_id ? Number(form.direct_supervisor_id) : null 
     }
     
@@ -391,6 +396,7 @@ function confirmStatusChange(emp: any) {
     accept: async () => {
       try {
         if (isDeactivating) { 
+          // Note: Di backend delete() melakukan soft delete / non-aktif
           await employeeService.delete(emp.id) 
         } else { 
           const payload = { ...emp, is_active: true } 
@@ -424,7 +430,6 @@ function confirmResetPassword(emp: any) {
 function getProfilePictureUrl(url: string) {
     if (!url) return ''
     if (url.startsWith('http')) return url
-    
     const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080' 
     return `${baseUrl.replace('/api', '')}${url}`
 }
