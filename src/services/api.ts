@@ -237,4 +237,28 @@ export const adminService = {
   }
 }
 
+export const warningService = {
+  // Menerbitkan SP
+  async create(data: any): Promise<any> {
+    const response = await api.post<ApiResponse<any>>('/manager/warnings', data) // Bisa pakai route manager/admin
+    return response.data.data
+  },
+
+  // Melihat Riwayat SP Pegawai Tertentu
+  async getByEmployee(employeeId: number): Promise<any[]> {
+    const response = await api.get<ApiResponse<any[]>>(`/admin/employees/${employeeId}/warnings`)
+    return response.data.data
+  },
+
+  // Hapus SP (Admin Only)
+  async delete(id: number): Promise<void> {
+    await api.delete(`/admin/warnings/${id}`)
+  },
+
+  async getMyWarnings(): Promise<any[]> {
+    const response = await api.get<ApiResponse<any[]>>('/employee/warnings')
+    return response.data.data
+  }
+}
+
 export default api

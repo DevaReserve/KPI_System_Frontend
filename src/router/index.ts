@@ -133,6 +133,13 @@ const router = createRouter({
           meta: { role: 'employee' }
         },
 
+        {
+          path: '/employee/warnings',
+          name: 'MyWarnings',
+          component: () => import('../views/employee/MyWarningsView.vue'),
+          meta: { requiresAuth: true, role: 'employee', title: 'Riwayat Pelanggaran' }
+        },
+
         // --- COMMON ROUTES ---
         {
           path: 'profile',

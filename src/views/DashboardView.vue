@@ -190,6 +190,31 @@
     </div>
 
     <div v-else-if="authStore.userRole === 'employee'" class="space-y-6">
+      <div 
+        v-if="myWarnings.length > 0" 
+        class="bg-red-50 border-l-4 border-red-500 rounded-r-xl shadow-md p-6 flex flex-col sm:flex-row items-center justify-between gap-4 animate-pulse-slow"
+      >
+        <div class="flex items-center gap-4">
+            <div class="bg-red-100 p-3 rounded-full text-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-red-700">Status: PERHATIAN</h3>
+                <p class="text-sm text-red-600">
+                    Anda memiliki <strong>{{ myWarnings.length }} Peringatan/SP</strong> yang perlu diperhatikan.
+                </p>
+            </div>
+        </div>
+        
+        <button 
+            @click="$router.push('/employee/warnings')" 
+            class="bg-red-600 text-white px-5 py-2 rounded-lg text-sm font-bold shadow hover:bg-red-700 transition-transform transform hover:scale-105 whitespace-nowrap"
+        >
+            Lihat Detail SP
+        </button>
+      </div>
       <div v-if="employeeStats.hasData" class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden transition-all hover:shadow-2xl">
         <div class="absolute -right-10 -top-10 h-64 w-64 bg-white opacity-10 rounded-full blur-3xl"></div>
         <div class="absolute left-10 bottom-10 h-32 w-32 bg-purple-400 opacity-20 rounded-full blur-2xl"></div>
@@ -214,6 +239,8 @@
                 Lihat Rapor Lengkap
               </button>
             </div>
+            
+            
           </div>
 
           <div class="bg-white/10 rounded-xl p-4 backdrop-blur-md border border-white/20 shadow-inner">
@@ -222,6 +249,7 @@
           </div>
         </div>
       </div>
+      
 
       <div v-else class="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
         <div class="bg-gray-50 h-24 w-24 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
@@ -248,7 +276,8 @@ import {
   periodService, 
   managerService, 
   myPerformanceService,
-  reportService
+  reportService,
+  warningService // <--- 1. IMPORT INI DITAMBAHKAN
 } from '../services/api'
 
 const authStore = useAuthStore()
@@ -266,9 +295,8 @@ const adminCharts = reactive({
     chart: { 
         id: 'division-bar', 
         fontFamily: 'inherit',
-        toolbar: { show: true } // Toolbar harus TRUE untuk download
+        toolbar: { show: true } 
     },
-    // Menambahkan Judul untuk Export
     title: {
         text: 'Distribusi Pegawai per Divisi',
         align: 'center',
@@ -316,6 +344,7 @@ const managerCharts = reactive({
 
 // --- STATE EMPLOYEE ---
 const employeeStats = reactive({ hasData: false, score: 0, grade: '', periodName: '' })
+const myWarnings = ref<any[]>([]) // <--- 2. STATE BARU UNTUK WARNING
 const employeeCharts = reactive({
   series: [] as any[],
   options: {
@@ -363,19 +392,16 @@ async function loadAdminData() {
   }
   adminCharts.divisionSeries = [{ name: 'Jumlah Pegawai', data: divCounts }]
 
-  // LOGIC TOP 5 & LOW 5 (DIPERBAIKI DENGAN FILTER)
+  // LOGIC TOP 5 & LOW 5
   if (active) {
     try {
       const reports = await reportService.getEvaluationReport(active.id)
       
-      // Top 5: Hanya ambil Nilai >= 80, Sortir Tertinggi -> Terendah
       adminStats.topPerformers = reports
         .filter((r: any) => r.total_score >= 80) 
         .sort((a: any, b: any) => b.total_score - a.total_score)
         .slice(0, 5)
 
-      // Low 5 (Pembinaan): Hanya ambil Nilai < 60, Sortir Terendah -> Tertinggi
-      // Logic: Pegawai dengan nilai 100 tidak akan masuk sini
       adminStats.lowPerformers = reports
         .filter((r: any) => r.total_score < 60)
         .sort((a: any, b: any) => a.total_score - b.total_score)
@@ -411,13 +437,20 @@ async function loadManagerData() {
   managerCharts.series = [done, draft, pending]
 }
 
-// --- LOAD DATA EMPLOYEE ---
+// --- LOAD DATA EMPLOYEE (UPDATED) ---
 async function loadEmployeeData() {
   try {
-    const history = await myPerformanceService.getHistory()
+    // 3. LOAD HISTORY & WARNINGS SECARA PARALEL
+    const [history, warnings] = await Promise.all([
+        myPerformanceService.getHistory(),
+        warningService.getMyWarnings()
+    ])
     
+    // Simpan warnings ke state agar muncul di dashboard
+    myWarnings.value = warnings
+
+    // Logic History Kinerja
     if (history && history.length > 0) {
-      // Data terbaru (index 0 karena sort desc di backend)
       const latest = history[0]
       
       employeeStats.hasData = true
@@ -425,7 +458,6 @@ async function loadEmployeeData() {
       employeeStats.periodName = latest.period_name || 'Periode Terakhir'
       employeeStats.grade = getGrade(latest.total_score)
 
-      // Grafik Tren (Reverse agar chronological order: lama -> baru)
       const trendData = [...history].reverse().map((h: any) => h.total_score)
       employeeCharts.series = [{ name: 'Skor Kinerja', data: trendData }]
     } else {
