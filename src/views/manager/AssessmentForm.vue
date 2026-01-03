@@ -246,7 +246,7 @@ onMounted(async () => {
     
     // Mapping Data Detail
     employeeName.value = data.employee_detail?.name || '-'
-    divisionName.value = data.employee_detail?.division?.name || '-' 
+    divisionName.value = data.employee_detail?.division_name || '-' 
     positionName.value = data.employee_detail?.position || '-'
     evaluatorName.value = data.evaluator_name || 'Admin/Manager'
     periodName.value = data.period_detail?.name || '-'
@@ -281,11 +281,16 @@ function submitFinal() {
   if (isReadOnly.value) return
   
   confirm.require({
-    group: 'dialog-assessment', 
-    header: 'Kirim Penilaian?',
-    message: `Anda yakin ingin mengirim nilai untuk <strong>${employeeName.value}</strong>?<br><br><span class="text-red-500 font-bold">Data tidak dapat diubah lagi setelah dikirim (Final).</span>`,
+    group: 'headless',
+    // PERBAIKAN: Pisahkan header dan message sebagai properti terpisah
+    header: 'Kirim Penilaian?', 
+    message: ``,
+    
     accept: async () => {
         await sendData(true)
+    },
+    reject: () => {
+        // Opsional: Logika jika batal
     }
   })
 }
