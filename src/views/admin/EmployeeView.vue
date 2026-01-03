@@ -31,17 +31,31 @@
         </template>
     </ConfirmDialog>
 
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">Manajemen Pegawai</h1>
-      <button @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-        </svg>
-        Tambah Pegawai
-      </button>
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Manajemen Pegawai</h1>
+        <p class="text-gray-500 text-sm">Kelola data karyawan dan hak akses.</p>
+      </div>
+
+      <div class="flex gap-3">
+        <div class="relative">
+          <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input 
+            v-model="searchQuery" 
+            type="text" 
+            placeholder="Cari Nama / NIP..." 
+            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full sm:w-64 transition-all"
+          >
+        </div>
+
+        <button @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm shrink-0">
+          <i class="pi pi-plus mr-2"></i>
+          Tambah Pegawai
+        </button>
+      </div>
     </div>
 
-    <DataTable :columns="tableColumns" :data="employees" :loading="isLoading">
+    <DataTable :columns="tableColumns" :data="filteredEmployees" :loading="isLoading">
       
       <template #name="{ item }">
         <div class="flex items-center cursor-pointer group" @click="$router.push(`/admin/employees/${item.id}`)" title="Klik untuk lihat Detail, Prestasi, & SP">
@@ -239,6 +253,7 @@ const tableColumns = [
   { key: 'is_active', label: 'Status' },
 ]
 
+const searchQuery = ref('')
 const employees = ref<any[]>([])
 const divisions = ref<Division[]>([])
 const isLoading = ref(true)
@@ -260,6 +275,21 @@ const form = reactive({
   role: 'employee', 
   is_active: true,
   direct_supervisor_id: null as number | null 
+})
+
+const filteredEmployees = computed(() => {
+  if (!searchQuery.value) {
+    return employees.value
+  }
+  
+  const query = searchQuery.value.toLowerCase()
+  return employees.value.filter(emp => 
+    emp.name.toLowerCase().includes(query) || 
+    emp.nip.toLowerCase().includes(query) ||
+    emp.email.toLowerCase().includes(query) ||
+    emp.position.toLowerCase().includes(query) ||
+    (emp.division_name && emp.division_name.toLowerCase().includes(query))
+  )
 })
 
 // Daftar pegawai yang bisa jadi atasan (Selain diri sendiri)

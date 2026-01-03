@@ -34,24 +34,38 @@
         </template>
     </ConfirmDialog>
 
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">Manajemen Jabatan</h1>
-      <button @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-        </svg>
-        Tambah Jabatan
-      </button>
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Manajemen Jabatan</h1>
+        <p class="text-gray-500 text-sm">Daftar posisi dan jabatan dalam perusahaan.</p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <div class="relative">
+          <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input 
+            v-model="searchQuery" 
+            type="text" 
+            placeholder="Cari Jabatan atau Divisi..." 
+            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full sm:w-64 transition-all shadow-sm"
+          >
+        </div>
+
+        <button @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center transition-colors shadow-sm shrink-0">
+          <i class="pi pi-plus mr-2"></i>
+          Tambah Jabatan
+        </button>
+      </div>
     </div>
 
-    <DataTable :columns="columns" :data="positions" :loading="isLoading">
+    <DataTable :columns="columns" :data="filteredPositions" :loading="isLoading">
       
       <template #name="{ value }">
         <span class="font-bold text-gray-900">{{ value }}</span>
       </template>
       
       <template #division_name="{ item }">
-        <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-semibold border border-gray-200">
+        <span class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded text-xs font-bold border border-indigo-100 uppercase tracking-wider">
           {{ item.division?.name || '-' }}
         </span>
       </template>
@@ -109,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { positionService, divisionService } from '../../services/api'
 import DataTable from '../../components/ui/DataTable.vue'
 
@@ -128,14 +142,37 @@ const isLoading = ref(true)
 const showModal = ref(false)
 const isEditing = ref(false)
 const isProcessing = ref(false)
+const searchQuery = ref('') // State Pencarian
 
 const form = reactive({ id: 0, name: '', description: '', division_id: '' as string | number })
 
 const columns = [
+  { key: 'division_name', label: 'Divisi' }, // Geser Divisi ke kiri agar jadi pengelompok utama
   { key: 'name', label: 'Nama Jabatan' },
-  { key: 'division_name', label: 'Divisi' },
   { key: 'description', label: 'Deskripsi' }
 ]
+
+// Computed Property untuk Filter & Sort
+const filteredPositions = computed(() => {
+  let result = positions.value;
+
+  // 1. Filter Pencarian
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    result = result.filter(pos => 
+      pos.name.toLowerCase().includes(query) || 
+      (pos.division?.name && pos.division.name.toLowerCase().includes(query))
+    )
+  }
+
+  // 2. Sorting Otomatis (Grouping by Division Name)
+  // Ini membuat tampilan tabel rapi: Divisi A kumpul dengan Divisi A
+  return result.sort((a, b) => {
+    const divA = a.division?.name || ''
+    const divB = b.division?.name || ''
+    return divA.localeCompare(divB)
+  })
+})
 
 onMounted(async () => {
   await fetchData()
@@ -202,7 +239,7 @@ function deletePos(item: any) {
     message: `Hapus jabatan <strong>${item.name}</strong>? <br> Data yang dihapus tidak dapat dikembalikan.`,
     icon: 'pi pi-trash',
     acceptLabel: 'Hapus',
-    acceptSeverity: 'danger', // Logic custom untuk warna merah
+    acceptSeverity: 'danger',
     accept: async () => {
       try {
         await positionService.delete(item.id)
