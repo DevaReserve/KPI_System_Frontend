@@ -211,7 +211,7 @@ function exportToPDF() {
     
     doc.setFontSize(10)
     doc.setFont('helvetica', 'normal')
-    doc.text(`Denpasar, ${today}`, signX, finalY, { align: 'center' })
+    doc.text(`Badung, ${today}`, signX, finalY, { align: 'center' })
     doc.text('Mengetahui,', signX, finalY + 6, { align: 'center' })
     doc.text('CEO PT. Cakra Media Data', signX, finalY + 11, { align: 'center' })
     

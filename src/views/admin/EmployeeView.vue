@@ -300,35 +300,46 @@ const potentialSupervisors = computed(() => {
   );
 });
 
-// Watcher Smart Supervisor
+// Update Watcher: Prioritaskan Manager yang sudah diset di Master Divisi
 watch(() => [form.division_id, form.position], ([newDivId, newPos]) => {
-  if (!showModal.value) return; // Jangan jalan kalau modal tutup
+  // Jangan jalankan jika modal tertutup atau data belum lengkap
+  if (!showModal.value) return; 
   if (!newDivId || !newPos) return;
 
-  // Jika sedang edit dan data sudah ada (user belum ubah apapun), skip logic auto-fill ini
-  // Namun ini agak tricky, jadi kita biarkan logic "saran" ini berjalan,
-  // user bisa menggantinya manual jika salah.
-  
   const posName = String(newPos).toLowerCase();
   
-  // LOGIKA 1: Manager dinilai oleh CEO
-  if (posName.includes('manager') || posName.includes('head')) {
-      // Coba cari pegawai dengan role Admin (biasanya CEO)
+  // SKENARIO 1: Jika yang diinput adalah MANAGER / HEAD (Level Pimpinan)
+  // Aturannya: Pimpinan melapor ke CEO (Admin)
+  if (posName.includes('manager') || posName.includes('head') || posName.includes('lead')) {
       const ceo = employees.value.find(e => e.role === 'admin');
-      if (ceo) form.direct_supervisor_id = ceo.id;
-      else form.direct_supervisor_id = 1; // Fallback ID 1
+      form.direct_supervisor_id = ceo ? ceo.id : 1; 
+      return; // Selesai, jangan lanjut ke bawah
   } 
-  // LOGIKA 2: Staff dinilai oleh Manager Divisinya
+  
+  // SKENARIO 2: Jika yang diinput adalah STAFF / INTERN (Bawahan)
+  // Cari data Divisi yang dipilih dari list divisions
+  const selectedDivision = divisions.value.find(d => d.id === Number(newDivId));
+
+  // CEK 1: Apakah di Menu Divisi sudah diset siapa Managernya? (Ini solusi untuk Bapak Topan)
+  if (selectedDivision && selectedDivision.manager_id) {
+      // Jika ada, langsung pakai ID Manager tersebut (Bapak Topan)
+      // Meskipun Bapak Topan ada di divisi Manajemen, dia akan terpilih karena ID-nya tersimpan di sini.
+      form.direct_supervisor_id = selectedDivision.manager_id;
+  } 
+  // CEK 2: Jika di Menu Divisi belum diset (Manager Kosong), cari manual
   else {
-      const managerInDivision = employees.value.find(e => 
+      // Cari pegawai lain di divisi yang sama yang role-nya Manager
+      const managerInSameDiv = employees.value.find(e => 
         e.division_id === Number(newDivId) && e.role === 'manager'
       );
 
-      if (managerInDivision) {
-        form.direct_supervisor_id = managerInDivision.id;
+      if (managerInSameDiv) {
+        form.direct_supervisor_id = managerInSameDiv.id;
+      } else {
+        form.direct_supervisor_id = null; // Biarkan kosong agar dipilih sendiri
       }
   }
-}); 
+});
 
 onMounted(async () => { await fetchData() })
 

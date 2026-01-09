@@ -92,12 +92,19 @@
         <Column header="Pelaku" field="user.username" sortable style="width: 20%">
            <template #body="{ data }">
             <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-xs font-bold text-blue-600 uppercase">
-                    {{ data.user?.username?.charAt(0) || '?' }}
+                <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-blue-600 uppercase overflow-hidden border border-gray-200"
+                     :class="data.user?.employee?.profile_picture_url ? 'bg-white' : 'bg-blue-50'">
+                    
+                    <img 
+                       v-if="data.user?.employee?.profile_picture_url" 
+                       :src="getProfilePictureUrl(data.user.employee.profile_picture_url)" 
+                       class="w-full h-full object-cover"
+                    >
+                    <span v-else>{{ data.user?.username?.charAt(0) || '?' }}</span>
                 </div>
                 <div>
                     <div class="text-sm font-bold text-gray-800">{{ data.user?.username }}</div>
-                    <div class="text-[10px] text-gray-400 uppercase tracking-wide">{{ data.user?.role }}</div>
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">{{ data.user?.role }}</div>
                 </div>
             </div>
           </template>
@@ -133,11 +140,11 @@ import { ref, reactive, onMounted } from 'vue'
 import { adminService } from '../../services/api'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Sidebar from 'primevue/sidebar' // Import Sidebar/Drawer
+import Sidebar from 'primevue/sidebar'
 
 const logs = ref<any[]>([])
 const isLoading = ref(true)
-const showFilterDrawer = ref(false) // State untuk kontrol Drawer
+const showFilterDrawer = ref(false)
 
 const filters = reactive({
   startDate: '',
@@ -161,14 +168,14 @@ async function fetchLogs() {
 
 function applyFilter() {
     fetchLogs()
-    showFilterDrawer.value = false // Tutup drawer setelah filter
+    showFilterDrawer.value = false
 }
 
 function resetFilter() {
   filters.startDate = ''
   filters.endDate = ''
   fetchLogs()
-  showFilterDrawer.value = false // Tutup drawer
+  showFilterDrawer.value = false
 }
 
 function getDateOnly(dateString: string) {
@@ -183,6 +190,16 @@ function getTimeOnly(dateString: string) {
   return new Date(dateString).toLocaleTimeString('id-ID', { 
       hour: '2-digit', minute: '2-digit' 
   })
+}
+
+// Tambahkan Fungsi Helper Ini
+function getProfilePictureUrl(url: string) {
+    if (!url) return ''
+    if (url.startsWith('http')) return url
+    
+    // Sesuaikan URL Backend
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080' 
+    return `${baseUrl.replace('/api', '')}${url}`
 }
 
 function getActionBadge(action: string) {
