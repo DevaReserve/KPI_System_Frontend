@@ -5,69 +5,124 @@
     <ConfirmDialog group="headless">
       <template #container="{ message, acceptCallback, rejectCallback }">
           <div class="flex flex-col items-center p-8 bg-white rounded-xl shadow-2xl border border-gray-200 max-w-sm w-full">
-              <div class="rounded-full inline-flex justify-center items-center h-24 w-24 -mt-20 border-4 border-white shadow-sm bg-red-50 text-red-500">
-                  <i :class="[message.icon, 'text-5xl']"></i>
+              <div class="rounded-full inline-flex justify-center items-center h-20 w-20 -mt-16 border-4 border-white shadow-lg"
+                 :class="message.acceptSeverity === 'danger' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'">
+                  <i :class="[message.icon, 'text-4xl']"></i>
               </div>
               
-              <span class="font-bold text-2xl block mb-2 mt-6 text-gray-800">{{ message.header }}</span>
+              <span class="font-bold text-xl block mb-2 mt-6 text-gray-800">{{ message.header }}</span>
               <p class="mb-6 text-gray-500 text-center leading-relaxed" v-html="message.message"></p>
               
               <div class="flex items-center gap-3 w-full">
                   <button 
                       @click="rejectCallback"
-                      class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                      class="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
                   >
                       Batal
                   </button>
                   <button 
                       @click="acceptCallback"
-                      class="flex-1 px-4 py-2 text-white rounded-lg font-medium transition-colors shadow-md bg-red-600 hover:bg-red-700"
+                      class="flex-1 px-4 py-2 text-white rounded-lg font-medium transition-colors shadow-md"
+                      :class="message.acceptSeverity === 'danger' ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'"
                   >
-                      {{ message.acceptLabel || 'Ya, Hapus' }} 
+                      {{ message.acceptLabel || 'Ya, Lanjutkan' }} 
                   </button>
               </div>
           </div>
       </template>
     </ConfirmDialog>
 
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">Manajemen Divisi</h1>
-      <button @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-        </svg>
-        Tambah Divisi
-      </button>
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Manajemen Divisi</h1>
+        <p class="text-gray-500 text-sm">Daftar divisi dalam perusahaan.</p>
+      </div>
+
+      <div class="flex gap-3 w-full sm:w-auto">
+        <div class="relative w-full sm:w-64">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="pi pi-search text-gray-400"></i>
+            </div>
+            <input 
+                v-model="filters['global'].value" 
+                type="text"
+                placeholder="Cari Divisi..." 
+                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+            />
+        </div>
+
+        <button @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm shrink-0 whitespace-nowrap">
+          <i class="pi pi-plus mr-2"></i>
+          Tambah Divisi
+        </button>
+      </div>
     </div>
 
-    <DataTable :columns="tableColumns" :data="divisions" :loading="isLoading">
-      
-      <template #name="{ value }">
-        <span class="font-bold text-gray-900">{{ value }}</span>
-      </template>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <DataTable 
+        v-model:filters="filters"
+        :value="divisions" 
+        :paginator="true" 
+        :rows="10" 
+        :rowsPerPageOptions="[5, 10, 20]" 
+        :loading="isLoading"
+        dataKey="id"
+        :globalFilterFields="['name', 'description', 'manager_name']"
+        stripedRows 
+        responsiveLayout="scroll"
+        removableSort
+        stateStorage="session" 
+        stateKey="dt-divisions-state"
+      >
+        <template #empty>
+            <div class="text-center p-8 text-gray-500">
+                <i class="pi pi-folder-open text-4xl mb-2"></i>
+                <p>Belum ada data divisi.</p>
+            </div>
+        </template>
 
-      <template #manager_name="{ value }">
-        <span v-if="value" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-          {{ value }}
-        </span>
-        <span v-else class="text-gray-400 italic text-xs">Tidak Ada</span>
-      </template>
+        <Column field="name" header="Nama Divisi" sortable style="width: 30%">
+            <template #body="{ data }">
+                <span class="font-bold text-gray-900">{{ data.name }}</span>
+            </template>
+        </Column>
 
-      <template #actions="{ item }">
-        <div class="flex gap-3">
-            <button @click="openModal(item)" class="text-indigo-600 hover:text-indigo-900 font-medium transition-colors text-sm">Edit</button>
-            <button @click="confirmDelete(item)" class="text-red-600 hover:text-red-900 font-medium transition-colors text-sm">Hapus</button>
-        </div>
-      </template>
+        <Column field="description" header="Deskripsi" sortable style="width: 40%">
+            <template #body="{ data }">
+                <span class="text-gray-600">{{ data.description || '-' }}</span>
+            </template>
+        </Column>
 
-    </DataTable>
+        <Column field="manager_name" header="Manager" sortable style="width: 20%">
+            <template #body="{ data }">
+                <span v-if="data.manager_name" class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                  {{ data.manager_name }}
+                </span>
+                <span v-else class="text-gray-400 italic text-xs">Tidak Ada</span>
+            </template>
+        </Column>
+
+        <Column header="Aksi" style="width: 10%">
+            <template #body="{ data }">
+                <div class="flex items-center gap-2">
+                    <button @click="openModal(data)" class="p-1 text-indigo-600 hover:bg-indigo-50 rounded" title="Edit">
+                        <i class="pi pi-pencil"></i>
+                    </button>
+                    <button @click="confirmDelete(data)" class="p-1 text-red-600 hover:bg-red-50 rounded" title="Hapus">
+                        <i class="pi pi-trash"></i>
+                    </button>
+                </div>
+            </template>
+        </Column>
+      </DataTable>
+    </div>
 
     <div v-if="showModal" class="fixed inset-0 z-50 overflow-y-auto">
-       <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+       <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeModal"></div>
         <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
           <div class="bg-white px-6 pt-6 pb-4">
-            <h3 class="text-lg leading-6 font-bold text-gray-900 mb-5">{{ isEditing ? 'Edit Divisi' : 'Tambah Divisi Baru' }}</h3>
+            <h3 class="text-lg leading-6 font-bold text-gray-900 mb-5 border-b pb-4">{{ isEditing ? 'Edit Divisi' : 'Tambah Divisi Baru' }}</h3>
             <form @submit.prevent="saveDivision">
               
               <div class="mb-4">
@@ -106,22 +161,19 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
 import { divisionService, employeeService } from '../../services/api'
-import DataTable from '../../components/ui/DataTable.vue'
+
+// Import PrimeVue Components
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import Toast from 'primevue/toast';
+import ConfirmDialog from 'primevue/confirmdialog';
 
 // PrimeVue Logic
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
-import Toast from 'primevue/toast'
-import ConfirmDialog from 'primevue/confirmdialog'
 
 const toast = useToast()
 const confirm = useConfirm()
-
-const tableColumns = [
-  { key: 'name', label: 'Nama Divisi' },
-  { key: 'description', label: 'Deskripsi' },
-  { key: 'manager_name', label: 'Manager' },
-]
 
 const divisions = ref<any[]>([])
 const allEmployees = ref<any[]>([])
@@ -131,6 +183,11 @@ const isEditing = ref(false)
 const isProcessing = ref(false)
 
 const form = reactive({ id: 0, name: '', description: '', manager_id: null as number | null })
+
+// Filter State
+const filters = ref({
+    global: { value: '', matchMode: 'contains' }, 
+});
 
 const potentialManagers = computed(() => {
   return allEmployees.value.filter(e => 
@@ -208,9 +265,14 @@ async function saveDivision() {
 function confirmDelete(item: any) {
   confirm.require({
     group: 'headless',
-    header: 'Konfirmasi Hapus',
+    header: 'Hapus Divisi?',
     message: `Apakah Anda yakin ingin menghapus divisi <strong>${item.name}</strong>? Data tidak dapat dikembalikan.`,
     icon: 'pi pi-trash',
+    acceptLabel: 'Hapus',
+    
+    // Custom property untuk styling merah (butuh 'as any')
+    acceptSeverity: 'danger', 
+    
     accept: async () => {
       try { 
         await divisionService.delete(item.id)
@@ -221,6 +283,6 @@ function confirmDelete(item: any) {
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal menghapus. Pastikan divisi kosong.', life: 3000 })
       }
     }
-  })
+  } as any)
 }
 </script>

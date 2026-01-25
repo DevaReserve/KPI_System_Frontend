@@ -23,7 +23,7 @@
                         @click="acceptCallback"
                         class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-md"
                     >
-                        Ya, Lanjutkan
+                        Ya, kirim
                     </button>
                 </div>
             </div>
@@ -284,7 +284,7 @@ function submitFinal() {
     group: 'headless',
     // PERBAIKAN: Pisahkan header dan message sebagai properti terpisah
     header: 'Kirim Penilaian?', 
-    message: ``,
+    message: `Penilaian yang sudah dikirim tidak dapat diubah kembali.`,
     
     accept: async () => {
         await sendData(true)

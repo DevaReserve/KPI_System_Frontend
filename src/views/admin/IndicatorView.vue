@@ -4,40 +4,58 @@
     
     <ConfirmDialog group="headless">
         <template #container="{ message, acceptCallback, rejectCallback }">
-          <div class="flex flex-col items-center p-8 bg-white rounded-xl shadow-2xl border border-gray-200 max-w-sm w-full">
-              <div class="rounded-full inline-flex justify-center items-center h-24 w-24 -mt-20 border-4 border-white shadow-sm bg-red-50 text-red-500">
-                  <i :class="[message.icon, 'text-5xl']"></i>
-              </div>
-              
-              <span class="font-bold text-2xl block mb-2 mt-6 text-gray-800">{{ message.header }}</span>
-              <p class="mb-6 text-gray-500 text-center leading-relaxed" v-html="message.message"></p>
-              
-              <div class="flex items-center gap-3 w-full">
-                  <button 
-                      @click="rejectCallback"
-                      class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
-                  >
-                      Batal
-                  </button>
-                  <button 
-                      @click="acceptCallback"
-                      class="flex-1 px-4 py-2 text-white rounded-lg font-medium transition-colors shadow-md bg-red-600 hover:bg-red-700"
-                  >
-                      {{ message.acceptLabel || 'Ya, Hapus' }} 
-                  </button>
-              </div>
-          </div>
-      </template>
+            <div class="flex flex-col items-center p-8 bg-white rounded-xl shadow-2xl border border-gray-100 w-full max-w-sm">
+                <div class="rounded-full inline-flex justify-center items-center h-20 w-20 -mt-16 border-4 border-white shadow-lg"
+                    :class="message.acceptSeverity === 'danger' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'">
+                    <i :class="[message.icon, 'text-4xl']"></i>
+                </div>
+                
+                <span class="font-bold text-xl block mb-2 mt-6 text-gray-800">{{ message.header }}</span>
+                <p class="mb-6 text-gray-500 text-center leading-relaxed" v-html="message.message"></p>
+                
+                <div class="flex items-center gap-3 w-full">
+                    <button 
+                        @click="rejectCallback"
+                        class="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                    >
+                        Batal
+                    </button>
+                    <button 
+                        @click="acceptCallback"
+                        class="flex-1 px-4 py-2 text-white rounded-lg font-medium transition-colors shadow-md"
+                        :class="message.acceptSeverity === 'danger' ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'"
+                    >
+                        {{ message.acceptLabel || 'Ya, Lanjutkan' }}
+                    </button>
+                </div>
+            </div>
+        </template>
     </ConfirmDialog>
 
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">Manajemen Indikator KPI</h1>
-      <button @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-        </svg>
-        Tambah Indikator
-      </button>
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Manajemen Indikator KPI</h1>
+        <p class="text-gray-500 text-sm">Atur pertanyaan penilaian dan bobot KPI.</p>
+      </div>
+
+      <div class="flex gap-3 w-full sm:w-auto">
+        <div class="relative w-full sm:w-64">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="pi pi-search text-gray-400"></i>
+            </div>
+            <input 
+                v-model="filters['global'].value" 
+                type="text"
+                placeholder="Cari Indikator / Target..." 
+                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+            />
+        </div>
+
+        <button @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm shrink-0 whitespace-nowrap">
+          <i class="pi pi-plus mr-2"></i>
+          Tambah Indikator
+        </button>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -67,8 +85,8 @@
         </p>
       </div>
 
-      <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 overflow-y-auto max-h-48 custom-scrollbar">
-        <h4 class="text-sm font-bold text-gray-700 mb-4 sticky top-0 bg-white pb-2 border-b border-gray-50">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 overflow-y-auto max-h-48 custom-scrollbar relative">
+        <h4 class="text-sm font-bold text-gray-700 mb-4 sticky top-0 bg-white pb-2 border-b border-gray-50 z-10">
           Total Bobot Akhir (Umum + Spesifik)
         </h4>
         
@@ -96,35 +114,73 @@
       </div>
     </div>
 
-    <DataTable :columns="columns" :data="indicators" :loading="isLoading">
-      
-      <template #name="{ item }">
-        <div>
-          <div class="font-bold text-gray-900">{{ item.name }}</div>
-          <div class="text-xs text-gray-500 truncate max-w-xs">{{ item.description }}</div>
-        </div>
-      </template>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <DataTable 
+        v-model:filters="filters"
+        :value="indicators" 
+        :paginator="true" 
+        :rows="10" 
+        :rowsPerPageOptions="[5, 10, 20, 50]" 
+        :loading="isLoading"
+        dataKey="id"
+        :globalFilterFields="['name', 'description', 'division_name', 'indicator_type']"
+        stripedRows 
+        responsiveLayout="scroll"
+        removableSort
+        stateStorage="session" 
+        stateKey="dt-indicators-state"
+      >
+        <template #empty>
+            <div class="text-center p-8 text-gray-500">
+                <i class="pi pi-list text-4xl mb-2"></i>
+                <p>Belum ada indikator KPI.</p>
+            </div>
+        </template>
 
-      <template #division_name="{ item }">
-        <span v-if="item.indicator_type === 'spesifik' && item.division" class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded text-xs font-bold border border-indigo-100">
-          {{ item.division.name }}
-        </span>
-        <span v-else class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-bold border border-blue-100">
-          UMUM (Semua Divisi)
-        </span>
-      </template>
+        <Column field="name" header="Nama Indikator" sortable style="width: 35%">
+            <template #body="{ data }">
+                <div class="font-bold text-gray-900">{{ data.name }}</div>
+                <div class="text-xs text-gray-500 truncate max-w-xs" :title="data.description">
+                    {{ data.description }}
+                </div>
+            </template>
+        </Column>
 
-      <template #weight="{ value }">
-        <span class="font-mono font-bold text-gray-800">{{ value }}%</span>
-      </template>
-      
-      <template #actions="{ item }">
-        <div class="flex items-center gap-3 text-sm">
-          <button @click="openModal(item)" class="text-indigo-600 hover:text-indigo-900 font-medium transition-colors">Edit</button>
-          <button @click="confirmDelete(item)" class="text-red-600 hover:text-red-900 font-medium transition-colors">Hapus</button>
-        </div>
-      </template>
-    </DataTable>
+        <Column field="indicator_type" header="Tipe & Target" sortable style="width: 25%">
+            <template #body="{ data }">
+                <div v-if="data.indicator_type === 'spesifik' && data.division" class="flex flex-col items-start gap-1">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-indigo-50 text-indigo-700 border-indigo-100">
+                        {{ data.division.name }}
+                    </span>
+                </div>
+                <div v-else>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-blue-50 text-blue-700 border-blue-100">
+                        UMUM (Semua Divisi)
+                    </span>
+                </div>
+            </template>
+        </Column>
+
+        <Column field="weight" header="Bobot" sortable style="width: 15%">
+            <template #body="{ data }">
+                <span class="font-mono font-bold text-gray-800 text-lg">{{ data.weight }}%</span>
+            </template>
+        </Column>
+
+        <Column header="Aksi" style="width: 15%">
+            <template #body="{ data }">
+                <div class="flex items-center gap-2">
+                    <button @click="openModal(data)" class="p-1 text-indigo-600 hover:bg-indigo-50 rounded" title="Edit">
+                        <i class="pi pi-pencil"></i>
+                    </button>
+                    <button @click="confirmDelete(data)" class="p-1 text-red-600 hover:bg-red-50 rounded" title="Hapus">
+                        <i class="pi pi-trash"></i>
+                    </button>
+                </div>
+            </template>
+        </Column>
+      </DataTable>
+    </div>
 
     <div v-if="showModal" class="fixed inset-0 z-50 overflow-y-auto">
       <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
@@ -189,9 +245,10 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
 import { indicatorService, divisionService } from '../../services/api'
-import DataTable from '../../components/ui/DataTable.vue'
 
-// PrimeVue Logic
+// PrimeVue Imports
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 import Toast from 'primevue/toast'
@@ -206,16 +263,14 @@ const isLoading = ref(true)
 const showModal = ref(false)
 const isEditing = ref(false)
 
+// Filter State
+const filters = ref({
+    global: { value: '', matchMode: 'contains' }, 
+});
+
 const form = reactive({
   id: 0, name: '', description: '', indicator_type: 'umum', weight: 0, division_id: null as number | null
 })
-
-const columns = [
-  { key: 'name', label: 'Indikator' },
-  { key: 'division_name', label: 'Target' },
-  { key: 'indicator_type', label: 'Tipe' },
-  { key: 'weight', label: 'Bobot' }
-]
 
 // --- LOGIC CALCULATOR ---
 const weightSummary = computed(() => {
@@ -265,7 +320,13 @@ async function fetchData() {
       indicatorService.getAll(),
       divisionService.getAll()
     ])
-    indicators.value = indData
+    
+    // Flatten Data agar Search Bar bisa baca 'division_name'
+    indicators.value = indData.map((item: any) => ({
+        ...item,
+        division_name: item.division ? item.division.name : '-' 
+    }))
+
     divisions.value = divData
   } catch (e) { 
     toast.add({ severity: 'error', summary: 'Error', detail: 'Gagal mengambil data', life: 3000 })
@@ -317,6 +378,8 @@ function confirmDelete(item: any) {
     header: 'Hapus Indikator?',
     message: `Hapus indikator <strong>${item.name}</strong>? Data tidak dapat dikembalikan.`,
     icon: 'pi pi-trash',
+    acceptLabel: 'Hapus',
+    acceptSeverity: 'danger',
     accept: async () => {
       try {
         await indicatorService.delete(item.id)
@@ -326,7 +389,7 @@ function confirmDelete(item: any) {
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal menghapus indikator', life: 3000 })
       }
     }
-  })
+  }as any)
 }
 </script>
 

@@ -1,4 +1,3 @@
-<!-- D:\Deva\Documents\GitHub\KPI_System_Frontend\src\views\employee\MyEvaluationDetail.vue -->
 <template>
   <div class="max-w-4xl mx-auto pb-10">
     <div class="mb-6">
