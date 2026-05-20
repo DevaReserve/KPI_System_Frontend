@@ -146,12 +146,29 @@ const router = createRouter({
           name: 'UserProfile',
           component: ProfileView,
         },
+        {
+          path: '/executive/dashboard',
+          name: 'ExecutiveDashboard',
+          // Perhatikan nama file path yang di-import
+          component: () => import('../views/ExecutiveDashboard.vue'), 
+          meta: { requiresAuth: true }, 
+          // Hapus parameter 'to' dan 'from', biarkan saja kosong, 
+          // atau gunakan underscore (_) untuk memberi tahu TypeScript bahwa parameter ini sengaja diabaikan.
+          beforeEnter: (_to, _from, next) => { 
+            const authStore = useAuthStore()
+            if (authStore.isExecutive) {
+              next()
+            } else {
+              next('/403') // Lebih baik arahkan ke halaman 403 Forbidden
+            }
+          }
+        },
       ]
     }
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const authStore = useAuthStore()
   const isAuthenticated = authStore.isAuthenticated
   const userRole = authStore.userRole  

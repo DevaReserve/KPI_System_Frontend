@@ -206,6 +206,15 @@
                                 <option value="admin" :disabled="isInternPosition">Admin</option>
                             </select>
                         </div>
+                        <div class="sm:col-span-2 mt-2" v-if="form.role === 'manager' || form.role === 'admin'">
+                            <label class="flex items-center gap-3 cursor-pointer p-4 border border-blue-200 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
+                                <input type="checkbox" v-model="form.is_executive" class="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <div>
+                                    <span class="block text-sm font-bold text-blue-900">Berikan Hak Akses Eksekutif (CEO)</span>
+                                    <span class="block text-xs text-blue-700">Centang kotak ini agar akun tersebut dapat melihat halaman khusus Performa Keseluruhan Perusahaan.</span>
+                                </div>
+                            </label>
+                        </div>
                         <div v-if="!isEditing" class="sm:col-span-2">
                             <label class="block text-sm font-medium mb-1">Password</label>
                             <input v-model="form.password" type="password" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-blue-500 outline-none" required>
@@ -257,7 +266,8 @@ const form = reactive({
   id: 0, nip: '', name: '', email: '', join_date: '', 
   division_id: '' as string | number, position: '', 
   username: '', password: '', role: 'employee', is_active: true,
-  direct_supervisor_id: null as number | null 
+  direct_supervisor_id: null as number | null,
+  is_executive: false
 })
 
 // --- COMPUTED PROPERTIES ---
@@ -353,6 +363,8 @@ function openModal(emp?: any) {
     // Handle nested objects safely
     form.username = emp.username || (emp.user ? emp.user.username : '');
     form.role = emp.role || (emp.user ? emp.user.role : 'employee');
+    // Gunakan pengecekan yang lebih kuat. Jika nilainya 1 atau true, maka true.
+form.is_executive = emp.is_executive === true || emp.is_executive === 1 || (emp.user && (emp.user.is_executive === true || emp.user.is_executive === 1));
     
     form.is_active = emp.is_active;
     form.password = '';
@@ -370,7 +382,8 @@ function openModal(emp?: any) {
         id: 0, nip: '', name: '', email: '', join_date: '', 
         division_id: '', position: '', username: '', password: '', 
         role: 'employee', is_active: true,
-        direct_supervisor_id: null 
+        direct_supervisor_id: null,
+        is_executive: false
     });
   }
   showModal.value = true;

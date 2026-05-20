@@ -22,15 +22,26 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Tangkap Error 401 (Unauthorized / Token Expired)
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       window.location.href = '/login'
     }
+    
+    // --- TAMBAHAN BARU: Tangkap Error 403 (Akun Di-DO / Diblokir) ---
+    if (error.response && error.response.status === 403) {
+      // Tampilkan pesan error dari backend (misal: "Akun Anda telah dinonaktifkan")
+      alert(error.response.data.message || error.response.data.error || "Akses Ditolak. Akun Anda telah dinonaktifkan.")
+      
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      window.location.href = '/login' // Tendang paksa ke halaman login
+    }
+    
     return Promise.reject(error)
   }
 )
-
 // ... (Auth, Division services TETAP SAMA) ...
 export const authService = {
   async login(credentials: LoginRequest): Promise<LoginResponse> {
@@ -46,6 +57,12 @@ export const authService = {
   }
 }
 
+export const executiveService = {
+  async getCompanyPerformance(): Promise<any[]> {
+    const response = await api.get<ApiResponse<any[]>>('/executive/company-performance')
+    return response.data.data
+  }
+}
 export const divisionService = {
   async getAll(): Promise<Division[]> {
     const response = await api.get<ApiResponse<Division[]>>('/admin/divisions')

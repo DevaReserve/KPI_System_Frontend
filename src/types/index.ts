@@ -4,6 +4,7 @@ export interface User {
   username: string
   email: string
   role: 'admin' | 'manager' | 'employee'
+  is_executive?: boolean;
   is_active: boolean
   last_login: string
   created_at: string

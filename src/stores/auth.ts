@@ -13,6 +13,7 @@ export const useAuthStore = defineStore('auth', () => {
   // Getters
   const isAuthenticated = computed(() => !!token.value)
   const userRole = computed(() => user.value?.role || null)
+  const isExecutive = computed(() => user.value?.is_executive === true)
 
   // Actions
   async function login(credentials: LoginRequest) {
@@ -56,6 +57,7 @@ export const useAuthStore = defineStore('auth', () => {
     error,   // <--- INI PERBAIKANNYA (Wajib di-return)
     isAuthenticated,
     userRole,
+    isExecutive,
     login,
     logout
   }
