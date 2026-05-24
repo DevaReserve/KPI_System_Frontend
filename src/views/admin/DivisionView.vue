@@ -87,18 +87,28 @@
             </template>
         </Column>
 
+        <Column field="manager_name" header="Kepala Divisi" sortable style="width: 25%">
+          <template #body="{ data }">
+              <div v-if="data.manager_id && data.manager_name" class="flex items-center gap-2">
+                  <div class="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">
+                      {{ data.manager_name.charAt(0) }}
+                  </div>
+                  <span class="text-sm font-medium text-gray-900">{{ data.manager_name }}</span>
+              </div>
+
+              <div v-else class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-50 border border-yellow-200 text-yellow-700 shadow-sm animate-pulse">
+                  <i class="pi pi-exclamation-triangle text-sm"></i>
+                  <div class="flex flex-col">
+                      <span class="text-xs font-extrabold uppercase tracking-wider">Perlu Tindakan</span>
+                      <span class="text-[10px] opacity-80">Manajer Belum Ditunjuk</span>
+                  </div>
+              </div>
+          </template>
+      </Column>
+
         <Column field="description" header="Deskripsi" sortable style="width: 40%">
             <template #body="{ data }">
                 <span class="text-gray-600">{{ data.description || '-' }}</span>
-            </template>
-        </Column>
-
-        <Column field="manager_name" header="Manager" sortable style="width: 20%">
-            <template #body="{ data }">
-                <span v-if="data.manager_name" class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                  {{ data.manager_name }}
-                </span>
-                <span v-else class="text-gray-400 italic text-xs">Tidak Ada</span>
             </template>
         </Column>
 
