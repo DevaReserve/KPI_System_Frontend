@@ -5,7 +5,7 @@
         <h1 class="text-2xl font-bold text-gray-800">Audit Trail</h1>
         <p class="text-sm text-gray-500">Rekam jejak aktivitas sistem.</p>
       </div>
-      
+       
       <button 
         @click="showFilterDrawer = true" 
         class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-blue-600 px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-sm flex items-center gap-2"
@@ -21,7 +21,7 @@
             <div class="flex items-center gap-2 font-bold text-lg text-gray-800">
                 <i class="pi pi-filter text-blue-600"></i>
                 Filter Log Aktivitas
-            </div>
+            </div>  
         </template>
 
         <div class="flex flex-col h-full py-4">

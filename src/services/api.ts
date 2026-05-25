@@ -1,5 +1,6 @@
+import type { ApiResponse, Division, LoginRequest, LoginResponse, User } from '@/types'
 import axios from 'axios'
-import type { ApiResponse, LoginRequest, LoginResponse, User, Division} from '@/types'
+import Swal from 'sweetalert2'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
@@ -31,12 +32,22 @@ api.interceptors.response.use(
     
     // --- TAMBAHAN BARU: Tangkap Error 403 (Akun Di-DO / Diblokir) ---
     if (error.response && error.response.status === 403) {
-      // Tampilkan pesan error dari backend (misal: "Akun Anda telah dinonaktifkan")
-      alert(error.response.data.message || error.response.data.error || "Akses Ditolak. Akun Anda telah dinonaktifkan.")
-      
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      window.location.href = '/login' // Tendang paksa ke halaman login
+      const message = error.response.data.message || error.response.data.error || 'Akses Ditolak. Akun Anda telah dinonaktifkan.'
+
+      Swal.fire({
+        title: 'Akses Ditolak',
+        text: message,
+        icon: 'error',
+        confirmButtonText: 'Kembali ke Login',
+        customClass: {
+          popup: 'rounded-3xl',
+          confirmButton: 'bg-blue-600 hover:bg-blue-700'
+        }
+      }).then(() => {
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        window.location.href = '/login'
+      })
     }
     
     return Promise.reject(error)
