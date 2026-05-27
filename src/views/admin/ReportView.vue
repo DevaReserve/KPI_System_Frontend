@@ -38,6 +38,14 @@
           <i class="pi pi-file-pdf mr-2"></i>
           Export PDF
         </button>
+        <button 
+          v-if="reportData.length > 0"
+          @click="exportToExcel"
+          class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-medium transition-colors shadow-sm flex items-center justify-center"
+        >
+          <i class="pi pi-file-excel mr-2"></i>
+          Export Excel
+        </button>
       </div>
 
       <div v-if="reportData.length > 0" class="w-full md:w-64">
@@ -128,7 +136,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted } from 'vue'
 import { periodService, reportService } from '../../services/api'
 import { useToast } from 'primevue/usetoast'
 import Toast from 'primevue/toast'
@@ -289,6 +297,52 @@ function exportToPDF() {
   } catch (e) {
     console.error(e)
     toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal membuat PDF', life: 3000 })
+  }
+}
+function exportToExcel() {
+  if (reportData.value.length === 0) return
+
+  try {
+    // 1. Buat Header Kolom CSV
+    let csvContent = "No,NIP,Nama Pegawai,Divisi,Jabatan,Skor Akhir,Grade\n"
+
+    // 2. Urutkan data berdasarkan skor tertinggi
+    const sortedData = [...reportData.value].sort((a, b) => b.total_score - a.total_score)
+
+    // 3. Masukkan data ke dalam baris CSV
+    sortedData.forEach((row, index) => {
+      const no = index + 1
+      // Gunakan kutip ganda agar jika ada nama dengan koma tidak merusak kolom
+      const nip = `"${row.nip}"`
+      const name = `"${row.employee_name}"`
+      const division = `"${row.division}"`
+      const position = `"${row.position}"`
+      const score = row.total_score.toFixed(2)
+      const grade = `"${row.grade}"`
+
+      csvContent += `${no},${nip},${name},${division},${position},${score},${grade}\n`
+    })
+
+    // 4. Ubah teks menjadi file Blob CSV yang bisa diunduh
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement("a")
+    const url = URL.createObjectURL(blob)
+    
+    // Ambil nama periode untuk nama file
+    const periodName = periods.value.find(p => p.id === Number(selectedPeriodId.value))?.name || 'Laporan'
+
+    // 5. Eksekusi unduhan otomatis di browser
+    link.setAttribute("href", url)
+    link.setAttribute("download", `Rekap_KPI_${periodName.replace(/\s+/g, '_')}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    toast.add({ severity: 'success', summary: 'Sukses', detail: 'Data Excel (CSV) berhasil diunduh', life: 3000 })
+  } catch (e) {
+    console.error(e)
+    toast.add({ severity: 'error', summary: 'Gagal', detail: 'Terjadi kesalahan saat membuat file Excel', life: 3000 })
   }
 }
 </script>
