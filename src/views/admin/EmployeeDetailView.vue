@@ -95,7 +95,7 @@
                     <div class="p-2 bg-red-100 rounded-lg text-red-600"><i class="pi pi-exclamation-circle text-lg"></i></div>
                     <div class="flex-1">
                         <h3 class="text-lg font-bold text-gray-800">Riwayat Pelanggaran (SP)</h3>
-                        <p class="text-xs text-gray-500">Catatan indisipliner dan surat peringatan.</p>
+                        <p class="text-xs text-gray-500">Catatan dan surat peringatan.</p>
                     </div>
                 </div>
 
@@ -117,7 +117,7 @@
                             </div>
                         </div>
 
-                        <button @click="deleteWarning(warn)" class="absolute top-2 right-2 p-1 text-red-300 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity" title="Hapus SP">
+                        <button @click="deleteWarning(warn)" class="absolute bottom-2 right-2 p-1 text-red-300 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity" title="Hapus SP">
                             <i class="pi pi-trash"></i>
                         </button>
                     </div>

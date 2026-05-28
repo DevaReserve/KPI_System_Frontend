@@ -180,16 +180,12 @@ function downloadSuratSP(warn: any) {
         
     doc.setFont('helvetica', 'bold')
     doc.text(warn.issuer?.name || 'HRD Management', 15, currentY + 25)
-    doc.setDrawColor(200, 200, 200)
-    doc.setLineWidth(0.5)
-    doc.line(15, currentY + 27, 60, currentY + 27)
 
     // Tanda Tangan Pegawai (Di Kanan untuk menjaga standar SP perusahaan)
     doc.setFont('helvetica', 'normal')
     doc.text('Mengetahui / Menerima,', pageWidth - 60, currentY)
     doc.setFont('helvetica', 'bold')
     doc.text(employeeName.value, pageWidth - 60, currentY + 25)
-    doc.line(pageWidth - 60, currentY + 27, pageWidth - 15, currentY + 27)
 
     // --- 6. FOOTER MODERN ---
     const footerY = pageHeight - 25
