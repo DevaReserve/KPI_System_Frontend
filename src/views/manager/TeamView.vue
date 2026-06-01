@@ -54,6 +54,10 @@
                 <span v-else-if="data.evaluation_status === 'draft'" class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">
                     <i class="pi pi-pencil mr-1 text-[10px]"></i> Draft
                 </span>
+                <!-- TAMBAHAN BARU: Status Appealed -->
+                <span v-else-if="data.evaluation_status === 'appealed'" class="px-2 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-orange-100 text-orange-800 border border-orange-300">
+                    <i class="pi pi-exclamation-circle mr-1 text-[10px]"></i> Ada Sanggahan
+                </span>
                 <span v-else class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-500 border border-gray-200">
                     <i class="pi pi-clock mr-1 text-[10px]"></i> Belum Dinilai
                 </span>
@@ -62,20 +66,23 @@
 
         <Column header="Aksi" style="width: 30%">
             <template #body="{ data }">
+                <!-- Jika statusnya Submitted ATAU Appealed, munculkan tombol Lihat Detail -->
                 <button 
-                    v-if="data.evaluation_status !== 'submitted'"
+                    v-if="data.evaluation_status === 'submitted' || data.evaluation_status === 'appealed'"
+                    @click="viewDetail(data)" 
+                    class="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded text-xs font-bold border border-green-200 transition-colors flex items-center shadow-sm"
+                    :class="data.evaluation_status === 'appealed' ? 'bg-orange-50 text-orange-700 border-orange-300 hover:bg-orange-100' : ''"
+                >
+                    <i class="pi pi-eye mr-1"></i> {{ data.evaluation_status === 'appealed' ? 'Tinjau Sanggahan' : 'Lihat Detail' }}
+                </button>
+
+                <!-- Selain status di atas (Draft / Belum Dibuat), munculkan tombol Mulai/Lanjut Menilai -->
+                <button 
+                    v-else
                     @click="handleAssess(data)" 
                     class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors shadow-sm"
                 >
                     {{ data.evaluation_status === 'draft' ? 'Lanjut Menilai' : 'Mulai Penilaian' }}
-                </button>
-
-                <button 
-                    v-else
-                    @click="viewDetail(data)" 
-                    class="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded text-xs font-bold border border-green-200 transition-colors flex items-center shadow-sm"
-                >
-                    <i class="pi pi-eye mr-1"></i> Lihat Detail
                 </button>
             </template>
         </Column>

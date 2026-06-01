@@ -92,6 +92,35 @@
         </div>
       </div>
 
+      <!-- KOTAK SANGGAHAN DARI PEGAWAI -->
+      <div v-if="evaluationStatus === 'appealed' && !isRevising" class="bg-orange-50 border border-orange-200 rounded-xl p-6 mb-6 shadow-sm no-print relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-2 h-full bg-orange-500"></div>
+        <div class="flex items-start justify-between">
+            <div>
+                <h3 class="text-lg font-bold text-orange-800 mb-2 flex items-center">
+                    <i class="pi pi-exclamation-circle mr-2"></i> Terdapat Sanggahan dari Pegawai!
+                </h3>
+                <p class="text-sm text-gray-700 mb-2 font-medium">Alasan Keberatan:</p>
+                <div class="bg-white p-4 rounded-lg border border-orange-100 text-gray-700 italic mb-4">
+                    "{{ appealReason }}"
+                </div>
+                
+                <a v-if="evidenceUrl" :href="getEvidenceFullUrl(evidenceUrl)" target="_blank" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-2 rounded-lg transition">
+                    <i class="pi pi-paperclip mr-2"></i> Lihat Bukti Lampiran
+                </a>
+            </div>
+        </div>
+
+        <div class="mt-6 border-t border-orange-200 pt-4 flex gap-3">
+            <button @click="rejectAppeal" class="px-5 py-2 bg-white border border-red-300 text-red-600 font-medium rounded-lg hover:bg-red-50 transition shadow-sm">
+                <i class="pi pi-times mr-1"></i> Tolak Sanggahan (Nilai Tetap)
+            </button>
+            <button @click="acceptAppeal" class="px-5 py-2 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition shadow-sm">
+                <i class="pi pi-pencil mr-1"></i> Terima & Revisi Nilai
+            </button>
+        </div>
+      </div>
+
       <div class="space-y-6">
         <div v-for="(score, index) in form.scores" :key="score.score_id" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 print:border-black print:shadow-none print:break-inside-avoid">
           <div class="flex justify-between items-start mb-3">
@@ -205,13 +234,22 @@ const evaluatorName = ref('')
 const periodName = ref('')
 const evaluationStatus = ref('')
 
+const appealReason = ref('')
+const evidenceUrl = ref('')
+
 const form = reactive({
   evaluation_id: 0,
   feedback: '',
   scores: [] as any[]
 })
 
-const isReadOnly = computed(() => evaluationStatus.value === 'submitted')
+const isReadOnly = computed(() => {
+  if (evaluationStatus.value === 'submitted') return true;
+  if (evaluationStatus.value === 'appealed' && !isRevising.value) return true;
+  return false;
+})
+
+const isRevising = ref(false)
 
 const statusColor = computed(() => {
   if (evaluationStatus.value === 'submitted') return 'bg-green-100 text-green-800'
@@ -250,6 +288,10 @@ onMounted(async () => {
     positionName.value = data.employee_detail?.position || '-'
     evaluatorName.value = data.evaluator_name || 'Admin/Manager'
     periodName.value = data.period_detail?.name || '-'
+
+    // Di dalam onMounted, di bawah evaluationStatus.value = ...
+    appealReason.value = data.evaluation_header.appeal_reason || ''
+    evidenceUrl.value = data.evaluation_header.evidence_url || ''
 
     if (data.scores && Array.isArray(data.scores)) {
       form.scores = data.scores.map((s: any) => {
@@ -324,6 +366,50 @@ async function sendData(isFinal: boolean) {
   }
 }
 
+function acceptAppeal() {
+    confirm.require({
+        group: 'headless',
+        header: 'Revisi Nilai?',
+        message: 'Form penilaian akan dibuka kembali. Silakan ubah nilai sesuai kesepakatan, lalu klik "Kirim Finalisasi" di bagian bawah untuk memperbarui nilai.',
+        accept: () => {
+            isRevising.value = true
+        }
+    })
+}
+
+function getEvidenceFullUrl(url: string) {
+    if (!url) return '#'
+    if (url.startsWith('http')) return url
+    
+    // Ambil base URL API (misal: http://localhost:8080/api)
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
+    
+    // Hapus '/api' di bagian belakang, lalu gabungkan dengan URL file
+    return `${baseUrl.replace(/\/api$/, '')}${url}`
+}
+
+async function rejectAppeal() {
+    confirm.require({
+        group: 'headless',
+        header: 'Tolak Sanggahan?',
+        message: 'Sanggahan akan ditolak dan nilai pegawai akan ditetapkan secara permanen. Tindakan ini tidak dapat dibatalkan.',
+        accept: async () => {
+            try {
+                isProcessing.value = true
+                // Disini kita akan memanggil API Golang untuk menolak sanggahan
+                await managerService.resolveAppeal(form.evaluation_id, { status: 'rejected' })
+                
+                toast.add({ severity: 'success', summary: 'Ditolak', detail: 'Sanggahan berhasil ditolak', life: 3000 })
+                setTimeout(() => { router.push('/manager/team') }, 1500)
+            } catch (error) {
+                toast.add({ severity: 'error', summary: 'Gagal', detail: 'Terjadi kesalahan sistem', life: 3000 })
+            } finally {
+                isProcessing.value = false
+            }
+        }
+    })
+}
+
 function printReport() {
   window.print()
 }
@@ -346,3 +432,5 @@ function printReport() {
 }
 .hidden { display: none; }
 </style>
+
+

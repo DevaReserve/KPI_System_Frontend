@@ -209,7 +209,17 @@ export const managerService = {
   async getTeamStatus() { return (await api.get('/manager/team-status')).data.data },
   async startEvaluation(data: any) { return (await api.post('/manager/evaluations/start', data)).data.data },
   async getEvaluationDetail(id: number) { return (await api.get(`/manager/evaluations/${id}`)).data.data },
-  async submitEvaluation(id: number, data: any) { return (await api.put(`/manager/evaluations/${id}/submit`, data)).data }
+  
+  // Gunakan satu submitEvaluation saja
+  async submitEvaluation(id: number, data: any) { 
+    return (await api.put(`/manager/evaluations/${id}/submit`, data)).data 
+  },
+
+  // Fitur Sanggahan (Ubah apiClient menjadi api)
+  resolveAppeal: async (id: number, data: { status: string }) => {
+    const response = await api.put(`/manager/evaluations/${id}/resolve-appeal`, data)
+    return response.data.data
+  }
 }
 
 export const myPerformanceService = {
