@@ -1,4 +1,4 @@
-import type { ApiResponse, Division, LoginRequest, LoginResponse, User } from '@/types'
+import type { ApiResponse, Division, EvaluationPeriod, LoginRequest, LoginResponse, User } from '@/types'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 
@@ -69,8 +69,13 @@ export const authService = {
 }
 
 export const executiveService = {
-  async getCompanyPerformance(): Promise<any[]> {
-    const response = await api.get<ApiResponse<any[]>>('/executive/company-performance')
+  async getCompanyPerformance(periodId?: number): Promise<any[]> {
+    const url = periodId ? `/executive/company-performance?period_id=${periodId}` : '/executive/company-performance'
+    const response = await api.get<ApiResponse<any[]>>(url)
+    return response.data.data
+  },
+  async getPeriods(): Promise<EvaluationPeriod[]> {
+    const response = await api.get<ApiResponse<EvaluationPeriod[]>>('/executive/periods')
     return response.data.data
   }
 }
@@ -233,6 +238,14 @@ export const myPerformanceService = {
   },
   async getLatest(): Promise<any> {
     const response = await api.get<ApiResponse<any>>('/employee/latest') 
+    return response.data.data
+  },
+  async submitAppeal(id: number, data: FormData): Promise<any> {
+    const response = await api.post<ApiResponse<any>>(`/employee/evaluations/${id}/appeal`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     return response.data.data
   }
 }

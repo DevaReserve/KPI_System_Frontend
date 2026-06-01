@@ -8,10 +8,38 @@
         </p>
       </div>
       <div class="text-right">
-        <span class="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 shadow-sm flex items-center gap-2">
+        <span class="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 shadow-sm inline-flex items-center gap-2">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           {{ currentDate }}
         </span>
+        <div class="mt-3 flex justify-end">
+          <Button
+            v-if="myWarnings.length > 0"
+            icon="pi pi-exclamation-circle"
+            severity="danger"
+            class="p-button-rounded p-button-text p-button-lg"
+            @click="toggleWarningPopover"
+            aria-label="Tampilkan status perhatian"
+          />
+          <OverlayPanel ref="warningPopover" :dismissable="true" showCloseIcon>
+            <div class="max-w-xs rounded-xl border border-red-200 bg-red-50 p-4 shadow-sm">
+              <div class="flex items-start gap-3">
+                <span class="pi pi-exclamation-triangle text-red-600 text-xl"></span>
+                <div>
+                  <div class="text-sm font-semibold">Status Perhatian</div>
+                  <p class="text-sm mt-1">Anda memiliki <span class="font-semibold">{{ myWarnings.length }}</span> peringatan/SP yang perlu diperhatikan.</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="mt-4 w-full rounded-lg border border-red-200 bg-red-100 text-sm font-semibold px-3 py-2 hover:bg-red-200"
+                @click="goToWarnings"
+              >
+                Lihat Detail SP
+              </button>
+            </div>
+          </OverlayPanel>
+        </div>
       </div>
     </div>
 
@@ -190,35 +218,9 @@
     </div>
 
     <div v-else-if="authStore.userRole === 'employee'" class="space-y-6">
-      <div 
-        v-if="myWarnings.length > 0" 
-        class="bg-red-50 border-l-4 border-red-500 rounded-r-xl shadow-md p-6 flex flex-col sm:flex-row items-center justify-between gap-4 animate-pulse-slow"
-      >
-        <div class="flex items-center gap-4">
-            <div class="bg-red-100 p-3 rounded-full text-red-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-            </div>
-            <div>
-                <h3 class="text-lg font-bold text-red-700">Status: PERHATIAN</h3>
-                <p class="text-sm text-red-600">
-                    Anda memiliki <strong>{{ myWarnings.length }} Peringatan/SP</strong> yang perlu diperhatikan.
-                </p>
-            </div>
-        </div>
-        
-        <button 
-            @click="$router.push('/employee/warnings')" 
-            class="bg-red-600 text-white px-5 py-2 rounded-lg text-sm font-bold shadow hover:bg-red-700 transition-transform transform hover:scale-105 whitespace-nowrap"
-        >
-            Lihat Detail SP
-        </button>
-      </div>
-      <div v-if="employeeStats.hasData" class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden transition-all hover:shadow-2xl">
-        <div class="absolute -right-10 -top-10 h-64 w-64 bg-white opacity-10 rounded-full blur-3xl"></div>
-        <div class="absolute left-10 bottom-10 h-32 w-32 bg-purple-400 opacity-20 rounded-full blur-2xl"></div>
-        
+      <div v-if="employeeStats.hasData" class="bg-slate-950 text-white rounded-3xl shadow-xl p-8 relative overflow-hidden transition-all hover:shadow-2xl border border-white/10">
+        <div class="absolute -right-10 -top-10 h-64 w-64 bg-white/5 rounded-full blur-3xl"></div>
+        <div class="absolute left-10 bottom-10 h-32 w-32 bg-white/10 rounded-full blur-2xl"></div>
         <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div>
             <h2 class="text-lg font-medium opacity-90 mb-1 flex items-center">
@@ -235,15 +237,12 @@
             </div>
             
             <div class="mt-8 pl-2">
-              <button @click="$router.push('/employee/history')" class="bg-white text-indigo-700 px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg hover:bg-gray-50 transition transform hover:-translate-y-0.5">
+              <button @click="$router.push('/employee/history')" class="bg-white/10 border border-white/20 text-white px-6 py-2.5 rounded-lg text-sm font-semibold shadow-sm hover:bg-white/20 transition transform hover:-translate-y-0.5">
                 Lihat Rapor Lengkap
               </button>
             </div>
-            
-            
           </div>
-
-          <div class="bg-white/10 rounded-xl p-4 backdrop-blur-md border border-white/20 shadow-inner">
+          <div class="bg-white/10 rounded-xl p-4 backdrop-blur-md border border-white/10 shadow-inner">
             <h4 class="text-sm font-semibold mb-2 opacity-90">Tren Kinerja Saya</h4>
             <apexchart type="area" height="150" :options="employeeCharts.options" :series="employeeCharts.series"></apexchart>
           </div>
@@ -251,13 +250,13 @@
       </div>
       
 
-      <div v-else class="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
-        <div class="bg-gray-50 h-24 w-24 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-          <svg class="w-12 h-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div v-else class="bg-white rounded-3xl shadow-sm p-12 text-center border border-gray-200">
+        <div class="bg-gray-100 h-24 w-24 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         </div>
-        <h3 class="text-lg font-bold text-gray-800">Belum Ada Data Penilaian</h3>
+        <h3 class="text-lg font-bold text-gray-900">Belum Ada Data Penilaian</h3>
         <p class="text-gray-500 mt-2 max-w-sm mx-auto">
           Hasil penilaian kinerja Anda untuk periode ini belum tersedia. Silakan cek kembali nanti atau hubungi atasan Anda.
         </p>
@@ -268,19 +267,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
-import { useAuthStore } from '../stores/auth'
-import { 
-  employeeService, 
-  divisionService, 
-  periodService, 
-  managerService, 
+import Button from 'primevue/button'
+import OverlayPanel from 'primevue/overlaypanel'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import {
+  divisionService,
+  employeeService,
+  managerService,
   myPerformanceService,
+  periodService,
   reportService,
   warningService // <--- 1. IMPORT INI DITAMBAHKAN
 } from '../services/api'
+import { useAuthStore } from '../stores/auth'
 
 const authStore = useAuthStore()
+const router = useRouter()
 const isLoading = ref(true)
 
 const currentDate = computed(() => {
@@ -345,6 +348,7 @@ const managerCharts = reactive({
 // --- STATE EMPLOYEE ---
 const employeeStats = reactive({ hasData: false, score: 0, grade: '', periodName: '' })
 const myWarnings = ref<any[]>([]) // <--- 2. STATE BARU UNTUK WARNING
+const warningPopover = ref<any>(null)
 const employeeCharts = reactive({
   series: [] as any[],
   options: {
@@ -467,6 +471,14 @@ async function loadEmployeeData() {
       console.warn("Failed to load employee data", e)
       employeeStats.hasData = false
   }
+}
+
+function goToWarnings() {
+  router.push('/employee/warnings')
+}
+
+function toggleWarningPopover(event: Event) {
+  warningPopover.value?.toggle(event)
 }
 
 function getGrade(score: number) {

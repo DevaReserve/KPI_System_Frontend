@@ -1,8 +1,28 @@
 <template>
-  <div class="p-6">
-    <div class="mb-8">
-      <h1 class="text-2xl font-bold text-gray-900">Performa Perusahaan</h1>
-      <p class="text-sm text-gray-500 mt-1">Ringkasan rata-rata skor evaluasi kinerja per divisi.</p>
+  <div>
+    <div class="mb-6 flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Performa Perusahaan</h1>
+        <p class="text-sm text-gray-500 mt-1">Ringkasan rata-rata skor evaluasi kinerja per divisi.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <label for="period-select" class="text-sm font-medium text-slate-600">Periode</label>
+        <select
+          id="period-select"
+          v-model="selectedPeriodId"
+          @change="onPeriodChange"
+          class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-700 outline-none transition focus:border-slate-500"
+        >
+          <option :value="0">Semua Periode</option>
+          <option
+            v-for="period in periods"
+            :key="period.id"
+            :value="period.id"
+          >
+            {{ period.name }} ({{ formatDate(period.start_date) }} - {{ formatDate(period.end_date) }})
+          </option>
+        </select>
+      </div>
     </div>
 
     <div v-if="isLoading" class="flex justify-center items-center h-40">
@@ -66,10 +86,13 @@
 </template>
 
 <script setup lang="ts">
+import type { EvaluationPeriod } from '@/types';
 import { onMounted, ref } from 'vue';
 import { executiveService } from '../services/api';
 
 const performanceData = ref<any[]>([]);
+const periods = ref<EvaluationPeriod[]>([]);
+const selectedPeriodId = ref<number>(0);
 const isLoading = ref(true);
 const errorMsg = ref<string | null>(null);
 
@@ -144,14 +167,45 @@ const getScoreLabel = (score: number) => {
   return 'Perlu Perbaikan';
 };
 
-onMounted(async () => {
+const formatDate = (value: string) => {
+  if (!value) return '-'
+  return new Date(value).toLocaleDateString('id-ID', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  })
+};
+
+const loadPeriods = async () => {
+  try {
+    const periodList = await executiveService.getPeriods();
+    periods.value = periodList.sort(
+      (a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
+    )
+  } catch (error: any) {
+    console.warn('Gagal ambil daftar periode', error)
+  }
+};
+
+const loadPerformance = async () => {
   try {
     isLoading.value = true;
-    performanceData.value = await executiveService.getCompanyPerformance();
+    performanceData.value = await executiveService.getCompanyPerformance(
+      selectedPeriodId.value || undefined
+    )
   } catch (error: any) {
     errorMsg.value = error.response?.data?.message || 'Gagal memuat data performa perusahaan.';
   } finally {
     isLoading.value = false;
   }
+};
+
+const onPeriodChange = async () => {
+  await loadPerformance()
+};
+
+onMounted(async () => {
+  await loadPeriods()
+  await loadPerformance()
 });
 </script>

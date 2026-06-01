@@ -115,12 +115,11 @@
 </template>
  
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { myPerformanceService } from '../../services/api'
-import axios from 'axios'
-import { useToast } from 'primevue/usetoast'
-import Toast from 'primevue/toast'
  
 const route = useRoute()
 const toast = useToast()
@@ -178,12 +177,7 @@ async function submitAppeal() {
 
         // Pastikan Anda memanggil instance axios yang memiliki token (misal: apiClient)
         // Sesuaikan dengan konfigurasi axios di service Anda
-        await axios.post(`http://localhost:8080/api/employee/evaluations/${data.value.evaluation_header.id}/appeal`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${localStorage.getItem('token')}` // Sesuaikan cara ambil token Anda
-            }
-        })
+        await myPerformanceService.submitAppeal(data.value.evaluation_header.id, formData)
         
         toast.add({ severity: 'success', summary: 'Berhasil', detail: 'Sanggahan berhasil dikirim ke manajer', life: 3000 })
         showAppealModal.value = false

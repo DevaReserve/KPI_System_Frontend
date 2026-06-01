@@ -100,11 +100,22 @@
                 <h3 class="text-lg font-bold text-orange-800 mb-2 flex items-center">
                     <i class="pi pi-exclamation-circle mr-2"></i> Terdapat Sanggahan dari Pegawai!
                 </h3>
+
+                <div class="mb-4">
+                    <p class="text-sm text-gray-700 mb-2 font-medium">Indikator yang Disanggah:</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span v-for="(indicator, idx) in appealedIndicators" :key="`appeal-indicator-${idx}`" class="inline-flex items-center rounded-full bg-orange-100 text-orange-800 px-3 py-1 text-xs font-semibold">
+                            {{ indicator }}
+                        </span>
+                        <span v-if="!appealedIndicators.length" class="text-xs text-gray-500 italic">Tidak ada indikator spesifik terdeteksi dari alasan.</span>
+                    </div>
+                </div>
+
                 <p class="text-sm text-gray-700 mb-2 font-medium">Alasan Keberatan:</p>
                 <div class="bg-white p-4 rounded-lg border border-orange-100 text-gray-700 italic mb-4">
-                    "{{ appealReason }}"
+                    "{{ appealDetail || 'Tidak ada alasan detail.' }}"
                 </div>
-                
+
                 <a v-if="evidenceUrl" :href="getEvidenceFullUrl(evidenceUrl)" target="_blank" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-2 rounded-lg transition">
                     <i class="pi pi-paperclip mr-2"></i> Lihat Bukti Lampiran
                 </a>
@@ -208,15 +219,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { managerService } from '../../services/api'
 
 // PrimeVue Logic
-import { useToast } from 'primevue/usetoast'
-import { useConfirm } from 'primevue/useconfirm'
-import Toast from 'primevue/toast'
 import ConfirmDialog from 'primevue/confirmdialog'
+import Toast from 'primevue/toast'
+import { useConfirm } from 'primevue/useconfirm'
+import { useToast } from 'primevue/usetoast'
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -236,6 +247,8 @@ const evaluationStatus = ref('')
 
 const appealReason = ref('')
 const evidenceUrl = ref('')
+const appealedIndicators = ref<string[]>([])
+const appealDetail = computed(() => parseAppealReasonDetail(appealReason.value))
 
 const form = reactive({
   evaluation_id: 0,
@@ -292,6 +305,7 @@ onMounted(async () => {
     // Di dalam onMounted, di bawah evaluationStatus.value = ...
     appealReason.value = data.evaluation_header.appeal_reason || ''
     evidenceUrl.value = data.evaluation_header.evidence_url || ''
+    appealedIndicators.value = parseAppealedIndicators(appealReason.value)
 
     if (data.scores && Array.isArray(data.scores)) {
       form.scores = data.scores.map((s: any) => {
@@ -377,14 +391,30 @@ function acceptAppeal() {
     })
 }
 
+function parseAppealedIndicators(rawReason: string): string[] {
+    const regex = /\[Indikator yang Disanggah:\s*([^\]]+)\]/i
+    const match = rawReason.match(regex)
+    if (!match || !match[1]) return []
+    return match[1]
+      .split(',')
+      .map(item => item.trim())
+      .filter(Boolean)
+}
+
+function parseAppealReasonDetail(rawReason: string): string {
+    const regex = /Alasan Detail:\s*([\s\S]*)/i
+    const match = rawReason.match(regex)
+    if (match && match[1]) {
+      return match[1].trim()
+    }
+    return rawReason.trim()
+}
+
 function getEvidenceFullUrl(url: string) {
     if (!url) return '#'
     if (url.startsWith('http')) return url
     
-    // Ambil base URL API (misal: http://localhost:8080/api)
     const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
-    
-    // Hapus '/api' di bagian belakang, lalu gabungkan dengan URL file
     return `${baseUrl.replace(/\/api$/, '')}${url}`
 }
 
