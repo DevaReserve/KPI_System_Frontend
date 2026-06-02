@@ -1,211 +1,260 @@
 <template>
-  <div>
-    <div class="mb-6 flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
+  <div class="max-w-7xl mx-auto pb-12 pt-4">
+    <Toast />
+
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Performa Perusahaan</h1>
-        <p class="text-sm text-gray-500 mt-1">Ringkasan rata-rata skor evaluasi kinerja per divisi.</p>
+        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+          <i class="pi pi-chart-pie text-blue-600"></i> Executive Dashboard
+        </h1>
+        <p class="text-gray-500 mt-1 text-sm">Ringkasan Kesehatan dan Performa SDM Perusahaan PT Cakra Media Data</p>
       </div>
-      <div class="flex items-center gap-3">
-        <label for="period-select" class="text-sm font-medium text-slate-600">Periode</label>
-        <select
-          id="period-select"
-          v-model="selectedPeriodId"
-          @change="onPeriodChange"
-          class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-700 outline-none transition focus:border-slate-500"
+      
+      <div class="bg-white p-1.5 rounded-lg border border-gray-200 shadow-sm flex items-center">
+        <span class="text-xs font-bold text-gray-500 uppercase px-3"><i class="pi pi-calendar mr-1"></i> Periode:</span>
+        <select 
+          v-model="selectedPeriod" 
+          @change="fetchDashboardData"
+          class="bg-gray-50 border-none text-sm font-semibold text-gray-800 rounded-md py-1.5 pl-3 pr-8 focus:ring-0 cursor-pointer"
         >
-          <option :value="0">Semua Periode</option>
-          <option
-            v-for="period in periods"
-            :key="period.id"
-            :value="period.id"
-          >
-            {{ period.name }} ({{ formatDate(period.start_date) }} - {{ formatDate(period.end_date) }})
-          </option>
+          <option value="">Semua Periode (Akumulasi)</option>
+          <option v-for="p in periods" :key="p.id" :value="p.id">{{ p.name }}</option>
         </select>
       </div>
     </div>
 
-    <div v-if="isLoading" class="flex justify-center items-center h-40">
-      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+    <div v-if="isLoading" class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600"></div>
     </div>
 
-    <div v-else-if="errorMsg" class="bg-red-50 p-4 rounded-lg border border-red-200 text-red-700">
-      {{ errorMsg }}
-    </div>
-
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      
-      <div 
-        v-for="(divisi, index) in performanceData" 
-        :key="index"
-        :class="['group relative overflow-hidden rounded-[32px] border bg-white/95 shadow-sm transition duration-250 hover:shadow-xl', getAccent(index).card]"
-      >
-        <div :class="['absolute inset-x-0 top-0 h-1.5', getAccent(index).stripe]"></div>
-        <div class="p-6 pt-8">
-          <div class="flex items-start justify-between gap-3 mb-5">
-            <div class="max-w-[68%]">
-              <h2 :class="['text-lg font-semibold tracking-tight', getAccent(index).title]">{{ divisi.division_name }}</h2>
-            </div>
-            <div :class="['flex h-11 w-11 items-center justify-center rounded-2xl border', getAccent(index).ring]">
-              <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
-          </div>
-
-          <div class="grid gap-4 md:grid-cols-[auto_1fr] items-start">
-            <div class="rounded-3xl bg-slate-50 p-5 border border-slate-100 min-w-[120px]">
-              <div class="flex items-end gap-2">
-                <span class="text-5xl font-semibold text-slate-900 tracking-tight">{{ displayScore(divisi.average_score).toFixed(0) }}</span>
-                <span class="text-sm text-slate-500">/ 100</span>
-              </div>
-              <p class="mt-3 text-xs text-slate-500">Skala 0 - 100</p>
+    <div v-else>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center hover:shadow-md transition-shadow">
+                <div class="rounded-xl bg-blue-100 p-4 mr-5 shadow-inner">
+                    <i class="pi pi-users text-2xl text-blue-600"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Total Karyawan</p>
+                    <h3 class="text-3xl font-black text-gray-800">{{ metrics.total_employees }}</h3>
+                </div>
             </div>
 
-            <div class="space-y-4">
-              <div>
-                <div class="flex items-center justify-between text-xs uppercase tracking-[0.18em] text-slate-500 mb-2">
-                  <span>Progress skor</span>
-                  <span>{{ scorePercentage(divisi.average_score) }}</span>
+            <div class="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center hover:shadow-md transition-shadow">
+                <div class="rounded-xl bg-purple-100 p-4 mr-5 shadow-inner">
+                    <i class="pi pi-sitemap text-2xl text-purple-600"></i>
                 </div>
-                <div class="h-2 rounded-full bg-slate-200 overflow-hidden">
-                  <div :style="{ width: scorePercentage(divisi.average_score) }" :class="['h-full rounded-full', getProgressTone(divisi.average_score)]"></div>
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Total Divisi</p>
+                    <h3 class="text-3xl font-black text-gray-800">{{ metrics.total_divisions }}</h3>
                 </div>
-                <div :class="['inline-flex items-center gap-2 mt-5 rounded-full px-3 py-1 text-xs font-semibold', getScoreTone(divisi.average_score)]">
-                  <span class="h-2.5 w-2.5 rounded-full bg-current"></span>
-                  {{ getScoreLabel(divisi.average_score) }}
-                </div>
-              </div>
             </div>
-          </div>
+
+            <div class="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center hover:shadow-md transition-shadow">
+                <div class="rounded-xl bg-green-100 p-4 mr-5 shadow-inner">
+                    <i class="pi pi-verified text-2xl text-green-600"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Evaluasi Selesai</p>
+                    <h3 class="text-3xl font-black text-gray-800">{{ metrics.total_completed_evals }}</h3>
+                </div>
+            </div>
         </div>
-      </div>
-      
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+                
+                <div class="mb-6">
+                    <h2 class="text-lg font-extrabold text-gray-800">Rata-Rata Nilai KPI per Divisi</h2>
+                    <p class="text-sm text-gray-500">Berdasarkan skala nilai 0-100.</p>
+                </div>
+                
+                <div class="w-full h-[350px]">
+                    <apexchart 
+                        v-if="barSeries[0].data.length > 0"
+                        type="bar" 
+                        height="350" 
+                        :options="barOptions" 
+                        :series="barSeries">
+                    </apexchart>
+                    <div v-else class="flex flex-col items-center justify-center h-full text-gray-400">
+                        <i class="pi pi-chart-bar text-5xl mb-3 opacity-50"></i>
+                        <p>Belum ada data evaluasi di periode ini.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="text-lg font-extrabold text-gray-800 mb-4">Status Penilaian</h2>
+                    <apexchart 
+                        v-if="donutSeries.length > 0"
+                        type="donut" 
+                        height="220" 
+                        :options="donutOptions" 
+                        :series="donutSeries">
+                    </apexchart>
+                    <div v-else class="text-center text-sm text-gray-500 py-10">Data tidak tersedia</div>
+                </div>
+
+                <div class="bg-gradient-to-b from-blue-600 to-blue-800 rounded-2xl shadow-lg border border-blue-700 p-6 text-white">
+                    <h2 class="text-lg font-extrabold mb-4 flex items-center">
+                        <i class="pi pi-star-fill text-yellow-400 mr-2"></i> Top 5 Pegawai Terbaik
+                    </h2>
+                    
+                    <div v-if="topEmployees.length > 0" class="space-y-3">
+                        <div v-for="(emp, idx) in topEmployees" :key="idx" class="flex justify-between items-center bg-white/10 rounded-lg p-3 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-6 h-6 rounded-full bg-yellow-400 text-blue-900 flex items-center justify-center text-xs font-bold">
+                                    {{ idx + 1 }}
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold leading-tight">{{ emp.name }}</p>
+                                    <p class="text-[10px] text-blue-200 uppercase">{{ emp.division_name }}</p>
+                                </div>
+                            </div>
+                            <div class="text-lg font-black text-white">{{ emp.total_score.toFixed(1) }}</div>
+                        </div>
+                    </div>
+                    <div v-else class="text-center text-sm text-blue-200 py-6">
+                        Belum ada evaluasi yang difinalisasi.
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { EvaluationPeriod } from '@/types';
-import { onMounted, ref } from 'vue';
-import { executiveService } from '../services/api';
+import { ref, onMounted, reactive } from 'vue'
+import { periodService } from '../services/api'
+import { useToast } from 'primevue/usetoast'
+import Toast from 'primevue/toast'
+import VueApexCharts from 'vue3-apexcharts'
+import type { ApexOptions } from 'apexcharts'
 
-const performanceData = ref<any[]>([]);
-const periods = ref<EvaluationPeriod[]>([]);
-const selectedPeriodId = ref<number>(0);
-const isLoading = ref(true);
-const errorMsg = ref<string | null>(null);
+const toast = useToast()
+const isLoading = ref(true)
+const apexchart = VueApexCharts
 
-// Fungsi untuk memberi label warna yang halus dan informatif
-const accentStyles = [
-  {
-    ring: 'border-cyan-200 bg-cyan-50 text-cyan-700',
-    stripe: 'bg-cyan-200',
-    progress: 'bg-cyan-500',
-    title: 'text-cyan-900',
-    pill: 'bg-cyan-100 text-cyan-700',
-    card: 'shadow-cyan-50'
-  },
-  {
-    ring: 'border-violet-200 bg-violet-50 text-violet-700',
-    stripe: 'bg-violet-200',
-    progress: 'bg-violet-500',
-    title: 'text-violet-900',
-    pill: 'bg-violet-100 text-violet-700',
-    card: 'shadow-violet-50'
-  },
-  {
-    ring: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-    stripe: 'bg-emerald-200',
-    progress: 'bg-emerald-500',
-    title: 'text-emerald-900',
-    pill: 'bg-emerald-100 text-emerald-700',
-    card: 'shadow-emerald-50'
-  },
-  {
-    ring: 'border-amber-200 bg-amber-50 text-amber-700',
-    stripe: 'bg-amber-200',
-    progress: 'bg-amber-500',
-    title: 'text-amber-900',
-    pill: 'bg-amber-100 text-amber-700',
-    card: 'shadow-amber-50'
-  }
-];
+const periods = ref<any[]>([])
+const selectedPeriod = ref('')
 
-const getAccent = (index: number) => accentStyles[index % accentStyles.length];
+const metrics = reactive({
+    total_employees: 0,
+    total_divisions: 0,
+    total_completed_evals: 0
+})
 
-const displayScore = (score: number) => {
-  if (score <= 5) {
-    return Math.min(Math.max(score * 20, 0), 100)
-  }
-  return Math.min(Math.max(score, 0), 100)
-};
+const topEmployees = ref<any[]>([])
 
-const scorePercentage = (score: number) => {
-  const percent = displayScore(score)
-  return `${percent.toFixed(0)}%`
-};
+// --- KONFIGURASI BAR CHART (Sumbu Y sudah diperbaiki ke 100) ---
+const barSeries = ref([{ name: 'Rata-rata Skor', data: [] as number[] }])
+const barOptions = ref<ApexOptions>({
+    chart: { type: 'bar', fontFamily: 'Inter, sans-serif', toolbar: { show: false } },
+    colors: ['#3b82f6'], // Biru modern
+    plotOptions: {
+        bar: { borderRadius: 8, columnWidth: '35%', dataLabels: { position: 'top' } }
+    },
+    dataLabels: {
+        enabled: true,
+        formatter: (val: number) => val.toFixed(1),
+        offsetY: -20,
+        style: { fontSize: '12px', colors: ["#475569"] }
+    },
+    xaxis: {
+        categories: [] as string[],
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+        labels: { style: { colors: '#64748b', fontWeight: 600 } }
+    },
+    yaxis: {
+        max: 100, // <--- PERBAIKAN: Skala disesuaikan dengan data Anda
+        tickAmount: 5,
+        labels: { style: { colors: '#94a3b8' } }
+    },
+    grid: { borderColor: '#f1f5f9', strokeDashArray: 4 },
+    fill: {
+        type: 'gradient',
+        gradient: { type: 'vertical', shadeIntensity: 1, opacityFrom: 1, opacityTo: 0.7, stops: [0, 100] }
+    }
+})
 
-const getProgressTone = (score: number) => {
-  const value = displayScore(score)
-  if (value >= 80) return 'bg-emerald-500'
-  if (value >= 60) return 'bg-amber-500'
-  return 'bg-rose-500'
-};
-
-const getScoreTone = (score: number) => {
-  const value = displayScore(score)
-  if (value >= 80) return 'bg-emerald-100 text-emerald-700';
-  if (value >= 60) return 'bg-amber-100 text-amber-700';
-  return 'bg-rose-100 text-rose-700';
-};
-
-const getScoreLabel = (score: number) => {
-  const value = displayScore(score)
-  if (value >= 80) return 'Sangat Baik';
-  if (value >= 60) return 'Baik';
-  return 'Perlu Perbaikan';
-};
-
-const formatDate = (value: string) => {
-  if (!value) return '-'
-  return new Date(value).toLocaleDateString('id-ID', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  })
-};
-
-const loadPeriods = async () => {
-  try {
-    const periodList = await executiveService.getPeriods();
-    periods.value = periodList.sort(
-      (a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
-    )
-  } catch (error: any) {
-    console.warn('Gagal ambil daftar periode', error)
-  }
-};
-
-const loadPerformance = async () => {
-  try {
-    isLoading.value = true;
-    performanceData.value = await executiveService.getCompanyPerformance(
-      selectedPeriodId.value || undefined
-    )
-  } catch (error: any) {
-    errorMsg.value = error.response?.data?.message || 'Gagal memuat data performa perusahaan.';
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-const onPeriodChange = async () => {
-  await loadPerformance()
-};
+// --- KONFIGURASI DONUT CHART ---
+const donutSeries = ref<number[]>([])
+const donutOptions = ref<ApexOptions>({
+    chart: { type: 'donut', fontFamily: 'Inter, sans-serif' },
+    labels: [],
+    colors: ['#10b981', '#f59e0b', '#ef4444', '#64748b'], // Hijau (Selesai), Kuning (Draft), Merah (Sanggahan), Abu
+    plotOptions: {
+        pie: { donut: { size: '70%', labels: { show: true, total: { show: true, label: 'Total', fontSize: '14px' } } } }
+    },
+    dataLabels: { enabled: false },
+    legend: { position: 'bottom', fontSize: '12px' }
+})
 
 onMounted(async () => {
-  await loadPeriods()
-  await loadPerformance()
-});
+    await fetchPeriods()
+    await fetchDashboardData()
+})
+
+async function fetchPeriods() {
+    try {
+        const res = await periodService.getAll()
+        periods.value = res
+        // Opsional: Set default ke periode aktif
+        const active = res.find((p: any) => p.is_active)
+        if (active) selectedPeriod.value = active.id.toString()
+    } catch (e) {
+        console.error(e)
+    }
+}
+
+async function fetchDashboardData() {
+    isLoading.value = true
+    try {
+        const urlParams = new URLSearchParams()
+        if (selectedPeriod.value) {
+            urlParams.append('period_id', selectedPeriod.value)
+        }
+        
+        // Memanggil API dengan query params (Butuh sedikit penyesuaian jika executiveService Anda belum support query, 
+        // tapi kita bisa langsung pakai api.get jika perlu. Saya asumsikan Anda memodifikasinya, 
+        // atau kita gunakan axios langsung di sini demi keamanan jika executiveService belum diupdate).
+        // Untuk amannya, kita fetch manual menggunakan axios instance bawaan Anda:
+        const { default: api } = await import('../services/api')
+        const { data: response } = await api.get(`/executive/company-performance?${urlParams.toString()}`)
+        const rawData = response.data
+
+        if (rawData.metrics) {
+            metrics.total_employees = rawData.metrics.total_employees
+            metrics.total_divisions = rawData.metrics.total_divisions
+            metrics.total_completed_evals = rawData.metrics.total_completed_evals
+        }
+
+        if (rawData.division_performance) {
+            const categories = rawData.division_performance.map((d: any) => d.division_name)
+            const scores = rawData.division_performance.map((d: any) => Number(d.average_score))
+            barOptions.value = { ...barOptions.value, xaxis: { ...barOptions.value.xaxis, categories } }
+            barSeries.value = [{ name: 'Rata-rata Skor', data: scores }]
+        }
+
+        if (rawData.status_distribution) {
+            const labels = rawData.status_distribution.map((d: any) => d.status.toUpperCase())
+            const counts = rawData.status_distribution.map((d: any) => d.count)
+            donutOptions.value = { ...donutOptions.value, labels }
+            donutSeries.value = counts
+        }
+
+        if (rawData.top_employees) {
+            topEmployees.value = rawData.top_employees
+        }
+
+    } catch (error: any) {
+        toast.add({ severity: 'error', summary: 'Gagal', detail: 'Tidak dapat memuat data dashboard', life: 3000 })
+    } finally {
+        isLoading.value = false
+    }
+}
 </script>
