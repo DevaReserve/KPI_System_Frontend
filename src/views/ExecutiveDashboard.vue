@@ -1,77 +1,105 @@
 <template>
-  <div>
+  <div class="max-w-7xl mx-auto pb-12 pt-4">
     <Toast />
 
-    <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
       <div>
-        <h1 class="text-3xl font-bold text-gray-800">Executive Dashboard</h1>
-        <p class="text-gray-600 mt-1">
-          Ringkasan Kesehatan dan Performa SDM Perusahaan PT Cakra Media Data
-        </p>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
+          <span class="bg-slate-900 text-white p-2 rounded-xl shadow-lg">
+            <i class="pi pi-chart-line text-xl"></i>
+          </span>
+          Executive Command Center
+        </h1>
+        <p class="text-slate-500 mt-2 text-sm font-medium">Ringkasan Strategis & Performa SDM PT Cakra Media Data</p>
       </div>
       
-      <div class="text-right">
-        <span class="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 shadow-sm inline-flex items-center gap-2">
-          <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          Periode:
-          <select 
-            v-model="selectedPeriod" 
-            @change="fetchDashboardData"
-            class="bg-transparent border-none text-sm font-semibold text-gray-800 py-0 pl-1 pr-6 focus:ring-0 cursor-pointer outline-none"
-          >
-            <option value="">Semua (Akumulasi)</option>
-            <option v-for="p in periods" :key="p.id" :value="p.id">{{ p.name }}</option>
-          </select>
-        </span>
+      <div class="bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm flex items-center">
+        <span class="text-xs font-bold text-slate-400 uppercase px-3"><i class="pi pi-calendar mr-1"></i> Periode:</span>
+        <select 
+          v-model="selectedPeriod" 
+          @change="fetchDashboardData"
+          class="bg-slate-50 border-none text-sm font-bold text-slate-800 rounded-lg py-2 pl-3 pr-8 focus:ring-0 cursor-pointer"
+        >
+          <option value="">Semua Periode (Akumulasi)</option>
+          <option v-for="p in periods" :key="p.id" :value="p.id">{{ p.name }}</option>
+        </select>
       </div>
     </div>
 
-    <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
-        <div class="h-32 bg-gray-200 rounded-xl"></div>
-        <div class="h-32 bg-gray-200 rounded-xl"></div>
-        <div class="h-32 bg-gray-200 rounded-xl"></div>
+    <div v-if="isLoading" class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-slate-900"></div>
     </div>
 
-    <div v-else class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500 relative overflow-hidden transition hover:shadow-md">
-                <div>
-                    <p class="text-sm font-medium text-gray-500 uppercase">Total Karyawan</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ metrics.total_employees }}</p>
+    <div v-else>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-slate-900 rounded-2xl shadow-xl p-6 relative overflow-hidden text-white transform transition duration-300 hover:scale-[1.02]">
+                <div class="absolute -right-6 -top-6 w-32 h-32 bg-indigo-500 rounded-full blur-3xl opacity-30"></div>
+                <div class="relative z-10">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Rata-Rata Kinerja Perusahaan</p>
+                    <div class="flex items-end gap-3">
+                        <h3 class="text-5xl font-black text-white">{{ metrics.company_average_score.toFixed(1) }}</h3>
+                        <span class="text-slate-400 font-medium mb-1">/ 100</span>
+                    </div>
                 </div>
-                <div class="absolute right-4 top-6 p-3 bg-blue-50 rounded-full text-blue-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                </div>
+                <i class="pi pi-bolt absolute right-6 bottom-6 text-4xl text-slate-700 opacity-50"></i>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500 relative overflow-hidden transition hover:shadow-md">
-                <div>
-                    <p class="text-sm font-medium text-gray-500 uppercase">Total Divisi</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ metrics.total_divisions }}</p>
+            <div class="bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl shadow-xl p-6 relative overflow-hidden text-white transform transition duration-300 hover:scale-[1.02]">
+                <div class="relative z-10">
+                    <p class="text-xs font-bold text-orange-100 uppercase tracking-wider mb-2">Divisi Performa Terbaik</p>
+                    <h3 class="text-3xl font-black text-white leading-tight mt-2">{{ metrics.top_division }}</h3>
                 </div>
-                <div class="absolute right-4 top-6 p-3 bg-purple-50 rounded-full text-purple-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                </div>
+                <i class="pi pi-star-fill absolute right-4 bottom-4 text-6xl text-white opacity-20"></i>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500 relative overflow-hidden transition hover:shadow-md">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex items-center justify-between transform transition duration-300 hover:shadow-md">
                 <div>
-                    <p class="text-sm font-medium text-gray-500 uppercase">Evaluasi Selesai</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ metrics.total_completed_evals }}</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Evaluasi Final</p>
+                    <h3 class="text-4xl font-black text-slate-800">{{ metrics.total_completed_evals }}</h3>
                 </div>
-                <div class="absolute right-4 top-6 p-3 bg-green-50 rounded-full text-green-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div class="rounded-full bg-emerald-50 p-4 border border-emerald-100">
+                    <i class="pi pi-check-circle text-3xl text-emerald-500"></i>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="text-lg font-bold text-gray-800 mb-1">Rata-Rata Nilai KPI per Divisi</h3>
-                <p class="text-sm text-gray-500 mb-6">Berdasarkan skala nilai 0-100.</p>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-lg font-extrabold text-slate-800 mb-1">Tren Kinerja Perusahaan</h2>
+                <p class="text-sm text-slate-500 mb-6">Pergerakan rata-rata nilai dari periode ke periode.</p>
                 
+                <div class="w-full h-[300px]">
+                    <apexchart 
+                        v-if="trendSeries[0].data.length > 0"
+                        type="area" 
+                        height="300" 
+                        :options="trendOptions" 
+                        :series="trendSeries">
+                    </apexchart>
+                    <div v-else class="flex flex-col items-center justify-center h-full text-slate-300">
+                        <i class="pi pi-chart-line text-4xl mb-3 opacity-50"></i>
+                        <p>Belum ada data tren yang cukup.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-lg font-extrabold text-slate-800 mb-4">Distribusi Status Penilaian</h2>
+                <apexchart 
+                    v-if="donutSeries.length > 0"
+                    type="donut" 
+                    height="280" 
+                    :options="donutOptions" 
+                    :series="donutSeries">
+                </apexchart>
+                <div v-else class="text-center text-sm text-slate-400 py-10">Data tidak tersedia</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-lg font-extrabold text-slate-800 mb-1">Komparasi Performa Divisi</h2>
+                <p class="text-sm text-slate-500 mb-6">Analisis rata-rata nilai KPI antar departemen.</p>
                 <div class="w-full h-[350px]">
                     <apexchart 
                         v-if="barSeries[0].data.length > 0"
@@ -80,82 +108,116 @@
                         :options="barOptions" 
                         :series="barSeries">
                     </apexchart>
-                    <div v-else class="flex flex-col items-center justify-center h-full text-gray-400">
-                        <svg class="w-12 h-12 mb-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                        <p>Belum ada data evaluasi di periode ini.</p>
-                    </div>
+                    <div v-else class="flex justify-center items-center h-full text-slate-300">Kosong</div>
                 </div>
             </div>
 
-            <div class="space-y-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Status Penilaian</h3>
-                    <apexchart 
-                        v-if="donutSeries.length > 0"
-                        type="donut" 
-                        height="220" 
-                        :options="donutOptions" 
-                        :series="donutSeries">
-                    </apexchart>
-                    <div v-else class="text-center text-sm text-gray-500 py-10">Data tidak tersedia</div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all duration-300 h-fit">
-                    <div 
-                        @click="isTopEmployeesOpen = !isTopEmployeesOpen"
-                        class="flex justify-between items-center cursor-pointer select-none group"
-                        :class="{ 'mb-4 pb-4 border-b border-gray-100': isTopEmployeesOpen }"
-                    >
-                        <h3 class="text-lg font-bold text-gray-800 flex items-center group-hover:text-blue-600 transition-colors">
-                            <svg class="w-5 h-5 mr-2 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 3.214L18 21l-5.714-3.214L6.571 21l5.714-6.857L6.571 12l5.714-3.214L10 3h4z" /></svg>
-                            Top 5 Pegawai
-                        </h3>
-                        
-                        <svg 
-                            class="w-5 h-5 text-gray-400 transition-transform duration-300"
-                            :class="isTopEmployeesOpen ? 'transform rotate-180' : ''"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        >
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                    
-                    <div v-show="isTopEmployeesOpen" class="space-y-3 animate-fade-in">
-                        <template v-if="topEmployees.length > 0">
-                            <div 
-                                v-for="(emp, idx) in topEmployees" 
-                                :key="idx"
-                                class="flex items-center justify-between p-3 border border-gray-100 rounded-xl bg-white hover:bg-gray-50 transition-colors"
-                            >
-                                <div class="flex items-center gap-4">
-                                    <div class="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold shadow-sm">
-                                        {{ idx + 1 }}
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-sm text-gray-700">{{ emp.name }}</p>
-                                        <p class="text-xs text-gray-400">{{ emp.division_name }}</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="text-right">
-                                    <span class="text-sm font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md border border-blue-100">
-                                        {{ emp.total_score.toFixed(1) }}
-                                    </span>
-                                </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col h-full">
+                <h2 class="text-lg font-extrabold text-slate-800 mb-6 flex items-center">
+                    <i class="pi pi-trophy text-amber-500 mr-2 text-xl"></i> Pegawai Bintang (Top 5)
+                </h2>
+                
+                <div v-if="topEmployees.length > 0" class="flex-1 space-y-4">
+                    <div v-for="(emp, idx) in topEmployees" :key="idx" class="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-100 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-black shadow-sm"
+                                 :class="idx === 0 ? 'bg-amber-400 text-white' : idx === 1 ? 'bg-slate-300 text-white' : idx === 2 ? 'bg-orange-300 text-white' : 'bg-white text-slate-500 border border-slate-200'">
+                                {{ idx + 1 }}
                             </div>
-                        </template>
-                        
-                        <div v-else class="text-center py-8 text-gray-400 opacity-80">
-                            <svg class="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>
-                            <p class="text-sm">Belum ada evaluasi.</p>
+                            <div>
+                                <p class="font-bold text-slate-800">{{ emp.name }}</p>
+                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ emp.division_name }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <!-- Tombol Download PDF -->
+                            <button 
+                            @click="printDashboard" 
+                            class="no-print bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
+                            >
+                            <i class="pi pi-file-pdf"></i> Eksport PDF
+                            </button>
+
+                            <!-- Filter Periode (Elegan) -->
+                            <div class="no-print bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm flex items-center">
+                            <!-- ... (kode select periode Anda tetap di sini) ... -->
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xl font-black text-slate-800">{{ emp.total_score.toFixed(1) }}</span>
                         </div>
                     </div>
-                </div>      
+                </div>
+                <div v-else class="text-center text-sm text-slate-400 py-10 my-auto">
+                    Belum ada data evaluasi.
+                </div>
             </div>
         </div>
     </div>
   </div>
 </template>
+
+<style>
+@media print {
+    /* 1. Sembunyikan elemen yang tidak perlu dicetak */
+    .no-print, header, nav, aside {
+        display: none !important;
+    }
+
+    /* 2. Pengaturan Kertas (Landscape) & Margin */
+    @page {
+        size: landscape;
+        margin: 5mm; 
+    }
+
+    body {
+        background-color: #f8fafc !important;
+        /* Memperkecil sedikit skala agar semua muat dalam 1 halaman */
+        zoom: 0.85; 
+    }
+
+    /* 3. Paksa Warna Background & Gradient Muncul */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* 4. ====================================================
+       OBAT ANTI-TAMPILAN-HP (MEMAKSA TAILWIND GRID AKTIF)
+       ==================================================== */
+    .grid {
+        display: grid !important;
+    }
+    
+    /* Memaksa Top Metrics (3 Kartu Atas) sejajar */
+    .md\:grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+    /* Memaksa layout Tengah & Bawah sejajar */
+    .lg\:grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+    .lg\:grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+    .lg\:col-span-2 {
+        grid-column: span 2 / span 2 !important;
+    }
+
+    /* 5. Mencegah Kartu/Grafik Terbelah di tengah halaman */
+    .bg-white, .bg-slate-900, .bg-gradient-to-br {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* 6. Memastikan Grafik ApexCharts Merender Penuh */
+    .apexcharts-canvas {
+        max-width: 100% !important;
+    }
+}
+</style>
 
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
@@ -173,55 +235,51 @@ const periods = ref<any[]>([])
 const selectedPeriod = ref('')
 
 const metrics = reactive({
-    total_employees: 0,
-    total_divisions: 0,
+    company_average_score: 0,
+    top_division: 'Belum Ada',
     total_completed_evals: 0
 })
 
-const isTopEmployeesOpen = ref(true)
 const topEmployees = ref<any[]>([])
 
-const barSeries = ref([{ name: 'Rata-rata Skor', data: [] as number[] }])
+// --- 1. TREN KINERJA (AREA CHART) ---
+const trendSeries = ref([{ name: 'Rata-rata Perusahaan', data: [] as number[] }])
+const trendOptions = ref<ApexOptions>({
+    chart: { type: 'area', fontFamily: 'Inter, sans-serif', toolbar: { show: false }, zoom: { enabled: false } },
+    colors: ['#0f172a'], // Slate-900
+    dataLabels: { enabled: true, formatter: (val) => Number(val).toFixed(1), offsetY: -5, background: { enabled: true, foreColor: '#fff', borderRadius: 4, padding: 4 } },
+    stroke: { curve: 'smooth', width: 3 },
+    xaxis: { categories: [] as string[], tooltip: { enabled: false } },
+    yaxis: { max: 100, 
+    min: 0, 
+    labels: { 
+        style: { colors: '#94a3b8' },
+        formatter: (val) => val.toFixed(0) // <--- TAMBAHKAN BARIS INI
+    }},
+    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0, stops: [0, 90, 100] } }
+})
+
+// --- 2. KOMPARASI DIVISI (BAR CHART) ---
+const barSeries = ref([{ name: 'Skor Divisi', data: [] as number[] }])
 const barOptions = ref<ApexOptions>({
     chart: { type: 'bar', fontFamily: 'Inter, sans-serif', toolbar: { show: false } },
     colors: ['#3b82f6'],
-    plotOptions: {
-        bar: { borderRadius: 8, columnWidth: '35%', dataLabels: { position: 'top' } }
-    },
-    dataLabels: {
-        enabled: true,
-        formatter: (val: number) => val.toFixed(1),
-        offsetY: -20,
-        style: { fontSize: '12px', colors: ["#475569"] }
-    },
-    xaxis: {
-        categories: [] as string[],
-        axisBorder: { show: false },
-        axisTicks: { show: false },
-        labels: { style: { colors: '#64748b', fontWeight: 600 } }
-    },
-    yaxis: {
-        max: 100,
-        tickAmount: 5,
-        labels: { style: { colors: '#94a3b8' } }
-    },
-    grid: { borderColor: '#f1f5f9', strokeDashArray: 4 },
-    fill: {
-        type: 'gradient',
-        gradient: { type: 'vertical', shadeIntensity: 1, opacityFrom: 1, opacityTo: 0.7, stops: [0, 100] }
-    }
+    plotOptions: { bar: { borderRadius: 6, horizontal: false, columnWidth: '40%', dataLabels: { position: 'top' } } },
+    dataLabels: { enabled: true, formatter: (val) => Number(val).toFixed(1), offsetY: -20, style: { colors: ['#475569'] } },
+    xaxis: { categories: [] as string[], labels: { style: { fontWeight: 600, colors: '#64748b' } } },
+    yaxis: { max: 100, labels: { style: { colors: '#94a3b8' } } },
+    grid: { borderColor: '#f1f5f9', strokeDashArray: 4 }
 })
 
+// --- 3. STATUS (DONUT CHART) ---
 const donutSeries = ref<number[]>([])
 const donutOptions = ref<ApexOptions>({
     chart: { type: 'donut', fontFamily: 'Inter, sans-serif' },
     labels: [],
-    colors: ['#10b981', '#f59e0b', '#ef4444', '#64748b'],
-    plotOptions: {
-        pie: { donut: { size: '70%', labels: { show: true, total: { show: true, label: 'Total', fontSize: '14px' } } } }
-    },
+    colors: ['#10b981', '#f59e0b', '#ef4444', '#94a3b8'],
+    plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total', fontSize: '14px', fontWeight: 'bold' } } } } },
     dataLabels: { enabled: false },
-    legend: { position: 'bottom', fontSize: '12px' }
+    legend: { position: 'bottom', fontSize: '13px', fontWeight: 500 }
 })
 
 onMounted(async () => {
@@ -235,36 +293,43 @@ async function fetchPeriods() {
         periods.value = res
         const active = res.find((p: any) => p.is_active)
         if (active) selectedPeriod.value = active.id.toString()
-    } catch (e) {
-        console.error(e)
-    }
+    } catch (e) { console.error(e) }
 }
 
 async function fetchDashboardData() {
     isLoading.value = true
     try {
         const urlParams = new URLSearchParams()
-        if (selectedPeriod.value) {
-            urlParams.append('period_id', selectedPeriod.value)
-        }
+        if (selectedPeriod.value) urlParams.append('period_id', selectedPeriod.value)
         
         const { default: api } = await import('../services/api')
         const { data: response } = await api.get(`/executive/company-performance?${urlParams.toString()}`)
         const rawData = response.data
 
+        // Map Metrics Atas
         if (rawData.metrics) {
-            metrics.total_employees = rawData.metrics.total_employees
-            metrics.total_divisions = rawData.metrics.total_divisions
-            metrics.total_completed_evals = rawData.metrics.total_completed_evals
+            metrics.company_average_score = rawData.metrics.company_average_score || 0
+            metrics.top_division = rawData.metrics.top_division || 'Belum Ada'
+            metrics.total_completed_evals = rawData.metrics.total_completed_evals || 0
         }
 
+        // Map Tren (Area Chart)
+        if (rawData.company_trends) {
+            const periods = rawData.company_trends.map((d: any) => d.period_name)
+            const trendScores = rawData.company_trends.map((d: any) => Number(d.average_score))
+            trendOptions.value = { ...trendOptions.value, xaxis: { ...trendOptions.value.xaxis, categories: periods } }
+            trendSeries.value = [{ name: 'Rata-rata Perusahaan', data: trendScores }]
+        }
+
+        // Map Divisi (Bar Chart)
         if (rawData.division_performance) {
             const categories = rawData.division_performance.map((d: any) => d.division_name)
             const scores = rawData.division_performance.map((d: any) => Number(d.average_score))
             barOptions.value = { ...barOptions.value, xaxis: { ...barOptions.value.xaxis, categories } }
-            barSeries.value = [{ name: 'Rata-rata Skor', data: scores }]
+            barSeries.value = [{ name: 'Skor Divisi', data: scores }]
         }
 
+        // Map Status (Donut Chart)
         if (rawData.status_distribution) {
             const labels = rawData.status_distribution.map((d: any) => d.status.toUpperCase())
             const counts = rawData.status_distribution.map((d: any) => d.count)
@@ -272,6 +337,7 @@ async function fetchDashboardData() {
             donutSeries.value = counts
         }
 
+        // Map Top Karyawan
         if (rawData.top_employees) {
             topEmployees.value = rawData.top_employees
         }
@@ -282,4 +348,10 @@ async function fetchDashboardData() {
         isLoading.value = false
     }
 }
+
+function printDashboard() {
+    window.print()
+}
+
+
 </script>
