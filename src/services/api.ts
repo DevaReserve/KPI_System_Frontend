@@ -368,4 +368,17 @@ export const warningService = {
   }
 }
 
+export const notificationService = {
+  async getMyNotifications(): Promise<any[]> {
+    const response = await api.get<ApiResponse<any[]>>('/notifications')
+    return response.data.data
+  },
+  async markAsRead(id: number): Promise<void> {
+    await api.put(`/notifications/${id}/read`)
+  },
+  async markAllAsRead(): Promise<void> {
+    await api.put('/notifications/read-all')
+  }
+}
+
 export default api

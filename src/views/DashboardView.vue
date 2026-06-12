@@ -9,8 +9,11 @@
       </div>
       <div class="text-right">
         <span class="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 shadow-sm inline-flex items-center gap-2">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-          {{ currentDate }}
+          <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+          <span>{{ currentDate }}</span>
+          <span class="border-l border-gray-300 h-4 mx-1"></span>
+          <svg class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <span class="font-bold text-gray-800 tracking-wider tabular-nums">{{ currentTime }}</span>
         </span>
         <div class="mt-3 flex justify-end">
           <Button
@@ -346,7 +349,7 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 import OverlayPanel from 'primevue/overlaypanel'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   adminService,
@@ -367,6 +370,9 @@ const isLoading = ref(true)
 const currentDate = computed(() => {
   return new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 })
+
+const currentTime = ref(new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }))
+let timerInterval: any = null
 
 // --- STATE ADMIN ---
 const dashboardStats = reactive<any>({})
@@ -450,6 +456,11 @@ const employeeCharts = reactive({
 })
 
 onMounted(async () => {
+  // Start clock
+  timerInterval = setInterval(() => {
+    currentTime.value = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  }, 1000)
+
   isLoading.value = true
   try {
     if (authStore.userRole === 'admin') await loadAdminData()
@@ -457,6 +468,10 @@ onMounted(async () => {
     else if (authStore.userRole === 'employee') await loadEmployeeData()
   } catch (error) { console.error(error) } 
   finally { isLoading.value = false }
+})
+
+onUnmounted(() => {
+  if (timerInterval) clearInterval(timerInterval)
 })
 
 // --- LOAD DATA ADMIN ---

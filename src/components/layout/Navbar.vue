@@ -39,6 +39,56 @@
           <div class="text-xs text-gray-500 uppercase font-semibold tracking-wider">{{ authStore.userRole }}</div>
         </router-link>
       </div>
+
+      <button 
+        @click="toggleNotif" 
+        class="relative p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors focus:outline-none" 
+        title="Notifikasi"
+      >
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+        <span v-if="unreadCount > 0" class="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full">
+            {{ unreadCount > 9 ? '9+' : unreadCount }}
+        </span>
+      </button>
+
+      <OverlayPanel ref="opNotif" class="w-80 shadow-2xl p-0">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+              <h3 class="font-bold text-gray-800">Notifikasi</h3>
+              <button v-if="unreadCount > 0" @click="markAllRead" class="text-xs text-blue-600 hover:underline">Tandai Semua Dibaca</button>
+          </div>
+          <div class="max-h-80 overflow-y-auto">
+              <div v-if="notifications.length === 0" class="p-6 text-center text-gray-500 text-sm">
+                  Belum ada notifikasi
+              </div>
+              <div v-else>
+                  <div 
+                      v-for="n in notifications" :key="n.id" 
+                      @click="markAsRead(n)"
+                      :class="['p-4 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition flex items-start gap-3', !n.is_read ? 'bg-blue-50/50' : '']"
+                  >
+                      <div class="mt-1">
+                          <div v-if="n.type === 'evaluation'" class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                              <i class="pi pi-check-circle"></i>
+                          </div>
+                          <div v-else-if="n.type === 'appeal'" class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
+                              <i class="pi pi-exclamation-circle"></i>
+                          </div>
+                          <div v-else class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center">
+                              <i class="pi pi-bell"></i>
+                          </div>
+                      </div>
+                      <div class="flex-1">
+                          <p class="text-sm font-bold text-gray-800">{{ n.title }}</p>
+                          <p class="text-xs text-gray-600 mt-1 line-clamp-2">{{ n.message }}</p>
+                          <p class="text-[10px] text-gray-400 mt-2">{{ formatDate(n.created_at) }}</p>
+                      </div>
+                      <div v-if="!n.is_read" class="w-2 h-2 rounded-full bg-blue-600 mt-2 flex-shrink-0"></div>
+                  </div>
+              </div>
+          </div>
+      </OverlayPanel>
       
       <button 
         @click="$router.push('/profile')" 
@@ -67,12 +117,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
+import { notificationService } from '../../services/api'
 import { useConfirm } from "primevue/useconfirm"
 import ConfirmDialog from 'primevue/confirmdialog'
 import Toast from 'primevue/toast'
+import OverlayPanel from 'primevue/overlaypanel'
 
 const confirm = useConfirm()
 const router = useRouter()
@@ -83,6 +135,60 @@ const currentRouteName = computed(() => (route.meta.title as string) || 'KPI Sys
 
 // Define emits agar parent tau
 const emit = defineEmits(['toggleSidebar'])
+
+// --- NOTIFICATION LOGIC ---
+const opNotif = ref()
+const notifications = ref<any[]>([])
+let notifInterval: any = null
+
+const unreadCount = computed(() => {
+    return notifications.value.filter(n => !n.is_read).length
+})
+
+async function fetchNotifications() {
+    try {
+        if (authStore.isAuthenticated) {
+            const data = await notificationService.getMyNotifications()
+            notifications.value = data || []
+        }
+    } catch(e) {}
+}
+
+function toggleNotif(event: any) {
+    opNotif.value.toggle(event)
+}
+
+async function markAsRead(notif: any) {
+    if (!notif.is_read) {
+        try {
+            await notificationService.markAsRead(notif.id)
+            notif.is_read = true
+        } catch(e) {}
+    }
+}
+
+async function markAllRead() {
+    try {
+        await notificationService.markAllAsRead()
+        notifications.value.forEach(n => n.is_read = true)
+    } catch(e) {}
+}
+
+function formatDate(dateStr: string) {
+    return new Date(dateStr).toLocaleString('id-ID', {
+        day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+    })
+}
+
+onMounted(() => {
+    fetchNotifications()
+    notifInterval = setInterval(fetchNotifications, 60000) // fetch every 1 minute
+})
+
+onUnmounted(() => {
+    if (notifInterval) clearInterval(notifInterval)
+})
+// --------------------------
 
 function handleLogout() {
   confirm.require({

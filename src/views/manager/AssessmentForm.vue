@@ -385,8 +385,17 @@ function acceptAppeal() {
         group: 'headless',
         header: 'Revisi Nilai?',
         message: 'Form penilaian akan dibuka kembali. Silakan ubah nilai sesuai kesepakatan, lalu klik "Kirim Finalisasi" di bagian bawah untuk memperbarui nilai.',
-        accept: () => {
-            isRevising.value = true
+        accept: async () => {
+            try {
+                isProcessing.value = true
+                await managerService.resolveAppeal(form.evaluation_id, { status: 'approved' })
+                isRevising.value = true
+                toast.add({ severity: 'success', summary: 'Sanggahan Diterima', detail: 'Silakan lakukan revisi nilai', life: 3000 })
+            } catch (error) {
+                toast.add({ severity: 'error', summary: 'Gagal', detail: 'Terjadi kesalahan sistem', life: 3000 })
+            } finally {
+                isProcessing.value = false
+            }
         }
     })
 }
