@@ -100,13 +100,13 @@ const router = createRouter({
             path: '/manager/team',
             name: 'Team',
             component: () => import('../views/manager/TeamView.vue'),
-            meta: { requiresAuth: true, role: 'manager', title: 'Tim Saya' }
+            meta: { requiresAuth: true, role: 'manager', title: '' }
         },
         {
             path: '/manager/kpi-targets',
             name: 'KPITargets',
             component: () => import('../views/manager/KPITargetView.vue'),
-            meta: { requiresAuth: true, role: 'manager', title: 'Target KPI' }
+            meta: { requiresAuth: true, role: 'manager', title: '' }
         },
         {
             path: '/admin/logs',
@@ -118,7 +118,7 @@ const router = createRouter({
             path: '/admin/warnings',
             name: 'WarningManagement',
             component: () => import('../views/admin/WarningManagementView.vue'),
-            meta: { requiresAuth: true, role: 'admin', title: 'Manajemen SP' }
+            meta: { requiresAuth: true, role: 'admin', title: '' }
         },
                 
         // --- MANAGER ROUTES (Menilai Tim) ---

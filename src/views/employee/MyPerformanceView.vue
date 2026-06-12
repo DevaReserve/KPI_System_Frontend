@@ -20,35 +20,43 @@
     <template v-else-if="history.length > 0">
       <!-- Summary Stats Cards -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-          <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Nilai Terakhir</p>
-          <p class="text-3xl font-extrabold mt-1" :class="getScoreColor(latestEval?.total_score)">
-            {{ latestEval?.total_score?.toFixed(1) ?? '-' }}
-          </p>
-          <div class="mt-1 inline-block px-2 py-0.5 rounded text-xs font-bold" :class="getGradeColor(latestEval?.total_score)">
-            Grade {{ getGrade(latestEval?.total_score) }}
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500 relative overflow-hidden transition hover:shadow-md">
+          <div>
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Nilai Terakhir</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1">
+              {{ latestEval?.total_score?.toFixed(1) ?? '-' }}
+            </p>
+            <div class="mt-1 inline-block px-2 py-0.5 rounded text-xs font-bold" :class="getGradeColor(latestEval?.total_score)">
+              Grade {{ getGrade(latestEval?.total_score) }}
+            </div>
           </div>
         </div>
 
-        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-          <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Rata-rata Skor</p>
-          <p class="text-3xl font-extrabold mt-1 text-blue-600">{{ avgScore.toFixed(1) }}</p>
-          <p class="text-xs text-gray-400 mt-1">dari {{ history.length }} periode</p>
-        </div>
-
-        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-          <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Tren Terkini</p>
-          <div class="flex items-center gap-2 mt-1">
-            <span class="text-3xl font-extrabold" :class="trendColor">{{ trendValue }}</span>
-            <i class="text-xl" :class="[trendIcon, trendColor]"></i>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-purple-500 relative overflow-hidden transition hover:shadow-md">
+          <div>
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Rata-rata Skor</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1">{{ avgScore.toFixed(1) }}</p>
+            <p class="text-xs text-gray-400 mt-1">dari {{ history.length }} periode</p>
           </div>
-          <p class="text-xs text-gray-400 mt-1">vs periode sebelumnya</p>
         </div>
 
-        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-          <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Nilai Tertinggi</p>
-          <p class="text-3xl font-extrabold mt-1 text-green-600">{{ bestScore.toFixed(1) }}</p>
-          <p class="text-xs text-gray-400 mt-1">{{ bestPeriod }}</p>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-orange-500 relative overflow-hidden transition hover:shadow-md">
+          <div>
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Tren Terkini</p>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-3xl font-bold text-gray-800">{{ trendValue }}</span>
+              <i class="text-xl" :class="[trendIcon, trendColor]"></i>
+            </div>
+            <p class="text-xs text-gray-400 mt-1">vs periode sebelumnya</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-green-500 relative overflow-hidden transition hover:shadow-md">
+          <div>
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Nilai Tertinggi</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1">{{ bestScore.toFixed(1) }}</p>
+            <p class="text-xs text-gray-400 mt-1">{{ bestPeriod }}</p>
+          </div>
         </div>
       </div>
 
@@ -140,12 +148,12 @@
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600">{{ formatDate(item.submitted_at) }}</td>
                 <td class="px-6 py-4 text-center">
-                  <span class="text-xl font-extrabold" :class="getScoreColor(item.total_score)">
+                  <span class="text-xl font-bold" :class="getScoreColor(item.total_score)">
                     {{ item.total_score.toFixed(2) }}
                   </span>
                 </td>
                 <td class="px-6 py-4 text-center">
-                  <span class="px-2.5 py-1 rounded-full text-xs font-extrabold border" :class="getGradeColor(item.total_score)">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-bold border" :class="getGradeColor(item.total_score)">
                     {{ getGrade(item.total_score) }}
                   </span>
                 </td>

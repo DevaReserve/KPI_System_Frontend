@@ -4,7 +4,7 @@
 
     <!-- Header -->
     <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">🎯 Penetapan Target KPI</h1>
+      <h1 class="text-2xl font-bold text-gray-800">Penetapan Target KPI</h1>
       <p class="text-gray-500 text-sm mt-1">Tetapkan target KPI untuk anggota tim di awal periode evaluasi.</p>
     </div>
 

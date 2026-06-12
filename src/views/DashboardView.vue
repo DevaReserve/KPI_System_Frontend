@@ -56,7 +56,7 @@
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500 relative overflow-hidden transition hover:shadow-md">
           <div>
             <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Total Pegawai Aktif</p>
-            <p class="text-3xl font-extrabold text-gray-800 mt-1">{{ dashboardStats.total_active_employees || adminStats.totalEmployees }}</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1">{{ dashboardStats.total_active_employees || adminStats.totalEmployees }}</p>
           </div>
           <div class="absolute right-4 top-5 p-2.5 bg-blue-50 rounded-full text-blue-500">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
@@ -66,7 +66,7 @@
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-green-500 relative overflow-hidden transition hover:shadow-md">
           <div>
             <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Evaluasi Selesai</p>
-            <p class="text-3xl font-extrabold text-green-600 mt-1">{{ dashboardStats.total_evaluations_done ?? 0 }}</p>
+            <p class="text-3xl font-bold mt-1">{{ dashboardStats.total_evaluations_done ?? 0 }}</p>
             <p class="text-xs text-gray-400 mt-0.5">{{ dashboardStats.active_period?.name || adminStats.activePeriod || 'Tidak Ada Periode' }}</p>
           </div>
           <div class="absolute right-4 top-5 p-2.5 bg-green-50 rounded-full text-green-500">
@@ -77,7 +77,7 @@
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-orange-500 relative overflow-hidden transition hover:shadow-md">
           <div>
             <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Belum Dievaluasi</p>
-            <p class="text-3xl font-extrabold text-orange-600 mt-1">{{ dashboardStats.not_evaluated_count ?? 0 }}</p>
+            <p class="text-3xl font-bold mt-1">{{ dashboardStats.not_evaluated_count ?? 0 }}</p>
             <p class="text-xs text-gray-400 mt-0.5">Pegawai menunggu penilaian</p>
           </div>
           <div class="absolute right-4 top-5 p-2.5 bg-orange-50 rounded-full text-orange-500">
@@ -88,8 +88,8 @@
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-red-500 relative overflow-hidden transition hover:shadow-md cursor-pointer" @click="$router.push('/admin/warnings')">
           <div>
             <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Total SP Diterbitkan</p>
-            <p class="text-3xl font-extrabold text-red-600 mt-1">{{ dashboardStats.total_warnings ?? 0 }}</p>
-            <p class="text-xs text-blue-500 mt-0.5 hover:underline">Kelola SP →</p>
+            <p class="text-3xl font-bold mt-1">{{ dashboardStats.total_warnings ?? 0 }}</p>
+            <p class="text-xs text-gray-400 mt-0.5 hover:underline">Kelola SP →</p>
           </div>
           <div class="absolute right-4 top-5 p-2.5 bg-red-50 rounded-full text-red-500">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
@@ -103,7 +103,7 @@
         <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-xl p-5 shadow-md flex flex-col justify-between">
           <div>
             <p class="text-xs font-bold opacity-80 uppercase tracking-wide">Rata-rata Skor Perusahaan</p>
-            <p class="text-5xl font-extrabold mt-2 tracking-tight">{{ (dashboardStats.company_avg_score ?? 0).toFixed(1) }}</p>
+            <p class="text-5xl font-bold mt-2 tracking-tight">{{ (dashboardStats.company_avg_score ?? 0).toFixed(1) }}</p>
             <div class="mt-2 inline-block px-2 py-0.5 bg-white/20 rounded text-xs font-semibold">Grade {{ getGradeFromScore(dashboardStats.company_avg_score) }}</div>
           </div>
           <p class="text-xs opacity-70 mt-4">Periode: {{ dashboardStats.active_period?.name || 'Semua Periode' }}</p>
@@ -128,7 +128,7 @@
               >
                 <span v-if="g.count > 0" class="absolute -top-5 left-1/2 -translate-x-1/2 text-xs font-bold" :class="getGradeTextColor(g.grade)">{{ g.count }}</span>
               </div>
-              <div class="text-xs font-extrabold mt-1" :class="getGradeTextColor(g.grade)">{{ g.grade }}</div>
+              <div class="text-xs font-bold mt-1" :class="getGradeTextColor(g.grade)">{{ g.grade }}</div>
             </div>
           </div>
           <div v-else class="h-28 flex items-center justify-center text-gray-400 text-sm">Belum ada data grade untuk periode ini.</div>
