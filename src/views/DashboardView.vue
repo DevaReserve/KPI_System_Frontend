@@ -1,40 +1,18 @@
 <template>
   <div>
-    <div class="mb-8 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+    <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div>
         <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
         <p class="text-gray-600 mt-1">
           Selamat datang kembali, <span class="font-semibold text-blue-600">{{ authStore.user?.employee?.name || authStore.user?.username || 'User' }}</span>.
         </p>
       </div>
-      
-      <div class="flex flex-col items-start md:items-end gap-3">
-        <div class="flex flex-col items-start md:items-end gap-2">
-          <span class="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 shadow-sm inline-flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            {{ currentDate }}
-          </span>
-
-          <span 
-            @click="toggleTime"
-            :class="[
-              'bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 shadow-sm inline-flex items-center gap-2 select-none transition-colors duration-200',
-              !isPast5PM ? 'cursor-pointer hover:bg-gray-50 active:bg-gray-100' : 'cursor-default'
-            ]"
-          >
-            <svg v-if="!showTimeLeft || isPast5PM" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <svg v-else class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span class="min-w-[65px] text-center">{{ displayedTime }}</span>
-          </span>
-        </div>
-
-        <div class="flex justify-end mt-1">
+      <div class="text-right">
+        <span class="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 shadow-sm inline-flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+          {{ currentDate }}
+        </span>
+        <div class="mt-3 flex justify-end">
           <Button
             v-if="myWarnings.length > 0"
             icon="pi pi-exclamation-circle"
@@ -49,14 +27,12 @@
                 <span class="pi pi-exclamation-triangle text-red-600 text-xl"></span>
                 <div>
                   <div class="text-sm font-semibold">Status Perhatian</div>
-                  <p class="text-sm mt-1">
-                    Anda memiliki <span class="font-semibold">{{ myWarnings.length }}</span> peringatan/SP yang perlu diperhatikan.
-                  </p>
+                  <p class="text-sm mt-1">Anda memiliki <span class="font-semibold">{{ myWarnings.length }}</span> peringatan/SP yang perlu diperhatikan.</p>
                 </div>
               </div>
               <button
                 type="button"
-                class="mt-4 w-full rounded-lg border border-red-200 bg-red-100 text-sm font-semibold px-3 py-2 hover:bg-red-200 transition-colors"
+                class="mt-4 w-full rounded-lg border border-red-200 bg-red-100 text-sm font-semibold px-3 py-2 hover:bg-red-200"
                 @click="goToWarnings"
               >
                 Lihat Detail SP
@@ -293,7 +269,7 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 import OverlayPanel from 'primevue/overlaypanel'
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   divisionService,
@@ -302,60 +278,17 @@ import {
   myPerformanceService,
   periodService,
   reportService,
-  warningService 
+  warningService // <--- 1. IMPORT INI DITAMBAHKAN
 } from '../services/api'
 import { useAuthStore } from '../stores/auth'
 
 const authStore = useAuthStore()
 const router = useRouter()
 const isLoading = ref(true)
-const now = ref(new Date())
-let clockInterval: number | undefined
-const showTimeLeft = ref(false)
 
 const currentDate = computed(() => {
-  return now.value.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+  return new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 })
-
-const currentTime = computed(() => {
-  return now.value.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-})
-
-// --- LOGIKA WAKTU BARU ---
-const isPast5PM = computed(() => {
-  const target = new Date(now.value)
-  target.setHours(20, 2, 30, 0)
-  return now.value >= target
-})
-
-const timeRemaining = computed(() => {
-  const target = new Date(now.value)
-  target.setHours(20, 2, 30, 0)
-  const diff = target.getTime() - now.value.getTime()
-  
-  if (diff <= 0) return '00:00:00'
-
-  const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0')
-  const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0')
-  const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0')
-
-  return `${h}:${m}:${s}`
-})
-
-const displayedTime = computed(() => {
-  if (isPast5PM.value) {
-    showTimeLeft.value = false // Auto reset jika jam 5 sore terlewati
-    return currentTime.value
-  }
-  return showTimeLeft.value ? `${timeRemaining.value}` : currentTime.value
-})
-
-const toggleTime = () => {
-  if (!isPast5PM.value) {
-    showTimeLeft.value = !showTimeLeft.value
-  }
-} 
-// -------------------------
 
 // --- STATE ADMIN ---
 const adminStats = reactive({ totalEmployees: 0, totalDivisions: 0, activePeriod: '', topPerformers: [] as any[], lowPerformers: [] as any[] })
@@ -414,7 +347,7 @@ const managerCharts = reactive({
 
 // --- STATE EMPLOYEE ---
 const employeeStats = reactive({ hasData: false, score: 0, grade: '', periodName: '' })
-const myWarnings = ref<any[]>([]) 
+const myWarnings = ref<any[]>([]) // <--- 2. STATE BARU UNTUK WARNING
 const warningPopover = ref<any>(null)
 const employeeCharts = reactive({
   series: [] as any[],
@@ -429,10 +362,6 @@ const employeeCharts = reactive({
 })
 
 onMounted(async () => {
-  clockInterval = window.setInterval(() => {
-    now.value = new Date()
-  }, 1000)
-
   isLoading.value = true
   try {
     if (authStore.userRole === 'admin') await loadAdminData()
@@ -440,12 +369,6 @@ onMounted(async () => {
     else if (authStore.userRole === 'employee') await loadEmployeeData()
   } catch (error) { console.error(error) } 
   finally { isLoading.value = false }
-})
-
-onUnmounted(() => {
-  if (clockInterval !== undefined) {
-    window.clearInterval(clockInterval)
-  }
 })
 
 // --- LOAD DATA ADMIN ---
@@ -462,6 +385,7 @@ async function loadAdminData() {
   const active = periods.find((p: any) => p.is_active)
   adminStats.activePeriod = active ? active.name : 'Tidak Ada'
 
+  // Chart 1: Distribusi Pegawai
   const divCounts = divs.map((d: any) => {
     return emps.filter((e: any) => e.division_id === d.id).length
   })
@@ -472,6 +396,7 @@ async function loadAdminData() {
   }
   adminCharts.divisionSeries = [{ name: 'Jumlah Pegawai', data: divCounts }]
 
+  // LOGIC TOP 5 & LOW 5
   if (active) {
     try {
       const reports = await reportService.getEvaluationReport(active.id)
@@ -494,6 +419,7 @@ async function loadAdminData() {
     adminStats.lowPerformers = []
   }
 
+  // Chart 2: Status Aktif
   const activeCount = emps.filter((e: any) => e.is_active).length
   const inactiveCount = emps.length - activeCount
   adminCharts.statusSeries = [activeCount, inactiveCount]
@@ -515,16 +441,19 @@ async function loadManagerData() {
   managerCharts.series = [done, draft, pending]
 }
 
-// --- LOAD DATA EMPLOYEE ---
+// --- LOAD DATA EMPLOYEE (UPDATED) ---
 async function loadEmployeeData() {
   try {
+    // 3. LOAD HISTORY & WARNINGS SECARA PARALEL
     const [history, warnings] = await Promise.all([
         myPerformanceService.getHistory(),
         warningService.getMyWarnings()
     ])
     
+    // Simpan warnings ke state agar muncul di dashboard
     myWarnings.value = warnings
 
+    // Logic History Kinerja
     if (history && history.length > 0) {
       const latest = history[0]
       
