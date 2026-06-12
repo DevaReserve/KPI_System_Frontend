@@ -97,10 +97,28 @@ const router = createRouter({
           meta: { requiresAuth: true, role: 'admin', title: 'Detail Pegawai' }
         },
         {
+            path: '/manager/team',
+            name: 'Team',
+            component: () => import('../views/manager/TeamView.vue'),
+            meta: { requiresAuth: true, role: 'manager', title: 'Tim Saya' }
+        },
+        {
+            path: '/manager/kpi-targets',
+            name: 'KPITargets',
+            component: () => import('../views/manager/KPITargetView.vue'),
+            meta: { requiresAuth: true, role: 'manager', title: 'Target KPI' }
+        },
+        {
             path: '/admin/logs',
             name: 'ActivityLogs',
             component: () => import('../views/admin/ActivityLogView.vue'),
             meta: { requiresAuth: true, role: 'admin', title: 'Audit Trail' }
+        },
+        {
+            path: '/admin/warnings',
+            name: 'WarningManagement',
+            component: () => import('../views/admin/WarningManagementView.vue'),
+            meta: { requiresAuth: true, role: 'admin', title: 'Manajemen SP' }
         },
                 
         // --- MANAGER ROUTES (Menilai Tim) ---

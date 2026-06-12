@@ -64,16 +64,32 @@
               Audit Trail
             </router-link>
           </li>
+          <li>
+            <router-link to="/admin/warnings" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')">
+              <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              Manajemen SP
+            </router-link>
+          </li>
         </template>
 
         <template v-if="authStore.userRole === 'manager' || authStore.userRole === 'admin'">
           <div class="mt-8 mb-2 px-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Manajemen Tim</div>
           <li><router-link to="/manager/team" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')"><svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>Penilaian Kinerja</router-link></li>
+          <li>
+            <router-link to="/manager/kpi-targets" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')">
+              <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+              </svg>
+              Target KPI
+            </router-link>
+          </li>
         </template>
 
         <template v-if="authStore.userRole === 'employee' || authStore.userRole === 'manager'">
           <div class="mt-8 mb-2 px-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Kinerja Saya</div>
-          <li><router-link to="/employee/history" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')"><svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>Raport Kinerja</router-link></li>
+          <li><router-link to="/employee/history" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')"><svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>Raport & Tren Kinerja</router-link></li>
         </template>
 
       </ul>

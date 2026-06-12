@@ -51,53 +51,115 @@
 
     <div v-else-if="authStore.userRole === 'admin'" class="space-y-6">
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500 relative overflow-hidden transition hover:shadow-md">
-          <div>
-            <p class="text-sm font-medium text-gray-500 uppercase">Total Pegawai</p>
-            <p class="text-3xl font-bold text-gray-800 mt-2">{{ adminStats.totalEmployees }}</p>
-          </div>
-          <div class="absolute right-4 top-6 p-3 bg-blue-50 rounded-full text-blue-600">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500 relative overflow-hidden transition hover:shadow-md">
-          <div>
-            <p class="text-sm font-medium text-gray-500 uppercase">Total Divisi</p>
-            <p class="text-3xl font-bold text-gray-800 mt-2">{{ adminStats.totalDivisions }}</p>
-          </div>
-          <div class="absolute right-4 top-6 p-3 bg-purple-50 rounded-full text-purple-600">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500 relative overflow-hidden transition hover:shadow-md">
-          <div>
-            <p class="text-sm font-medium text-gray-500 uppercase">Periode Aktif</p>
-            <p class="text-lg font-bold text-green-600 mt-2 truncate">{{ adminStats.activePeriod || 'Tidak Ada' }}</p>
-          </div>
-          <div class="absolute right-4 top-6 p-3 bg-green-50 rounded-full text-green-600">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-          </div>
-        </div>
-      </div>
-
+      <!-- Row 1: Summary Stats -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-         <button @click="$router.push('/admin/employees')" class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50 text-left transition">
-            <div class="font-bold text-gray-700">+ Pegawai Baru</div>
-            <div class="text-xs text-gray-500">Kelola data karyawan</div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500 relative overflow-hidden transition hover:shadow-md">
+          <div>
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Total Pegawai Aktif</p>
+            <p class="text-3xl font-extrabold text-gray-800 mt-1">{{ dashboardStats.total_active_employees || adminStats.totalEmployees }}</p>
+          </div>
+          <div class="absolute right-4 top-5 p-2.5 bg-blue-50 rounded-full text-blue-500">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-green-500 relative overflow-hidden transition hover:shadow-md">
+          <div>
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Evaluasi Selesai</p>
+            <p class="text-3xl font-extrabold text-green-600 mt-1">{{ dashboardStats.total_evaluations_done ?? 0 }}</p>
+            <p class="text-xs text-gray-400 mt-0.5">{{ dashboardStats.active_period?.name || adminStats.activePeriod || 'Tidak Ada Periode' }}</p>
+          </div>
+          <div class="absolute right-4 top-5 p-2.5 bg-green-50 rounded-full text-green-500">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-orange-500 relative overflow-hidden transition hover:shadow-md">
+          <div>
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Belum Dievaluasi</p>
+            <p class="text-3xl font-extrabold text-orange-600 mt-1">{{ dashboardStats.not_evaluated_count ?? 0 }}</p>
+            <p class="text-xs text-gray-400 mt-0.5">Pegawai menunggu penilaian</p>
+          </div>
+          <div class="absolute right-4 top-5 p-2.5 bg-orange-50 rounded-full text-orange-500">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-red-500 relative overflow-hidden transition hover:shadow-md cursor-pointer" @click="$router.push('/admin/warnings')">
+          <div>
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Total SP Diterbitkan</p>
+            <p class="text-3xl font-extrabold text-red-600 mt-1">{{ dashboardStats.total_warnings ?? 0 }}</p>
+            <p class="text-xs text-blue-500 mt-0.5 hover:underline">Kelola SP →</p>
+          </div>
+          <div class="absolute right-4 top-5 p-2.5 bg-red-50 rounded-full text-red-500">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Rata2 + Quick Actions -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Rata2 Skor Perusahaan -->
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-xl p-5 shadow-md flex flex-col justify-between">
+          <div>
+            <p class="text-xs font-bold opacity-80 uppercase tracking-wide">Rata-rata Skor Perusahaan</p>
+            <p class="text-5xl font-extrabold mt-2 tracking-tight">{{ (dashboardStats.company_avg_score ?? 0).toFixed(1) }}</p>
+            <div class="mt-2 inline-block px-2 py-0.5 bg-white/20 rounded text-xs font-semibold">Grade {{ getGradeFromScore(dashboardStats.company_avg_score) }}</div>
+          </div>
+          <p class="text-xs opacity-70 mt-4">Periode: {{ dashboardStats.active_period?.name || 'Semua Periode' }}</p>
+        </div>
+
+        <!-- Distribusi Grade -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 col-span-2">
+          <h3 class="text-sm font-bold text-gray-700 mb-3">Distribusi Grade Pegawai</h3>
+          <div v-if="dashboardStats.grade_distribution?.length" class="flex items-end gap-2 h-28">
+            <div
+              v-for="g in dashboardStats.grade_distribution"
+              :key="g.grade"
+              class="flex-1 flex flex-col items-center group"
+            >
+              <div class="text-xs font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity" :class="getGradeTextColor(g.grade)">
+                {{ g.count }}
+              </div>
+              <div
+                class="w-full rounded-t-md transition-all duration-500 relative"
+                :class="getGradeBarColor(g.grade)"
+                :style="{ height: maxGradeCount > 0 ? Math.max((g.count / maxGradeCount) * 80, g.count > 0 ? 12 : 0) + 'px' : '0px' }"
+              >
+                <span v-if="g.count > 0" class="absolute -top-5 left-1/2 -translate-x-1/2 text-xs font-bold" :class="getGradeTextColor(g.grade)">{{ g.count }}</span>
+              </div>
+              <div class="text-xs font-extrabold mt-1" :class="getGradeTextColor(g.grade)">{{ g.grade }}</div>
+            </div>
+          </div>
+          <div v-else class="h-28 flex items-center justify-center text-gray-400 text-sm">Belum ada data grade untuk periode ini.</div>
+        </div>
+      </div>
+
+      <!-- Row 3: Quick Actions -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+         <button @click="$router.push('/admin/employees')" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-blue-200 text-left transition-all group">
+            <div class="text-blue-600 mb-2"><i class="pi pi-user-plus text-lg"></i></div>
+            <div class="font-bold text-gray-700 text-sm">+ Pegawai Baru</div>
+            <div class="text-xs text-gray-500 mt-0.5">Kelola data karyawan</div>
          </button>
-         <button @click="$router.push('/admin/periods')" class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50 text-left transition">
-            <div class="font-bold text-gray-700">+ Periode Baru</div>
-            <div class="text-xs text-gray-500">Buka evaluasi baru</div>
+         <button @click="$router.push('/admin/periods')" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-green-200 text-left transition-all group">
+            <div class="text-green-600 mb-2"><i class="pi pi-calendar-plus text-lg"></i></div>
+            <div class="font-bold text-gray-700 text-sm">+ Periode Baru</div>
+            <div class="text-xs text-gray-500 mt-0.5">Buka evaluasi baru</div>
          </button>
-         <button @click="$router.push('/admin/reports')" class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50 text-left transition">
-            <div class="font-bold text-gray-700">Lihat Laporan</div>
-            <div class="text-xs text-gray-500">Rekapitulasi nilai</div>
+         <button @click="$router.push('/admin/reports')" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-purple-200 text-left transition-all group">
+            <div class="text-purple-600 mb-2"><i class="pi pi-file-pdf text-lg"></i></div>
+            <div class="font-bold text-gray-700 text-sm">Lihat Laporan</div>
+            <div class="text-xs text-gray-500 mt-0.5">Rekapitulasi nilai</div>
+         </button>
+         <button @click="$router.push('/admin/warnings')" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-red-200 text-left transition-all group">
+            <div class="text-red-600 mb-2"><i class="pi pi-shield text-lg"></i></div>
+            <div class="font-bold text-gray-700 text-sm">Manajemen SP</div>
+            <div class="text-xs text-gray-500 mt-0.5">Kelola peringatan</div>
          </button>
       </div>
 
+      <!-- Row 4: Charts -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <h3 class="text-lg font-bold text-gray-800 mb-4">Distribusi Pegawai per Divisi</h3>
@@ -107,62 +169,77 @@
           <div v-else class="h-64 flex items-center justify-center text-gray-400">Memuat grafik...</div>
         </div>
 
+        <!-- [BARU] Chart Kinerja per Divisi -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-gray-800">Kinerja per Divisi</h3>
+            <span class="text-xs text-gray-400">{{ dashboardStats.active_period?.name || 'Semua Periode' }}</span>
+          </div>
+          <div v-if="adminCharts.divisionPerfSeries.length > 0 && adminCharts.divisionPerfSeries[0].data.some((v: number) => v > 0)">
+            <apexchart type="bar" height="300" :options="adminCharts.divisionPerfOptions" :series="adminCharts.divisionPerfSeries"></apexchart>
+          </div>
+          <div v-else class="h-64 flex items-center justify-center text-gray-400">
+            <div class="text-center">
+              <i class="pi pi-chart-bar text-3xl mb-2 block"></i>
+              <p class="text-sm">Belum ada data kinerja divisi.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 5: Charts row 2 -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <h3 class="text-lg font-bold text-gray-800 mb-4">Status Akun Pegawai</h3>
           <div v-if="adminCharts.statusSeries.length > 0">
             <apexchart type="pie" height="300" :options="adminCharts.statusOptions" :series="adminCharts.statusSeries"></apexchart>
           </div>
         </div>
-      </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div class="px-6 py-4 border-b border-gray-100 bg-green-50">
-            <h3 class="font-bold text-green-800 flex items-center">
-              <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 3.214L18 21l-5.714-3.214L6.571 21l5.714-6.857L6.571 12l5.714-3.214L10 3h4z" /></svg>
-              Top Performers (>80)
-            </h3>
+        <!-- Top & Low Performers -->
+        <div class="space-y-4">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-5 py-3 border-b border-gray-100 bg-green-50 flex items-center">
+              <i class="pi pi-star-fill text-green-600 mr-2"></i>
+              <h3 class="font-bold text-green-800 text-sm">Top Performers (≥80)</h3>
+            </div>
+            <table class="min-w-full">
+              <tbody class="divide-y divide-gray-100">
+                <tr v-for="(p, idx) in adminStats.topPerformers" :key="idx" class="hover:bg-gray-50 transition">
+                  <td class="px-5 py-2.5 text-sm text-gray-700 font-medium flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold">{{ idx + 1 }}</span>
+                    {{ p.employee_name }}
+                  </td>
+                  <td class="px-5 py-2.5 text-sm text-right font-bold text-green-600">{{ p.total_score.toFixed(2) }}</td>
+                </tr>
+                <tr v-if="adminStats.topPerformers.length === 0">
+                  <td colspan="2" class="px-5 py-6 text-center text-sm text-gray-400">Belum ada pegawai dengan nilai ≥ 80.</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <table class="min-w-full">
-            <tbody class="divide-y divide-gray-100">
-              <tr v-for="(p, idx) in adminStats.topPerformers" :key="idx" class="hover:bg-gray-50 transition">
-                <td class="px-6 py-3 text-sm text-gray-700 font-medium flex items-center gap-2">
-                  <span class="w-6 h-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold">{{ idx + 1 }}</span>
-                  {{ p.employee_name }}
-                </td>
-                <td class="px-6 py-3 text-sm text-right font-bold text-green-600">{{ p.total_score.toFixed(2) }}</td>
-              </tr>
-              <tr v-if="adminStats.topPerformers.length === 0">
-                <td colspan="2" class="px-6 py-8 text-center text-sm text-gray-400">Belum ada pegawai dengan nilai > 80.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div class="px-6 py-4 border-b border-gray-100 bg-red-50">
-            <h3 class="font-bold text-red-800 flex items-center">
-              <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>
-              Perlu Pembinaan (&lt;60)
-            </h3>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-5 py-3 border-b border-gray-100 bg-red-50 flex items-center">
+              <i class="pi pi-arrow-down text-red-600 mr-2"></i>
+              <h3 class="font-bold text-red-800 text-sm">Perlu Pembinaan (&lt;60)</h3>
+            </div>
+            <table class="min-w-full">
+              <tbody class="divide-y divide-gray-100">
+                <tr v-for="(p, idx) in adminStats.lowPerformers" :key="idx" class="hover:bg-gray-50 transition">
+                  <td class="px-5 py-2.5 text-sm text-gray-700 font-medium flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-red-100 text-red-700 flex items-center justify-center text-xs font-bold">{{ idx + 1 }}</span>
+                    {{ p.employee_name }}
+                  </td>
+                  <td class="px-5 py-2.5 text-sm text-right font-bold text-red-600">{{ p.total_score.toFixed(2) }}</td>
+                </tr>
+                <tr v-if="adminStats.lowPerformers.length === 0">
+                  <td colspan="2" class="px-5 py-6 text-center text-sm text-gray-400">Tidak ada pegawai di bawah standar.</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <table class="min-w-full">
-            <tbody class="divide-y divide-gray-100">
-              <tr v-for="(p, idx) in adminStats.lowPerformers" :key="idx" class="hover:bg-gray-50 transition">
-                <td class="px-6 py-3 text-sm text-gray-700 font-medium flex items-center gap-2">
-                  <span class="w-6 h-6 rounded-full bg-red-100 text-red-700 flex items-center justify-center text-xs font-bold">{{ idx + 1 }}</span>
-                  {{ p.employee_name }}
-                </td>
-                <td class="px-6 py-3 text-sm text-right font-bold text-red-600">{{ p.total_score.toFixed(2) }}</td>
-              </tr>
-              <tr v-if="adminStats.lowPerformers.length === 0">
-                <td colspan="2" class="px-6 py-8 text-center text-sm text-gray-400">Tidak ada pegawai di bawah standar.</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
-
       </div>
     </div>
 
@@ -272,13 +349,14 @@ import OverlayPanel from 'primevue/overlaypanel'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
+  adminService,
   divisionService,
   employeeService,
   managerService,
   myPerformanceService,
   periodService,
   reportService,
-  warningService // <--- 1. IMPORT INI DITAMBAHKAN
+  warningService
 } from '../services/api'
 import { useAuthStore } from '../stores/auth'
 
@@ -291,6 +369,7 @@ const currentDate = computed(() => {
 })
 
 // --- STATE ADMIN ---
+const dashboardStats = reactive<any>({})
 const adminStats = reactive({ totalEmployees: 0, totalDivisions: 0, activePeriod: '', topPerformers: [] as any[], lowPerformers: [] as any[] })
 const adminCharts = reactive({
   divisionSeries: [] as any[],
@@ -303,11 +382,7 @@ const adminCharts = reactive({
     title: {
         text: 'Distribusi Pegawai per Divisi',
         align: 'center',
-        style: { fontSize: '16px', fontWeight: 'bold', fontFamily: 'inherit' }
-    },
-    subtitle: {
-        text: 'PT. Cakra Media Data',
-        align: 'center',
+        style: { fontSize: '14px', fontWeight: 'bold', fontFamily: 'inherit' }
     },
     xaxis: { categories: [] as string[] },
     plotOptions: { bar: { borderRadius: 4, horizontal: true, barHeight: '50%' } },
@@ -323,12 +398,25 @@ const adminCharts = reactive({
     title: {
         text: 'Status Keaktifan Akun',
         align: 'center',
-        style: { fontSize: '16px', fontWeight: 'bold', fontFamily: 'inherit' }
+        style: { fontSize: '14px', fontWeight: 'bold', fontFamily: 'inherit' }
     },
     labels: ['Aktif', 'Non-Aktif'],
     colors: ['#10b981', '#ef4444'],
     legend: { position: 'bottom' },
     plotOptions: { pie: { donut: { size: '55%' } } }
+  },
+  // [BARU] Chart kinerja rata-rata per divisi
+  divisionPerfSeries: [] as any[],
+  divisionPerfOptions: {
+    chart: { id: 'div-perf-bar', fontFamily: 'inherit', toolbar: { show: false } },
+    plotOptions: { bar: { borderRadius: 4, horizontal: false, columnWidth: '55%', distributed: true } },
+    dataLabels: { enabled: true, formatter: (val: number) => val > 0 ? val.toFixed(1) : '-', style: { fontSize: '11px', fontWeight: 'bold' } },
+    xaxis: { categories: [] as string[], labels: { style: { fontSize: '11px' } } },
+    yaxis: { max: 100, labels: { formatter: (val: number) => val.toFixed(0) } },
+    colors: ['#6366f1','#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#14b8a6'],
+    legend: { show: false },
+    grid: { borderColor: '#f3f4f6' },
+    tooltip: { y: { formatter: (val: number) => val.toFixed(2) + ' pts' } }
   }
 })
 
@@ -373,12 +461,16 @@ onMounted(async () => {
 
 // --- LOAD DATA ADMIN ---
 async function loadAdminData() {
-  const [emps, divs, periods] = await Promise.all([
+  const [emps, divs, periods, stats] = await Promise.all([
     employeeService.getAll(),
     divisionService.getAll(),
-    periodService.getAll()
+    periodService.getAll(),
+    adminService.getDashboardStats().catch(() => ({}))
   ])
   
+  // Simpan stats ke reactive
+  Object.assign(dashboardStats, stats)
+
   adminStats.totalEmployees = emps.length
   adminStats.totalDivisions = divs.length
   
@@ -395,6 +487,28 @@ async function loadAdminData() {
     xaxis: { categories: divs.map((d: any) => d.name) }
   }
   adminCharts.divisionSeries = [{ name: 'Jumlah Pegawai', data: divCounts }]
+
+  // Chart 2: Status Aktif
+  const activeCount = emps.filter((e: any) => e.is_active).length
+  const inactiveCount = emps.length - activeCount
+  adminCharts.statusSeries = [activeCount, inactiveCount]
+
+  // [BARU] Chart 3: Kinerja per Divisi dari endpoint baru
+  try {
+    const activePeriodId = active?.id
+    const divStats = await adminService.getDivisionStats(activePeriodId)
+    
+    const divNames = divStats.map((d: any) => d.division_name)
+    const divAvgs = divStats.map((d: any) => parseFloat(d.average_score.toFixed(2)))
+    
+    adminCharts.divisionPerfOptions = {
+      ...adminCharts.divisionPerfOptions,
+      xaxis: { ...adminCharts.divisionPerfOptions.xaxis, categories: divNames }
+    }
+    adminCharts.divisionPerfSeries = [{ name: 'Rata-rata Skor', data: divAvgs }]
+  } catch (e) {
+    console.warn('Gagal load division stats', e)
+  }
 
   // LOGIC TOP 5 & LOW 5
   if (active) {
@@ -418,11 +532,6 @@ async function loadAdminData() {
     adminStats.topPerformers = []
     adminStats.lowPerformers = []
   }
-
-  // Chart 2: Status Aktif
-  const activeCount = emps.filter((e: any) => e.is_active).length
-  const inactiveCount = emps.length - activeCount
-  adminCharts.statusSeries = [activeCount, inactiveCount]
 }
 
 // --- LOAD DATA MANAGER ---
@@ -484,5 +593,39 @@ function toggleWarningPopover(event: Event) {
 function getGrade(score: number) {
   if (score >= 86) return 'A'; if (score >= 71) return 'B';
   if (score >= 56) return 'C'; if (score >= 41) return 'D'; return 'E';
+}
+
+// [BARU] Computed untuk distribusi grade
+const maxGradeCount = computed(() => {
+  const grades = dashboardStats.grade_distribution ?? []
+  return grades.reduce((max: number, g: any) => Math.max(max, g.count), 0)
+})
+
+function getGradeFromScore(score: number) {
+  if (!score) return '-'
+  if (score >= 86) return 'A'; if (score >= 71) return 'B';
+  if (score >= 56) return 'C'; if (score >= 41) return 'D'; return 'E';
+}
+
+function getGradeBarColor(grade: string) {
+  switch(grade) {
+    case 'A': return 'bg-green-500'
+    case 'B': return 'bg-blue-500'
+    case 'C': return 'bg-yellow-400'
+    case 'D': return 'bg-orange-500'
+    case 'E': return 'bg-red-500'
+    default: return 'bg-gray-300'
+  }
+}
+
+function getGradeTextColor(grade: string) {
+  switch(grade) {
+    case 'A': return 'text-green-600'
+    case 'B': return 'text-blue-600'
+    case 'C': return 'text-yellow-600'
+    case 'D': return 'text-orange-600'
+    case 'E': return 'text-red-600'
+    default: return 'text-gray-500'
+  }
 }
 </script>

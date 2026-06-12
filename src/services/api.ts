@@ -190,7 +190,7 @@ export const indicatorService = {
 
 export const periodService = {
   async getAll(): Promise<any[]> {
-    const response = await api.get<ApiResponse<any[]>>('/admin/periods')
+    const response = await api.get<ApiResponse<any[]>>('/periods')
     return response.data.data
   },
   async create(data: any): Promise<any> {
@@ -272,6 +272,40 @@ export const reportService = {
   async getEvaluationReport(periodId: number): Promise<any[]> {
     const response = await api.get<ApiResponse<any[]>>(`/admin/reports/evaluations?period_id=${periodId}`)
     return response.data.data
+  },
+
+  // [BARU] Komparasi 2 Periode
+  async getPeriodComparison(periodA: number, periodB: number): Promise<any[]> {
+    const response = await api.get<ApiResponse<any[]>>(`/admin/reports/comparison?period_a=${periodA}&period_b=${periodB}`)
+    return response.data.data
+  }
+}
+
+// [BARU] KPI Target Service (Goal Setting)
+export const kpiTargetService = {
+  // Manager: ambil target yang sudah diset untuk pegawai
+  async getTargets(employeeId: number, periodId: number): Promise<any[]> {
+    const response = await api.get<ApiResponse<any[]>>(`/manager/targets?employee_id=${employeeId}&period_id=${periodId}`)
+    return response.data.data
+  },
+
+  // Manager: set target massal untuk pegawai
+  async setTargetsBulk(data: { employee_id: number; period_id: number; targets: any[] }): Promise<any> {
+    const response = await api.post<ApiResponse<any>>('/manager/targets/bulk', data)
+    return response.data.data
+  },
+
+  // Manager: ambil indikator yang relevan untuk pegawai tertentu
+  async getIndicatorsForTarget(employeeId: number): Promise<any[]> {
+    const response = await api.get<ApiResponse<any[]>>(`/manager/targets/indicators?employee_id=${employeeId}`)
+    return response.data.data
+  },
+
+  // Employee: lihat target sendiri
+  async getMyTargets(periodId?: number): Promise<any[]> {
+    const url = periodId ? `/employee/targets?period_id=${periodId}` : '/employee/targets'
+    const response = await api.get<ApiResponse<any[]>>(url)
+    return response.data.data
   }
 }
 
@@ -285,6 +319,19 @@ export const adminService = {
 
     const response = await api.get<ApiResponse<any[]>>(`/admin/activity-logs?${params.toString()}`)
     return response.data.data
+  },
+
+  // [BARU] Statistik Dashboard Admin
+  async getDashboardStats(): Promise<any> {
+    const response = await api.get<ApiResponse<any>>('/admin/dashboard')
+    return response.data.data
+  },
+
+  // [BARU] Statistik Kinerja Per Divisi
+  async getDivisionStats(periodId?: number): Promise<any[]> {
+    const url = periodId ? `/admin/divisions/stats?period_id=${periodId}` : '/admin/divisions/stats'
+    const response = await api.get<ApiResponse<any[]>>(url)
+    return response.data.data
   }
 }
 
@@ -292,6 +339,15 @@ export const warningService = {
   // Menerbitkan SP
   async create(data: any): Promise<any> {
     const response = await api.post<ApiResponse<any>>('/manager/warnings', data) // Bisa pakai route manager/admin
+    return response.data.data
+  },
+
+  // [BARU] Ambil SEMUA SP (Admin) dengan filter opsional
+  async getAll(level?: string, employeeId?: number): Promise<any[]> {
+    const params = new URLSearchParams()
+    if (level) params.append('level', level)
+    if (employeeId) params.append('employee_id', String(employeeId))
+    const response = await api.get<ApiResponse<any[]>>(`/admin/warnings?${params.toString()}`)
     return response.data.data
   },
 
