@@ -7,9 +7,47 @@
       <p class="text-gray-600 text-sm mt-1">Daftar pegawai di bawah supervisi Anda.</p>
     </div>
 
+    <!-- Filter & Search Bar -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4 flex flex-col md:flex-row gap-3 items-center">
+      <!-- Search -->
+      <div class="relative w-full md:flex-1">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="pi pi-search text-gray-400 text-sm"></i>
+        </div>
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Cari nama anggota tim..."
+          class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+        />
+        <button v-if="searchQuery" @click="searchQuery = ''" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+          <i class="pi pi-times text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Filter Status -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-sm text-gray-500 font-medium whitespace-nowrap">Filter:</span>
+        <button
+          v-for="opt in filterOptions"
+          :key="opt.value"
+          @click="selectedStatus = opt.value"
+          class="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all"
+          :class="selectedStatus === opt.value ? opt.activeClass : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'"
+        >
+          {{ opt.label }}
+        </button>
+      </div>
+
+      <!-- Badge Jumlah -->
+      <div class="text-sm text-gray-500 whitespace-nowrap">
+        Menampilkan <span class="font-bold text-blue-600">{{ filteredTeam.length }}</span> dari {{ teamMembers.length }}
+      </div>
+    </div>
+
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <DataTable 
-        :value="teamMembers" 
+        :value="filteredTeam" 
         :paginator="true" 
         :rows="10" 
         :rowsPerPageOptions="[5, 10, 20]"
@@ -21,7 +59,7 @@
         <template #empty>
             <div class="text-center p-8 text-gray-500">
                 <i class="pi pi-users text-4xl mb-2"></i>
-                <p>Belum ada anggota tim.</p>
+                <p>{{ searchQuery || selectedStatus !== 'semua' ? 'Tidak ada data yang cocok dengan filter.' : 'Belum ada anggota tim.' }}</p>
             </div>
         </template>
 
@@ -54,7 +92,6 @@
                 <span v-else-if="data.evaluation_status === 'draft'" class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">
                     <i class="pi pi-pencil mr-1 text-[10px]"></i> Draft
                 </span>
-                <!-- TAMBAHAN BARU: Status Appealed -->
                 <span v-else-if="data.evaluation_status === 'appealed'" class="px-2 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-orange-100 text-orange-800 border border-orange-300">
                     <i class="pi pi-exclamation-circle mr-1 text-[10px]"></i> Ada Sanggahan
                 </span>
@@ -93,7 +130,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { managerService } from '../../services/api'
 import { useToast } from 'primevue/usetoast'
@@ -117,6 +154,35 @@ interface TeamMember {
 
 const teamMembers = ref<TeamMember[]>([]) 
 const isLoading = ref(true)
+const searchQuery = ref('')
+const selectedStatus = ref('semua')
+
+// Opsi filter status
+const filterOptions = [
+  { value: 'semua', label: 'Semua', activeClass: 'bg-blue-600 text-white border-blue-600' },
+  { value: 'Belum Dibuat', label: 'Belum Dinilai', activeClass: 'bg-gray-600 text-white border-gray-600' },
+  { value: 'draft', label: 'Draft', activeClass: 'bg-yellow-500 text-white border-yellow-500' },
+  { value: 'submitted', label: 'Selesai', activeClass: 'bg-green-600 text-white border-green-600' },
+  { value: 'appealed', label: 'Ada Sanggahan', activeClass: 'bg-orange-500 text-white border-orange-500' },
+]
+
+// Computed: hasil filter + search
+const filteredTeam = computed(() => {
+  let result = teamMembers.value
+
+  // Filter by status
+  if (selectedStatus.value !== 'semua') {
+    result = result.filter(m => m.evaluation_status === selectedStatus.value)
+  }
+
+  // Filter by search query
+  if (searchQuery.value.trim()) {
+    const q = searchQuery.value.toLowerCase().trim()
+    result = result.filter(m => m.employee_name.toLowerCase().includes(q))
+  }
+
+  return result
+})
 
 onMounted(async () => {
   await fetchTeam()
