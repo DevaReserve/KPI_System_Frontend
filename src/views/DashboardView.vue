@@ -54,6 +54,58 @@
 
     <div v-else-if="authStore.userRole === 'admin'" class="space-y-6">
       
+      <!-- MODAL PEGAWAI BELUM DIEVALUASI -->
+      <div v-if="showUnevaluatedModal" class="fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+          <div class="fixed inset-0 bg-gray-900 bg-opacity-50 transition-opacity" @click="showUnevaluatedModal = false"></div>
+          <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+          <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full">
+            <div class="bg-white px-6 pt-6 pb-4">
+              <div class="flex justify-between items-center mb-4 border-b pb-3">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                  <i class="pi pi-users text-orange-500 mr-2"></i> Pegawai Belum Dievaluasi
+                </h3>
+                <button @click="showUnevaluatedModal = false" class="text-gray-400 hover:text-gray-600 focus:outline-none">
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
+              
+              <div class="max-h-[60vh] overflow-y-auto pr-2">
+                <table class="min-w-full divide-y divide-gray-200" v-if="dashboardStats.unevaluated_employees?.length > 0">
+                  <thead class="bg-gray-50 sticky top-0">
+                    <tr>
+                      <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Nama Pegawai</th>
+                      <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Divisi</th>
+                      <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Atasan (Menilai)</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-100">
+                    <tr v-for="(emp, idx) in dashboardStats.unevaluated_employees" :key="idx" class="hover:bg-orange-50">
+                      <td class="px-4 py-3 text-sm text-gray-800 font-medium">{{ emp.employee_name }}</td>
+                      <td class="px-4 py-3 text-sm text-gray-600">{{ emp.division_name || '-' }}</td>
+                      <td class="px-4 py-3 text-sm text-gray-600">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                          {{ emp.manager_name || 'Tidak ada atasan' }}
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div v-else class="text-center py-8 text-gray-500">
+                  Semua pegawai di periode aktif ini sudah dievaluasi.
+                </div>
+              </div>
+              
+              <div class="mt-5 sm:mt-6 flex justify-end">
+                <button @click="showUnevaluatedModal = false" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition">
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Row 1: Summary Stats -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500 relative overflow-hidden transition hover:shadow-md">
@@ -77,11 +129,11 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-orange-500 relative overflow-hidden transition hover:shadow-md">
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-orange-500 relative overflow-hidden transition hover:shadow-md cursor-pointer group" @click="showUnevaluatedModal = true">
           <div>
             <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Belum Dievaluasi</p>
             <p class="text-3xl font-bold mt-1">{{ dashboardStats.not_evaluated_count ?? 0 }}</p>
-            <p class="text-xs text-gray-400 mt-0.5">Pegawai menunggu penilaian</p>
+            <p class="text-xs text-orange-500 font-semibold mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">Lihat Daftar Pegawai →</p>
           </div>
           <div class="absolute right-4 top-5 p-2.5 bg-orange-50 rounded-full text-orange-500">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -298,6 +350,23 @@
     </div>
 
     <div v-else-if="authStore.userRole === 'employee'" class="space-y-6">
+      
+      <!-- [BARU] Notifikasi / Info Target KPI -->
+      <div class="bg-blue-50 border border-blue-200 rounded-2xl p-6 flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-4">
+          <div class="bg-blue-100 p-3 rounded-xl text-blue-600">
+            <i class="pi pi-target text-2xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-blue-900">Target KPI Periode Ini</h3>
+            <p class="text-sm text-blue-700 mt-1">Pastikan Anda mengetahui target pencapaian yang telah ditentukan oleh atasan Anda.</p>
+          </div>
+        </div>
+        <button @click="$router.push('/employee/targets')" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-md transition whitespace-nowrap">
+          Lihat Target Saya
+        </button>
+      </div>
+
       <div v-if="employeeStats.hasData" class="bg-slate-950 text-white rounded-3xl shadow-xl p-8 relative overflow-hidden transition-all hover:shadow-2xl border border-white/10">
         <div class="absolute -right-10 -top-10 h-64 w-64 bg-white/5 rounded-full blur-3xl"></div>
         <div class="absolute left-10 bottom-10 h-32 w-32 bg-white/10 rounded-full blur-2xl"></div>
@@ -367,6 +436,9 @@ const authStore = useAuthStore()
 const router = useRouter()
 const isLoading = ref(true)
 
+// [BARU] Modal State
+const showUnevaluatedModal = ref(false)
+
 const currentDate = computed(() => {
   return new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 })
@@ -424,7 +496,7 @@ const adminCharts = reactive({
     grid: { borderColor: '#f3f4f6' },
     tooltip: { y: { formatter: (val: number) => val.toFixed(2) + ' pts' } }
   }
-})
+})  
 
 // --- STATE MANAGER ---
 const managerStats = reactive({ total: 0, done: 0, pending: 0, percentage: 0 })

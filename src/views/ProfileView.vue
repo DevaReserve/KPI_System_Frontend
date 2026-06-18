@@ -177,34 +177,6 @@
             </div>
         </div>
 
-        <div v-if="activeTab === 'history'">
-             <div v-if="chartSeries.length > 0 && chartSeries[0].data.length > 0">
-                <div class="mb-8 bg-gray-50 p-6 rounded-xl border border-gray-200">
-                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 text-center">Grafik Tren Kinerja</h3>
-                    <apexchart type="area" height="300" :options="chartOptions" :series="chartSeries"></apexchart>
-                </div>
-                <div class="overflow-hidden rounded-lg border border-gray-200 shadow-sm">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Periode</th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Tanggal</th>
-                                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase">Skor</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <tr v-for="h in historyData" :key="h.id" class="hover:bg-gray-50">
-                                <td class="px-6 py-4 text-sm text-gray-900">{{ h.period_name }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ formatDate(h.submitted_at) }}</td>
-                                <td class="px-6 py-4 text-sm text-right font-bold text-blue-600">{{ h.total_score.toFixed(2) }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-             </div>
-             <div v-else class="text-center py-10 text-gray-500">Belum ada riwayat penilaian.</div>
-        </div>
-
         <div v-if="activeTab === 'achievements'">
             <div class="flex justify-between items-center mb-6">
                 <div>
@@ -351,21 +323,17 @@ const toast = useToast()
 
 const tabs = [
   { id: 'biodata', name: 'Biodata' },
-  { id: 'history', name: 'Riwayat Kinerja' },
   { id: 'achievements', name: 'Prestasi' },
   { id: 'security', name: 'Keamanan' }
 ]
 
 const activeTab = ref('biodata')
 const userProfile = ref<any>(null)
-const historyData = ref<any[]>([])
 const achievements = ref<any[]>([])
 const isLoading = ref(false)
 const isProcessing = ref(false)
 
 // State Chart & Password
-const chartSeries = ref<any[]>([])
-const chartOptions = reactive({ chart: { id: 'history-chart', toolbar: { show: false } }, xaxis: { categories: [] as string[] }, stroke: { curve: 'smooth', width: 3 } })
 const passForm = reactive({ old_password: '', new_password: '', confirm_password: '' })
 
 // State Cropper
@@ -391,13 +359,6 @@ onMounted(async () => {
 async function loadData() {
     try { 
         userProfile.value = await authService.getProfile() 
-        const history = await myPerformanceService.getHistory()
-        if (history) {
-            historyData.value = history
-            const sorted = [...history].reverse()
-            chartOptions.xaxis = { categories: sorted.map((h: any) => h.period_name) }
-            chartSeries.value = [{ name: 'Total Skor', data: sorted.map((h: any) => h.total_score) }]
-        }
         try { achievements.value = await employeeService.getAchievements() } catch(e){}
     } catch (e) { console.error(e) }
 }

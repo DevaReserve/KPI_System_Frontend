@@ -513,7 +513,7 @@ function getTrendActiveClass(trend: string) {
 function exportToPDF() {
   if (filteredReport.value.length === 0) return
   try {
-    const doc = new jsPDF('l', 'mm', 'a4')
+    const doc = new jsPDF('p', 'mm', 'a4')
     const pageWidth = doc.internal.pageSize.width
     const pageHeight = doc.internal.pageSize.height
     doc.setFont('helvetica', 'bold')

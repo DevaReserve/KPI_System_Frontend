@@ -457,6 +457,10 @@ function printReport() {
 <style scoped>
 /* CSS KHUSUS UNTUK CETAK/PRINT */
 @media print {
+  @page {
+    size: portrait;
+    margin: 5mm;
+  }
   .no-print, nav, aside, .sidebar { display: none !important; }
   .print-block { display: block !important; }
   .print-flex { display: flex !important; }

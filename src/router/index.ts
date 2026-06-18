@@ -118,7 +118,7 @@ const router = createRouter({
             path: '/admin/warnings',
             name: 'WarningManagement',
             component: () => import('../views/admin/WarningManagementView.vue'),
-            meta: { requiresAuth: true, role: 'admin', title: '' }
+            meta: { requiresAuth: true, role: 'manager', title: '' }
         },
                 
         // --- MANAGER ROUTES (Menilai Tim) ---
@@ -156,6 +156,12 @@ const router = createRouter({
           name: 'MyWarnings',
           component: () => import('../views/employee/MyWarningsView.vue'),
           meta: { requiresAuth: true, role: 'employee', title: 'Riwayat Pelanggaran' }
+        },
+        {
+          path: '/employee/targets',
+          name: 'MyTargets',
+          component: () => import('../views/employee/MyTargetsView.vue'),
+          meta: { requiresAuth: true, role: 'employee', title: 'Target KPI Saya' }
         },
 
         // --- COMMON ROUTES ---

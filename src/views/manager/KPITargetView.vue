@@ -11,7 +11,7 @@
     <!-- Step 1: Pilih Periode & Pegawai -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
       <h2 class="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Langkah 1 — Pilih Periode & Pegawai</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Periode Evaluasi <span class="text-red-500">*</span></label>
           <select v-model="selectedPeriodId" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-400 outline-none">
@@ -22,18 +22,34 @@
           </select>
         </div>
         <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Mode Penetapan</label>
+          <select v-model="targetMode" @change="resetSelection" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-400 outline-none">
+            <option value="individual">Individu (Pilih Pegawai)</option>
+            <option value="division">Massal (Pilih Divisi)</option>
+          </select>
+        </div>
+        <div v-if="targetMode === 'individual'">
           <label class="block text-sm font-medium text-gray-700 mb-1">Pegawai <span class="text-red-500">*</span></label>
           <select v-model="selectedEmployeeId" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-400 outline-none">
             <option value="">-- Pilih Pegawai --</option>
-            <option v-for="m in teamMembers" :key="m.employee_id" :value="m.employee_id">
-              {{ m.employee_name }}
+            <option v-for="m in teamMembers" :key="m.id" :value="m.id">
+              {{ m.name }}
+            </option>
+          </select>
+        </div>
+        <div v-if="targetMode === 'division'">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Divisi <span class="text-red-500">*</span></label>
+          <select v-model="selectedDivisionId" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-400 outline-none">
+            <option value="">-- Pilih Divisi --</option>
+            <option v-for="d in managerDivisions" :key="d.id" :value="d.id">
+              {{ d.name }}
             </option>
           </select>
         </div>
       </div>
       <button
         @click="loadTargetForm"
-        :disabled="!selectedPeriodId || !selectedEmployeeId || isLoadingForm"
+        :disabled="!selectedPeriodId || (targetMode === 'individual' && !selectedEmployeeId) || (targetMode === 'division' && !selectedDivisionId) || isLoadingForm"
         class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold disabled:opacity-50 transition flex items-center gap-2"
       >
         <i class="pi pi-spin pi-spinner" v-if="isLoadingForm"></i>
@@ -129,7 +145,7 @@
     <div v-if="existingTargets.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mt-6">
       <h2 class="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
         <i class="pi pi-history text-blue-500"></i>
-        Target yang Sudah Tersimpan
+        {{ targetMode === 'individual' ? 'Target yang Sudah Tersimpan' : 'Preview Indikator Divisi' }}
       </h2>
       <div class="overflow-x-auto">
         <table class="min-w-full">
@@ -172,11 +188,23 @@ const existingTargets = ref<any[]>([])
 
 const selectedPeriodId = ref<any>('')
 const selectedEmployeeId = ref<any>('')
+const selectedDivisionId = ref<any>('')
+const targetMode = ref<'individual' | 'division'>('individual')
 const targetMap = ref<Record<number, number>>({})
 const notesMap = ref<Record<number, string>>({})
 
 const isLoadingForm = ref(false)
 const isSubmitting = ref(false)
+
+const managerDivisions = computed(() => {
+  const divisions = new Map()
+  teamMembers.value.forEach(m => {
+    if (m.division_id && m.division_name) {
+      divisions.set(m.division_id, m.division_name) 
+    }
+  })
+  return Array.from(divisions.entries()).map(([id, name]) => ({ id, name }))
+})
 
 const allTargetsSet = computed(() =>
   indicators.value.length > 0 &&
@@ -187,7 +215,7 @@ onMounted(async () => {
   try {
     const [perds, team] = await Promise.all([
       periodService.getAll(),
-      managerService.getTeamStatus()
+      managerService.getMyTeam()
     ])
     periods.value = perds
     teamMembers.value = team
@@ -201,24 +229,34 @@ onMounted(async () => {
 })
 
 async function loadTargetForm() {
-  if (!selectedPeriodId.value || !selectedEmployeeId.value) return
+  if (!selectedPeriodId.value) return
+  if (targetMode.value === 'individual' && !selectedEmployeeId.value) return
+  if (targetMode.value === 'division' && !selectedDivisionId.value) return
+
   isLoadingForm.value = true
   try {
-    const [inds, existing] = await Promise.all([
-      kpiTargetService.getIndicatorsForTarget(selectedEmployeeId.value),
-      kpiTargetService.getTargets(selectedEmployeeId.value, selectedPeriodId.value)
-    ])
-
-    indicators.value = inds
-    existingTargets.value = existing
-
-    // Pre-fill form dengan target yang sudah ada
     targetMap.value = {}
     notesMap.value = {}
-    existing.forEach((t: any) => {
-      targetMap.value[t.indicator_id] = t.target_score
-      notesMap.value[t.indicator_id] = t.notes || ''
-    })
+    existingTargets.value = []
+
+    if (targetMode.value === 'individual') {
+      const [inds, existing] = await Promise.all([
+        kpiTargetService.getIndicatorsForTarget(selectedEmployeeId.value),
+        kpiTargetService.getTargets(selectedEmployeeId.value, selectedPeriodId.value)
+      ])
+      indicators.value = inds
+      existingTargets.value = existing
+
+      existing.forEach((t: any) => {
+        targetMap.value[t.indicator_id] = t.target_score
+        notesMap.value[t.indicator_id] = t.notes || ''
+      })
+    } else {
+      // Division mode
+      const inds = await kpiTargetService.getIndicatorsForDivision(selectedDivisionId.value)
+      indicators.value = inds
+      // Biarkan existingTargets kosong, manager buat target baru massal
+    }
   } catch (e: any) {
     toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal memuat indikator', life: 3000 })
   } finally {
@@ -235,6 +273,14 @@ function resetForm() {
   notesMap.value = {}
 }
 
+function resetSelection() {
+  selectedEmployeeId.value = ''
+  selectedDivisionId.value = ''
+  indicators.value = []
+  existingTargets.value = []
+  resetForm()
+}
+
 async function submitTargets() {
   isSubmitting.value = true
   try {
@@ -244,16 +290,23 @@ async function submitTargets() {
       notes: notesMap.value[ind.id] || ''
     }))
 
-    await kpiTargetService.setTargetsBulk({
-      employee_id: Number(selectedEmployeeId.value),
-      period_id: Number(selectedPeriodId.value),
-      targets
-    })
-
-    toast.add({ severity: 'success', summary: 'Berhasil', detail: 'Target KPI berhasil disimpan!', life: 3000 })
-
-    // Refresh existing targets
-    existingTargets.value = await kpiTargetService.getTargets(selectedEmployeeId.value, selectedPeriodId.value)
+    if (targetMode.value === 'individual') {
+      await kpiTargetService.setTargetsBulk({
+        employee_id: Number(selectedEmployeeId.value),
+        period_id: Number(selectedPeriodId.value),
+        targets
+      })
+      toast.add({ severity: 'success', summary: 'Berhasil', detail: 'Target individu berhasil disimpan!', life: 3000 })
+      existingTargets.value = await kpiTargetService.getTargets(selectedEmployeeId.value, selectedPeriodId.value)
+    } else {
+      await kpiTargetService.setTargetsDivision({
+        division_id: Number(selectedDivisionId.value),
+        period_id: Number(selectedPeriodId.value),
+        targets
+      })
+      toast.add({ severity: 'success', summary: 'Berhasil', detail: 'Target massal divisi berhasil disimpan!', life: 3000 })
+      resetSelection()
+    }
   } catch (e: any) {
     toast.add({ severity: 'error', summary: 'Gagal', detail: e.response?.data?.message || 'Gagal menyimpan target', life: 3000 })
   } finally {

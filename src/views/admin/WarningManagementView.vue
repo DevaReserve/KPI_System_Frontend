@@ -236,13 +236,15 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { warningService, employeeService } from '../../services/api'
+import { warningService, employeeService, managerService } from '../../services/api'
+import { useAuthStore } from '../../stores/auth'
 import { useToast } from 'primevue/usetoast'
 import Toast from 'primevue/toast'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Swal from 'sweetalert2'
 
+const authStore = useAuthStore()
 const toast = useToast()
 
 const warnings = ref<any[]>([])
@@ -311,7 +313,11 @@ async function fetchWarnings() {
 
 async function fetchEmployees() {
   try {
-    employees.value = await employeeService.getAll()
+    if (authStore.userRole === 'manager') {
+      employees.value = await managerService.getMyTeam() || []
+    } else {
+      employees.value = await employeeService.getAll() || []
+    }
   } catch (e) {
     console.error('Gagal memuat pegawai', e)
   }

@@ -295,9 +295,21 @@ export const kpiTargetService = {
     return response.data.data
   },
 
+  // Manager: set target massal untuk divisi
+  async setTargetsDivision(data: { division_id: number; period_id: number; targets: any[] }): Promise<any> {
+    const response = await api.post<ApiResponse<any>>('/manager/targets/division', data)
+    return response.data.data
+  },
+
   // Manager: ambil indikator yang relevan untuk pegawai tertentu
   async getIndicatorsForTarget(employeeId: number): Promise<any[]> {
     const response = await api.get<ApiResponse<any[]>>(`/manager/targets/indicators?employee_id=${employeeId}`)
+    return response.data.data
+  },
+
+  // Manager: ambil indikator untuk divisi tertentu
+  async getIndicatorsForDivision(divisionId: number): Promise<any[]> {
+    const response = await api.get<ApiResponse<any[]>>(`/manager/targets/indicators-division?division_id=${divisionId}`)
     return response.data.data
   },
 
@@ -347,7 +359,18 @@ export const warningService = {
     const params = new URLSearchParams()
     if (level) params.append('level', level)
     if (employeeId) params.append('employee_id', String(employeeId))
-    const response = await api.get<ApiResponse<any[]>>(`/admin/warnings?${params.toString()}`)
+    
+    // Cek Role User
+    const userStr = localStorage.getItem('user')
+    let url = `/admin/warnings?${params.toString()}`
+    if (userStr) {
+      const user = JSON.parse(userStr)
+      if (user.role === 'manager') {
+        url = `/manager/warnings?${params.toString()}`
+      }
+    }
+    
+    const response = await api.get<ApiResponse<any[]>>(url)
     return response.data.data
   },
 

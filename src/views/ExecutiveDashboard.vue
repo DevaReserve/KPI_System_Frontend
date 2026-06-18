@@ -11,10 +11,15 @@
       </div>
       <div class="flex flex-col items-start md:items-end gap-3 no-print">
         
-        <span class="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 shadow-sm inline-flex items-center gap-2">
-          <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-          {{ currentDate }}
-        </span>
+        <div class="flex gap-2">
+          <button @click="printDashboard" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow-sm">
+            <i class="pi pi-print"></i> Cetak Laporan
+          </button>
+          <span class="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 shadow-sm inline-flex items-center gap-2">
+            <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            {{ currentDate }}
+          </span>
+        </div>
 
         <div class="bg-white p-1 rounded-lg border border-gray-200 shadow-sm flex items-center">
           <span class="text-xs font-bold text-gray-400 uppercase px-2"><i class="pi pi-calendar mr-1"></i> Periode:</span>
@@ -172,9 +177,9 @@
         display: none !important;
     }
 
-    /* 2. Pengaturan Kertas (Landscape) & Margin */
+    /* 2. Pengaturan Kertas (Portrait) & Margin */
     @page {
-        size: landscape;
+        size: portrait;
         margin: 5mm; 
     }
 
