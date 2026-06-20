@@ -8,9 +8,9 @@
         <div class="relative z-10 animate-fade-in">
           <div class="inline-flex items-center gap-4">
             <img 
-              src="/images/logos/cakra.png" 
+              src="/images/logos/min_cmd.png" 
               alt="Logo PT. Cakra Media Data" 
-              class="w-40 h-5w-40 object-contain drop-shadow-md"
+              class="w-16 h-auto object-contain drop-shadow-md"
             />
           </div>
         </div>
@@ -33,6 +33,15 @@
 
         <div class="w-full max-w-md mx-auto mt-8 lg:mt-0">
           
+          <!-- Logo khusus Mobile (Hanya tampil di layar kecil) -->
+          <div class="mb-8 flex justify-center lg:hidden">
+            <img 
+              src="/images/logos/min_cmd.png" 
+              alt="Logo PT. Cakra Media Data" 
+              class="h-14 w-auto object-contain drop-shadow-sm"
+            />
+          </div>
+
           <div class="mb-12 text-center lg:text-left">
             <h2 class="text-4xl font-bold text-slate-900 tracking-tight">Selamat Datang</h2>
             <p class="mt-3 text-base text-slate-500">Silakan masuk ke akun Anda untuk melanjutkan</p>
