@@ -155,7 +155,8 @@
       <!-- Row 2: Rata2 + Quick Actions -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- Rata2 Skor Perusahaan -->
-        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-xl p-5 shadow-md flex flex-col justify-between">
+        <div :class="['text-white rounded-xl p-5 shadow-md flex flex-col justify-between transition-colors duration-500', 
+        getCompanyScoreColor(dashboardStats.company_avg_score)]">
           <div>
             <p class="text-xs font-bold opacity-80 uppercase tracking-wide">Rata-rata Skor Perusahaan</p>
             <p class="text-5xl font-bold mt-2 tracking-tight">{{ (dashboardStats.company_avg_score ?? 0).toFixed(1) }}</p>
@@ -545,6 +546,20 @@ onMounted(async () => {
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval)
 })
+
+function getCompanyScoreColor(score: number) {
+  // Jika nilai kosong atau 0
+  if (!score) return 'bg-gradient-to-br from-gray-400 to-gray-600'
+  
+  // Nilai Rendah (merah) - misal di bawah 60
+  if (score < 60) return 'bg-gradient-to-br from-red-600 to-rose-700'
+  
+  // Nilai Rata-rata/Cukup (oranye) - misal 60 sampai 75
+  if (score < 76) return 'bg-gradient-to-br from-orange-500 to-amber-600'
+  
+  // Nilai Bagus (biru) - 76 ke atas
+  return 'bg-gradient-to-br from-blue-600 to-indigo-700'
+}
 
 // --- LOAD DATA ADMIN ---
 async function loadAdminData() {

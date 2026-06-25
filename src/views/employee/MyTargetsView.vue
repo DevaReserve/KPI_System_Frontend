@@ -1,83 +1,103 @@
 <template>
-  <div class="p-6 max-w-5xl mx-auto">
-    <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+  <div>
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
       <div>
         <h1 class="text-2xl font-bold text-gray-800">Target KPI Saya</h1>
-        <p class="text-gray-500 text-sm mt-1">Daftar target yang harus dicapai pada periode evaluasi.</p>
+        <p class="text-gray-500 text-sm">Daftar target yang harus dicapai pada periode evaluasi.</p>
       </div>
 
-      <div class="w-full md:w-64">
-        <label class="block text-xs font-medium text-gray-500 mb-1">Pilih Periode</label>
-        <select v-model="selectedPeriodId" @change="loadMyTargets" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-400 outline-none">
-          <option v-for="p in periods" :key="p.id" :value="p.id">
-            {{ p.name }} {{ p.is_active ? '(Aktif)' : '' }}
-          </option>
-          <option value="" v-if="periods.length === 0">Tidak ada periode</option>
-        </select>
+      <div class="flex gap-3 w-full sm:w-auto items-center">
+        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">
+            Pilih Periode
+        </label>
+        <div class="relative w-full sm:w-64">
+            <select 
+                v-model="selectedPeriodId" 
+                @change="loadMyTargets" 
+                class="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-lg leading-5 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out appearance-none"
+            >
+                <option v-for="p in periods" :key="p.id" :value="p.id">
+                    {{ p.name }} {{ p.is_active ? '(Aktif)' : '' }}
+                </option>
+                <option value="" v-if="periods.length === 0">Tidak ada periode</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                <i class="pi pi-chevron-down text-xs"></i>
+            </div>
+        </div>
       </div>
     </div>
 
-    <div v-if="isLoading" class="text-center py-20">
-      <i class="pi pi-spin pi-spinner text-4xl text-blue-600"></i>
-      <p class="text-sm text-gray-500 mt-3">Memuat target KPI...</p>
-    </div>
-
-    <div v-else-if="targets.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <div class="px-5 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-        <h3 class="font-bold text-gray-700">Daftar Indikator & Target</h3>
-        <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">
-          Total: {{ targets.length }} Indikator
-        </span>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-white">
-            <tr>
-              <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">No</th>
-              <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Indikator</th>
-              <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Kategori</th>
-              <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Bobot</th>
-              <th class="px-6 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider w-32">Target Skor</th>
-              <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Catatan Tambahan</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-100">
-            <tr v-for="(t, idx) in targets" :key="t.id" class="hover:bg-gray-50 transition-colors">
-              <td class="px-6 py-4 text-sm text-gray-500">{{ idx + 1 }}</td>
-              <td class="px-6 py-4">
-                <div class="font-bold text-gray-800">{{ t.indicator_name || 'Indikator Dihapus' }}</div>
-              </td>
-              <td class="px-6 py-4">
-                <span :class="t.indicator_type === 'umum' ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'" class="px-2 py-1 rounded text-xs font-semibold uppercase">
-                  {{ t.indicator_type || '-' }}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <DataTable 
+        :value="targets" 
+        :loading="isLoading"
+        stripedRows 
+        responsiveLayout="scroll"
+        class="p-datatable-sm w-full"
+      >
+        <template #header>
+            <div class="flex justify-between items-center px-4 py-2 border-b border-gray-100 bg-gray-50">
+                <span class="text-gray-700 font-bold">Daftar Indikator & Target</span>
+                <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">
+                    {{ targets.length }} Indikator
                 </span>
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-600 font-medium">
-                {{ t.indicator_weight ? t.indicator_weight + '%' : '-' }}
-              </td>
-              <td class="px-6 py-4 text-center">
-                <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-50 border border-blue-100 text-blue-700 font-bold text-lg">
-                  {{ t.target_score }}
-                </div>
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-500 italic">
-                {{ t.notes || '-' }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+            </div>
+        </template>
 
-    <div v-else class="text-center py-20 bg-white rounded-xl shadow-sm border border-gray-100">
-      <div class="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i class="pi pi-target text-3xl text-gray-400"></i>
-      </div>
-      <h3 class="text-lg font-bold text-gray-800 mb-2">Belum Ada Target KPI</h3>
-      <p class="text-gray-500 text-sm max-w-md mx-auto">
-        Target Anda untuk periode ini belum ditetapkan oleh atasan. Anda akan menerima target jika atasan telah menyimpannya.
-      </p>
+        <template #empty>
+            <div class="text-center p-12 text-gray-500">
+                <div class="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="pi pi-target text-4xl text-gray-400"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800 mb-1">Belum Ada Target KPI</h3>
+                <p class="text-sm max-w-xs mx-auto">Target Anda untuk periode ini belum ditetapkan oleh atasan.</p>
+            </div>
+        </template>
+
+        <Column header="No" style="width: 5%">
+          <template #body="slotProps">
+            <span class="text-gray-500">{{ slotProps.index + 1 }}</span>
+          </template>
+        </Column>
+
+        <Column field="indicator_name" header="Indikator" style="width: 35%">
+          <template #body="{ data }">
+            <span class="font-bold text-gray-900">{{ data.indicator_name || 'Indikator Dihapus' }}</span>
+          </template>
+        </Column>
+
+        <Column field="indicator_type" header="Kategori" style="width: 15%">
+          <template #body="{ data }">
+            <span 
+                :class="data.indicator_type === 'umum' ? 'bg-purple-50 text-purple-700 border-purple-100' : 'bg-orange-50 text-orange-700 border-orange-100'" 
+                class="px-2.5 py-1 rounded-md text-xs font-bold border uppercase tracking-wider"
+            >
+              {{ data.indicator_type || '-' }}
+            </span>
+          </template>
+        </Column>
+
+        <Column field="weight" header="Bobot" style="width: 15%">
+          <template #body="{ data }">
+            <span class="font-medium text-gray-700">{{ data.weight ? data.weight + '%' : '-' }}</span>
+          </template>
+        </Column>
+
+        <Column field="target_score" header="Target Skor" headerClass="justify-center" bodyClass="text-center" style="width: 10%">
+          <template #body="{ data }">
+            <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 border border-blue-100 text-blue-700 font-bold shadow-sm">
+                {{ data.target_score }}
+            </div>
+          </template>
+        </Column>
+
+        <Column field="notes" header="Catatan Tambahan" style="width: 20%">
+          <template #body="{ data }">
+            <span class="text-gray-500 text-sm italic">{{ data.notes || '-' }}</span>
+          </template>
+        </Column>
+      </DataTable>
     </div>
   </div>
 </template>
@@ -85,9 +105,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { periodService, kpiTargetService } from '../../services/api'
-import { useAuthStore } from '../../stores/auth'
 
-const authStore = useAuthStore()
+// PrimeVue Imports (Pastikan sudah terinstall)
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+
 const periods = ref<any[]>([])
 const selectedPeriodId = ref<number | ''>('')
 const targets = ref<any[]>([])
@@ -128,3 +150,21 @@ async function loadMyTargets() {
   }
 }
 </script>
+
+<style scoped>
+/* Menyesuaikan gaya internal PrimeVue agar lebih minimalis seperti PositionView */
+:deep(.p-datatable .p-datatable-thead > tr > th) {
+    background-color: #fcfcfc;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+:deep(.p-datatable .p-datatable-tbody > tr > td) {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f8fafc;
+}
+</style>
