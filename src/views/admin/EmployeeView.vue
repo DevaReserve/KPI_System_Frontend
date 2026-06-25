@@ -191,7 +191,7 @@
                         <div class="sm:col-span-2 mt-2 p-4 bg-blue-50 border border-blue-100 rounded-lg">
                             <label class="block text-sm font-bold text-blue-800 mb-2"><i class="pi pi-sitemap mr-1"></i> Dinilai Oleh (Atasan Langsung)</label>
                             <select v-model="form.direct_supervisor_id" class="w-full rounded-lg border border-blue-200 px-3 py-2 bg-white focus:ring-blue-500 outline-none">
-                                <option :value="null">-- Tidak Ada / Saya adalah CEO --</option>
+                                <option :value="null">Tidak Ada</option>
                                 <option v-for="boss in potentialSupervisors" :key="boss.id" :value="boss.id">{{ boss.name }} ({{ boss.position }})</option>
                             </select>
                         </div>
