@@ -27,7 +27,9 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-      window.location.href = '/login'
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login'
+      }
     }
     
     // --- TAMBAHAN BARU: Tangkap Error 403 (Akun Di-DO / Diblokir) ---
