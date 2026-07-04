@@ -262,6 +262,67 @@
             </div>
         </div>
 
+        <div v-if="activeTab === 'warnings'">
+          <!-- Header -->
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-red-600">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                </span>
+                Riwayat Surat Peringatan
+              </h3>
+              <p class="text-sm text-gray-500 mt-1 ml-10">Anda memiliki <span class="font-semibold text-red-600">{{ myWarnings.length }}</span> surat peringatan.</p>
+            </div>
+          </div>
+
+          <!-- SP Cards -->
+          <div class="space-y-3"
+            @click="$router.push('/employee/warnings')">
+            <div 
+              v-for="(w, idx) in myWarnings" 
+              :key="w.id"
+              class="group relative bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-red-200 transition-all duration-200 overflow-hidden"
+            >
+              <!-- Colored left bar -->
+              <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl"
+                :class="w.level === 'SP3' ? 'bg-red-600' : w.level === 'SP2' ? 'bg-orange-500' : 'bg-yellow-400'"
+              ></div>
+
+              <div class="flex items-center gap-4 p-5 pl-6">
+                <!-- Number badge -->
+                <div class="flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm shadow-inner"
+                  :class="w.level === 'SP3' ? 'bg-red-100 text-red-700' : w.level === 'SP2' ? 'bg-orange-100 text-orange-700' : 'bg-yellow-100 text-yellow-800'"
+                >
+                  {{ idx + 1 }}
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0">
+                  <div class="flex flex-wrap items-center gap-2 mb-1">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider"
+                      :class="w.level === 'SP3' ? 'bg-red-600 text-white' : w.level === 'SP2' ? 'bg-orange-500 text-white' : 'bg-yellow-400 text-yellow-900'"
+                    >{{ w.level || 'SP' }}</span>
+                    <span class="text-xs text-gray-400 flex items-center gap-1">
+                      <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                      {{ formatDate(w.issued_date || w.created_at) }}
+                    </span>
+                    <span v-if="w.period_name" class="text-xs text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full">{{ w.period_name }}</span>
+                  </div>
+                  <p class="text-sm font-medium text-gray-800 truncate">{{ w.reason || w.description || 'Pelanggaran Kinerja' }}</p>
+                </div>
+
+                <!-- Arrow icon -->
+                <button class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    @click="$router.push('/employee/warnings')">
+                    <svg class="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
         <div v-if="activeTab === 'security'">
              <div class="max-w-xl mx-auto py-4">
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
@@ -295,8 +356,8 @@
 <script setup lang="ts">
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { onMounted, reactive, ref } from 'vue'
-import { authService, employeeService, myPerformanceService } from '../services/api'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { authService, employeeService, myPerformanceService, warningService } from '../services/api'
 import { useAuthStore } from '../stores/auth'
 
 // --- CROPPER ---
@@ -321,15 +382,22 @@ const vClickOutside = {
 const authStore = useAuthStore()
 const toast = useToast()
 
-const tabs = [
-  { id: 'biodata', name: 'Biodata' },
-  { id: 'achievements', name: 'Prestasi' },
-  { id: 'security', name: 'Keamanan' }
-]
+const tabs = computed(() => {
+  const baseTabs = [
+    { id: 'biodata', name: 'Biodata' },
+    { id: 'achievements', name: 'Prestasi' },
+    { id: 'security', name: 'Keamanan' }
+  ]
+  if (myWarnings.value.length > 0) {
+    baseTabs.splice(2, 0, { id: 'warnings', name: 'Riwayat SP' })
+  }
+  return baseTabs
+})
 
 const activeTab = ref('biodata')
 const userProfile = ref<any>(null)
 const achievements = ref<any[]>([])
+const myWarnings = ref<any[]>([])
 const isLoading = ref(false)
 const isProcessing = ref(false)
 
@@ -360,6 +428,7 @@ async function loadData() {
     try { 
         userProfile.value = await authService.getProfile() 
         try { achievements.value = await employeeService.getAchievements() } catch(e){}
+        try { myWarnings.value = await warningService.getMyWarnings() } catch(e){}
     } catch (e) { console.error(e) }
 }
 

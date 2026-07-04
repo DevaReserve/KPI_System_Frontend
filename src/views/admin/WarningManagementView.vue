@@ -46,28 +46,6 @@
           class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none"
         />
       </div>
-
-      <!-- Filter Level -->
-      <select v-model="selectedLevel" class="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-red-400 outline-none">
-        <option value="">Semua Level</option>
-        <option value="SP1">SP1</option>
-        <option value="SP2">SP2</option>
-        <option value="SP3">SP3</option>
-      </select>
-
-      <!-- Reset -->
-      <button
-        v-if="searchQuery || selectedLevel"
-        @click="resetFilter"
-        class="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg px-3 py-2 transition"
-      >
-        <i class="pi pi-filter-slash"></i>
-        Reset
-      </button>
-
-      <div class="text-sm text-gray-500 whitespace-nowrap self-center">
-        <span class="font-bold text-red-600">{{ filteredWarnings.length }}</span> data
-      </div>
     </div>
 
     <!-- Table -->
