@@ -15,34 +15,6 @@
           <svg class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           <span class="font-bold text-gray-800 tracking-wider tabular-nums">{{ currentTime }}</span>
         </span>
-        <div class="mt-3 flex justify-end">
-          <Button
-            v-if="myWarnings.length > 0"
-            icon="pi pi-exclamation-circle"
-            severity="danger"
-            class="p-button-rounded p-button-text p-button-lg"
-            @click="toggleWarningPopover"
-            aria-label="Tampilkan status perhatian"
-          />
-          <OverlayPanel ref="warningPopover" :dismissable="true" showCloseIcon>
-            <div class="max-w-xs rounded-xl border border-red-200 bg-red-50 p-4 shadow-sm">
-              <div class="flex items-start gap-3">
-                <span class="pi pi-exclamation-triangle text-red-600 text-xl"></span>
-                <div>
-                  <div class="text-sm font-semibold">Status Perhatian</div>
-                  <p class="text-sm mt-1">Anda memiliki <span class="font-semibold">{{ myWarnings.length }}</span> peringatan/SP yang perlu diperhatikan.</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                class="mt-4 w-full rounded-lg border border-red-200 bg-red-100 text-sm font-semibold px-3 py-2 hover:bg-red-200"
-                @click="goToWarnings"
-              >
-                Lihat Detail SP
-              </button>
-            </div>
-          </OverlayPanel>
-        </div>
       </div>
     </div>
 
@@ -638,7 +610,13 @@ async function loadAdminData() {
 
 // --- LOAD DATA MANAGER ---
 async function loadManagerData() {
-  const team = await managerService.getTeamStatus()
+  const [team, warnings] = await Promise.all([
+    managerService.getTeamStatus(),
+    warningService.getMyWarnings().catch(() => [])
+  ])
+  
+  myWarnings.value = warnings || []
+
   const total = team.length
   const done = team.filter((t: any) => t.evaluation_status === 'submitted').length
   const draft = team.filter((t: any) => t.evaluation_status === 'draft').length
