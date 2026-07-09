@@ -423,7 +423,7 @@ function getEvidenceFullUrl(url: string) {
     if (!url) return '#'
     if (url.startsWith('http')) return url
     
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
+    const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').trimEnd('/' as any)
     return `${baseUrl.replace(/\/api$/, '')}${url}`
 }
 
