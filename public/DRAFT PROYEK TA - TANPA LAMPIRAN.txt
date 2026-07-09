@@ -1,0 +1,3515 @@
+PROYEK
+TUGAS AKHIR
+
+SISTEM INFORMASI STRATEGIS BUSINESS DEVELOPMENT
+UNTUK ANALISIS INTELIJEN PASAR
+DAN OPTIMALISASI OPERASIONAL TENDER
+
+OLEH :
+I Komang Syama Sundara / 2315323019
+Elnanda Raya Alfatsyach / 2315323059
+
+PROGRAM STUDI MANAJEMEN INFORMATIKA
+JURUSAN TEKNOLOGI INFORMASI
+POLITEKNIK NEGERI BALI
+2026
+
+LEMBAR PENGESAHAN
+PROYEK TUGAS AKHIR
+SISTEM INFORMASI STRATEGIS BUSINESS DEVELOPMENT
+UNTUK ANALISIS INTELIJEN PASAR
+DAN OPTIMALISASI OPERASIONAL TENDER
+Proyek Tugas Akhir ini Diajukan untuk Menyelesaikan
+Program Pendidikan Diploma DIII di
+Program Studi DIII Manajemen Informatika
+Jurusan Teknologi Informasi - Politeknik Negeri Bali
+No
+1
+2
+
+NIM
+2315323019
+2315323059
+
+Oleh :
+Nama Mahasiswa
+I Komang Syama Sundara
+Elnanda Raya Alfatsyach
+
+Tanda Tangan
+
+Bukit Jimbaran, 29 Mei 2026
+Disetujui Oleh :
+Manager Proyek
+
+(Gaga Fridayla)
+NIP/NIK. 2009072022003
+Pembimbing 1
+
+Pembimbing 2
+
+(I Made Riyan Adi Nugroho, S.SI, M.T)
+NIP. 199004042019031017
+
+(Gusti Nyoman Ayu Sukerti, S.S., M.Hum)
+NIP. 198507062015042003
+
+Penguji 1
+
+Penguji 2
+
+(I Komang Wiratama, S.Kom.,M.Cs)
+NIP. 99011052019031009
+
+(I Made Agus Oka Gunawan, S.Kom., M.Kom.)
+NIP. 199308172025061008
+
+ii
+
+LEMBAR PERNYATAAN PERSETUJUAN PUBLIKASI
+LAPORAN PROYEK TUGAS AKHIR
+UNTUK KEPENTINGAN AKADEMIS
+
+Saya yang bertanda tangan di bawah ini :
+Nama
+
+: I Komang Syama Sundara
+
+NIM
+
+: 2315323019
+
+Program Studi
+
+: Manajemen Informatika
+
+Jurusan
+
+: Teknologi Informasi
+
+Jenis Karya
+
+: ProyekTugas Akhir
+
+demi pengembangan ilmu pengetahuan, menyetujui untuk memberikan kepada
+Politeknik Negeri Bali Hak Bebas Royalti Nonekslusif (Non-exclusive Royalty- Free
+Right) atas proyek tugas akhir saya yang berjudul: Sistem Informasi Strategis
+Business
+
+Development Untuk
+
+Analisis
+
+Intelijen
+
+Pasar dan Optimalisasi
+
+Operasional Tender beserta perangkat yang ada (jika diperlukan). Dengan Hak Bebas
+Royalti Nonekslusif ini Politeknik Negeri bali berhak menyimpan, mengalihmedia atau
+mengalihformatkan, mengelola dalam bentuk pangkalan data (database), merawat, dan
+memublikasikan tugas akhir saya selama tetap mencantumkan nama saya sebagai
+penulis/pencipta dan sebagai pemilik Hak Cipta.
+Demikian pernyataan ini saya buat dengan sebenarnya.
+Bukit Jimbaran, 29 Mei 2026
+Yang menyatakan
+
+Materai
+10.000
+
+(I Komang Syama Sundara)
+
+iii
+
+LEMBAR PERNYATAAN PERSETUJUAN PUBLIKASI
+LAPORAN PROYEK TUGAS AKHIR
+UNTUK KEPENTINGAN AKADEMIS
+
+Saya yang bertanda tangan di bawah ini :
+Nama
+
+: Elnanda Raya Alfatsyach
+
+NIM
+
+: 2315323059
+
+Program Studi
+
+: Manajemen Informatika
+
+Jurusan
+
+: Teknologi Informasi
+
+Jenis Karya
+
+: ProyekTugas Akhir
+
+demi pengembangan ilmu pengetahuan, menyetujui untuk memberikan kepada
+Politeknik Negeri Bali Hak Bebas Royalti Nonekslusif (Non-exclusive Royalty- Free
+Right) atas proyek tugas akhir saya yang berjudul: Sistem Informasi Strategis
+Business
+
+Development Untuk
+
+Analisis
+
+Intelijen
+
+Pasar dan Optimalisasi
+
+Operasional Tender beserta perangkat yang ada (jika diperlukan). Dengan Hak Bebas
+Royalti Nonekslusif ini Politeknik Negeri bali berhak menyimpan, mengalihmedia atau
+mengalihformatkan, mengelola dalam bentuk pangkalan data (database), merawat, dan
+memublikasikan tugas akhir saya selama tetap mencantumkan nama saya sebagai
+penulis/pencipta dan sebagai pemilik Hak Cipta.
+Demikian pernyataan ini saya buat dengan sebenarnya.
+Bukit Jimbaran, 29 Mei 2026
+Yang menyatakan
+
+Materai
+10.000
+
+(Elnanda Raya Alfatsyach)
+
+iv
+
+FORM PERNYATAAN BEBAS PLAGIARISME
+
+Saya yang bertandatangan dibawah ini:
+Nama / NIM
+
+: I Komang Syama Sundara / 2315323019
+: Elnanda Raya Alfatsyach / 2315323059
+
+Program Studi
+
+: Manajemen Informatika
+
+Jurusan
+
+: Teknologi Informasi
+
+Menyatakan dengan sesungguhnya bahwa Laporan Proyek Tugas Akhir berjudul Sistem
+Informasi Strategis Business Development Untuk Analisis Intelijen Pasar dan
+Optimalisasi Operasional Tender bebas dari plagiarisme dan bukan hasil karya orang
+lain. Apabila di kemudian hari ditemukan bahwa proyek tugas akhir terdapat indikasi
+plagiarisme, saya bersedia menerima sanksi akademik berupa pencabutan Tugas
+Akhir dan gelar yang saya peroleh dari Tugas Akhir tersebut.
+Bukit Jimbaran, 29 Mei 2026
+Yang membuat pernyataan,
+TTD dan Materai
+
+TTD
+
+I Komang Syama Sundara
+
+Elnanda Raya Alfatsyach
+
+2315323019
+
+2315323059
+
+v
+
+KATA PENGANTAR
+Puji dan syukur penulis panjatkan kepada Tuhan Yang Maha Esa karena atas
+izin, rahmat, dan karunia-Nya, penulis dapat menyelesaikan penyusunan Laporan
+Proyek Tugas Akhir yang berjudul “Sistem Informasi Strategis Business Development
+untuk Analisis Intelijen Pasar dan Optimalisasi Operasional Tender”.
+Adapun tujuan penyusunan laporan ini adalah sebagai salah satu syarat untuk
+menyelesaikan Program Pendidikan Diploma III pada Program Studi Manajemen
+Informatika, Jurusan Teknologi Informasi, Politeknik Negeri Bali.
+Dalam penyusunan laporan ini, penulis banyak memperoleh bimbingan,
+dukungan, dan masukan dari beberapa pihak, baik secara langsung maupun tidak
+langsung. Oleh karena itu, dalam kesempatan ini penulis mengucapkan terima kasih
+kepada:
+1. Bapak I Nyoman Abdi, S.E., M.eCom., selaku Direktur Politeknik Negeri Bali.
+2. Bapak Prof. Dr. I Nyoman Gede Arya Astawa, S.T., M.Kom., selaku Ketua
+Jurusan Teknologi Informasi di Politeknik Negeri Bali.
+3. Bapak I Made Riyan Adi Nugroho, S.Si., M.T., selaku Koordinator Program
+Studi Manajemen Informatika sekaligus Dosen Pembimbing Pertama yang telah
+memberikan banyak arahan, waktu, dan ilmu berharga kepada penulis.
+4. Ibu Gusti Nyoman Ayu Sukerti, S.S., M.Hum., selaku Dosen Pembimbing
+Kedua yang telah memberikan koreksi, bimbingan, dan masukan demi
+kesempurnaan laporan ini.
+5. Bapak Komang Putra Astawa, selaku Direktur PT Sanata System yang telah
+memberikan izin dan kesempatan kepada penulis untuk melaksanakan proyek di
+lingkungan perusahaan.
+6. Bapak Gaga Fridayla, selaku Manajer Divisi/Pembimbing Lapangan di PT
+Sanata System yang senantiasa membimbing dan memvalidasi kebutuhan bisnis
+selama pengerjaan proyek.
+7. Seluruh Staf dan Karyawan PT Sanata System, yang telah banyak membantu,
+memberikan arahan teknis, serta berbagi pengalaman berharga selama penulis
+melaksanakan praktis di lapangan.
+
+vi
+
+8. Keluarga serta teman-teman yang senantiasa memberikan doa, dukungan moral,
+dan motivasi selama proses pengerjaan proyek dan penyusunan laporan ini.
+Penulis menyadari bahwa laporan ini masih jauh dari kata sempurna. Oleh
+karena itu, penulis mengharapkan saran dan kritik yang membangun demi
+penyempurnaan laporan ini di masa mendatang. Akhir kata, semoga laporan ini dapat
+memberikan manfaat dan wawasan bagi para pembaca.
+
+Bukit Jimbaran, 29 Mei 2026
+Penulis
+
+vii
+
+ABSTRAK
+Divisi Business Development pada perusahaan System Integrator memegang
+peranan krusial sebagai inti strategi korporasi dalam memetakan peluang pasar dan
+memenangkan tender proyek teknologi. Namun, pada PT Sanata System, operasional
+divisi ini masih menghadapi tantangan signifikan di mana 90% proses analisis dan
+pengolahan datanya masih dilakukan secara manual dan terfragmentasi. Ketiadaan
+sinkronisasi antara data rencana pengadaan eksternal dengan data historis internal
+mengakibatkan hilangnya momentum bisnis, lemahnya visualisasi dominasi pasar
+geografis, serta tingginya risiko subjektivitas dalam menilai posisi tawar perusahaan
+terhadap kompetitor.
+Penelitian ini bertujuan untuk membangun Sistem Informasi Strategis Business
+Development berbasis web yang mengintegrasikan fungsi intelijen pasar dan
+optimalisasi operasional tender secara end-to-end. Sistem ini dikembangkan
+menggunakan model sekuensial linier (Waterfall). Arsitektur sistem dibangun berbasis
+Microservices dengan isolasi data terdistribusi pada database SQL Server, didukung
+teknologi backend PHP (CodeIgniter 4) serta teknologi frontend menggunakan Vue.js
+dan Tailwind CSS yang dikelola melalui Web Server Nginx. Pengujian sistem dilakukan
+secara fungsional menggunakan metode Black Box Testing.
+Hasil proyek Tugas Akhir ini berhasil mentransformasi proses operasional
+konvensional menjadi ekosistem digital yang sistematis melalui empat modul utama
+pada platform Genesys. Modul LPSE Scraper dan Market Heatmap mampu
+mengotomatisasi kurasi data SiRUP pemerintah serta menerjemahkannya menjadi
+visualisasi peta spasial untuk memetakan potensi anggaran wilayah secara akurat.
+Modul Competitor Matrix berhasil menyajikan simulasi perbandingan kekuatan
+berbasis grafik Radar Chart guna menghilangkan bias penilaian strategis perusahaan
+terhadap entitas pesaing. Terakhir, modul Solution Bundler berfungsi sebagai
+laboratorium R&D yang memfasilitasi peracikan komponen produk menjadi draf paket
+solusi kompetitif melalui fitur self-calculation dan fleksibilitas skema bonus
+kondisional.
+Kata Kunci: Web Scraping, Market Heatmap, Competitor Matrix, Solution Bundler.
+viii
+
+DAFTAR ISI
+KATA PENGANTAR ..................................................................................................... vi
+ABSTRAK .................................................................................................................... viii
+DAFTAR ISI ................................................................................................................... ix
+DAFTAR TABEL ............................................................................................................ x
+DAFTAR GAMBAR....................................................................................................... xi
+BAB I INFORMASI UMUM PROYEK .......................................................................... 1
+1.1 Informasi Global Proyek ...................................................................................... 1
+1.2 Latar Belakang ...................................................................................................... 2
+1.3 Deskripsi Proyek / Gambaran Umum Proyek ..................................................... 3
+1.4 Tujuan Proyek .................................................................................................... 15
+1.5 Keuntungan Proyek ............................................................................................ 15
+BAB II PERENCANAAN PROYEK ............................................................................ 17
+2.1 Teknologi Digunakan ......................................................................................... 17
+2.2 Pembagian Tugas dan Pelaksanaan .................................................................... 18
+2.3 Perancangan Proyek ........................................................................................... 20
+2.4 Anggaran Biaya .................................................................................................. 48
+BAB III PELAKSANAAN PROYEK ........................................................................... 50
+3.1 Hasil Proyek Aplikasi ......................................................................................... 50
+3.2 Implementasi Proyek .......................................................................................... 65
+BAB IV PENUTUP ........................................................................................................ 69
+4.1 Kesimpulan ......................................................................................................... 69
+4.2 Saran ................................................................................................................... 70
+DAFTAR PUSTAKA ..................................................................................................... 71
+
+ix
+
+DAFTAR TABEL
+Tabel 1.1 Informasi Global Proyek .................................................................................. 1
+Tabel 2.1 Pembagian Tugas Anggota Tim Proyek ......................................................... 19
+Tabel 2.2 Timeline Pelaksanaan Aktivitas Proyek Tahun 2026 ..................................... 20
+Tabel 2.3 Struktur Tabel users ........................................................................................ 39
+Tabel 2.4 Struktur Tabel sirup_assignments .................................................................. 40
+Tabel 2.5 Tabel Profil Perusahaan .................................................................................. 41
+Tabel 2.6 Tabel Master Kompetitor ............................................................................... 43
+Tabel 2.7 Tabel Master Bundling R&D ......................................................................... 45
+Tabel 2.8 Tabel Detail Item Bundling R&D .................................................................. 46
+Tabel 2.9 Tabel Komponen Harga Bundling.................................................................. 47
+Tabel 2.10 Rincian Anggaran Biaya Realisasi Proyek ................................................... 48
+Tabel 3.1 Hasil Pengujian Fungsionalitas Aplikasi Strategis Business Development ... 68
+
+x
+
+DAFTAR GAMBAR
+Gambar 1.1 Flowmap Tahap Autentikasi dan Inisiasi ..................................................... 6
+Gambar 1.2 Flowmap Modul LPSE Scraper .................................................................... 7
+Gambar 1.3 Flowmap Modul Market Heatmap ............................................................... 8
+Gambar 1.4 Flowmap Modul Solution Bundler ............................................................. 10
+Gambar 1.5 Flowmap Modul Competitor Matrix .......................................................... 12
+Gambar 2.1 Use Case Diagram Sistem Informasi Strategis Business Development ..... 22
+Gambar 2.2 Activity Diagram Proses Autentikasi dan Inisiasi Portal ........................... 24
+Gambar 2.3 Activity Diagram Modul LPSE Scraper ..................................................... 25
+Gambar 2.4 Activity Diagram Modul Market Heatmap................................................. 26
+Gambar 2.5 Activity Diagram Modul Competitor Matrix ............................................. 28
+Gambar 2.6 Activity Diagram Modul Solution Bundler ................................................ 29
+Gambar 2. 7 Sequence Diagram Proses Autentikasi dan Inisiasi Portal ........................ 31
+Gambar 2.8 Sequence Diagram Modul LPSE Scraper ................................................... 32
+Gambar 2.9 Sequence Diagram Modul Market Heatmap .............................................. 33
+Gambar 2.10 Sequence Diagram Modul Competitor Matrix ......................................... 34
+Gambar 2.11 Sequence Diagram Modul Solution Bundler ............................................ 35
+Gambar 2.12 Entity Relationship Diagram (ERD) Sistem Genesys Modul Business
+Development ................................................................................................................... 37
+Gambar 3.1 Antarmuka Halaman Login Portal Gateway............................................... 50
+Gambar 3.2 Antarmuka Halaman Dashboard Portal Gateway ....................................... 51
+Gambar 3.3 Antarmuka Dashboard Utama Business Development............................... 51
+Gambar 3.4 Antarmuka Modul LPSE Scraper (Akuisisi Data)...................................... 52
+Gambar 3.5 Antarmuka Detail Paket Pengadaan dan Fungsi Assign Sales ................... 53
+Gambar 3.6 Antarmuka Halaman Penugasan Sales dan Pemantauan Status ................. 53
+Gambar 3.7 Antarmuka Modul Market Heatmap (Analisis Spasial) ............................. 54
+Gambar 3.8 Tampilan Informasi Agregasi Anggaran dan Entitas Kewilayahan ........... 55
+Gambar 3.9 Antarmuka Halaman View Detail Wilayah Terpilih (Peta Detail dan Daftar
+Satuan Kerja) .................................................................................................................. 56
+Gambar 3.10 Antarmuka Halaman View Detail Wilayah Terpilih (Daftar Paket
+Pengadaan)...................................................................................................................... 56
+xi
+
+Gambar 3.11 Antarmuka Modul Competitor Matrix (Simulasi Strategi) ...................... 57
+Gambar 3. 12 Antarmuka Pengelolaan Profil dan Skor Internal Perusahaan ................. 58
+Gambar 3. 13 Antarmuka Halaman Manage Competitor ............................................... 58
+Gambar 3. 14 Antarmuka Formulir Tambah dan Ubah Data Kompetitor...................... 59
+Gambar 3. 15 Antarmuka Pemilihan Entitas Simulasi Komparasi ................................ 60
+Gambar 3. 16 Antarmuka Hasil Analisis Komparasi Grafik Radar Chart ..................... 60
+Gambar 3. 17 Antarmuka Daftar (List) Paket Solution Bundler .................................... 61
+Gambar 3.18 Antarmuka Formulir Peracikan Paket Bundling (Identitas Bundle dan
+Pilihan Produk) ............................................................................................................... 62
+Gambar 3.19 Antarmuka Formulir Peracikan Paket Bundling (Komponen Harga dan
+Bonus)............................................................................................................................. 62
+Gambar 3.20 Antarmuka Formulir Peracikan Paket Bundling (Total Harga Bundle) ... 63
+Gambar 3.21 Antarmuka Tampilan Detail Paket Solution Bundle (Detail Indentitas
+Bundle) ........................................................................................................................... 64
+Gambar 3.22 Antarmuka Tampilan Detail Paket Solution Bundle (Pilihan Bundle
+Produk, Komponen Harga, dan Bonus) .......................................................................... 64
+Gambar 3.23 Antarmuka Tampilan Detail Paket Solution Bundle (Harga Jual Akhir) . 65
+Gambar 3.24 Dokumentasi Struktur Database-per-Service pada SQL Server ............... 66
+Gambar 3.25 Dokumentasi Verifikasi Akses Publik dan Reverse Proxy Nginx............ 67
+
+xii
+
+BAB I
+INFORMASI UMUM PROYEK
+1.1
+
+Informasi Global Proyek
+Proyek ini merupakan pembangunan sistem informasi manajemen strategis
+berbasis web yang dirancang untuk mengintegrasikan proses bisnis pada divisi
+Business Development PT Sanata System, mulai dari tahap identifikasi peluang hingga
+analisis kompetisi pasar. Sejalan dengan visi bahwa Business Development merupakan
+inti dari strategi korporasi, sistem ini ditujukan untuk mentransformasi infrastruktur
+manajemen data yang sebelumnya masih bersifat konvensional dengan tingkat
+ketergantungan manual mencapai 90%. Proyek ini berhasil memperbarui sistem yang
+ada agar lebih efektif dalam melakukan analisis intelijen pasar melalui otomasi
+pencarian data pengadaan guna mengatasi kendala hilangnya momentum akibat
+pergerakan pasar yang cepat.
+Selain itu, sistem dikembangkan untuk mengoptimalisasi operasional tender
+melalui mekanisme "laboratorium solusi" (Solution Bundler) yang meracik berbagai
+komponen produk menjadi paket solusi terintegrasi yang lebih kompetitif. Seluruh
+modul fungsional tersebut dibangun di atas arsitektur Microservices yang mandiri
+namun tetap terintegrasi secara terpusat pada sistem manajemen basis data SQL
+Server. Dengan penerapan sistem ini, tercipta visualisasi data strategis yang mampu
+meningkatkan kualitas pengambilan keputusan secara keseluruhan, membantu pihak
+manajemen perusahaan dalam melakukan pemetaan kompetisi pasar secara
+komprehensif, serta memperkuat daya saing pada setiap pengadaan proyek teknologi.
+Tabel 1.1 Informasi Global Proyek
+Jenis Proyek
+
+Proyek Dari Tempat PKL
+
+Pengerjaan Proyek
+
+Kelompok
+
+Pemilik Proyek
+
+PT Sanata System
+
+Manajer Proyek
+
+Gaga Fridayla
+
+Ketua Tim Proyek
+
+Gaga Fridayla
+
+Anggota Proyek
+
+1. I Komang Syama Sundara
+2. Elnanda Raya Alfatsyach
+1
+
+1.2
+
+Latar Belakang
+Di era transformasi digital yang berkembang pesat saat ini, peran teknologi
+informasi dan komunikasi (Information and Communication Technology) telah
+menjadi faktor penentu dalam keberhasilan strategi bisnis di berbagai sektor industri
+komersial [1]. Hal ini termasuk pada perusahaan penyedia solusi teknologi atau
+System Integrator. Divisi Business Development pada PT Sanata System memegang
+peranan krusial sebagai inti strategi korporasi dalam mengidentifikasi peluang pasar,
+memetakan potensi wilayah, serta mengoptimalkan operasional penawaran proyek
+atau tender. Namun, dalam pelaksanaannya, divisi ini menghadapi tantangan
+signifikan di mana 90% proses operasional dan analisis datanya masih dilakukan
+secara manual dan terfragmentasi.
+Identifikasi peluang pasar sebelumnya dilakukan dengan memantau berbagai
+portal pengadaan secara konvensional satu per satu, yang mengakibatkan
+ketidakefisienan waktu akibat volume data yang sangat masif. Penggunaan teknik web
+scraping menjadi solusi relevan untuk mengotomatisasi pencarian data pada Sistem
+Informasi Rencana Umum Pengadaan (SiRUP) milik pemerintah. Portal SiRUP ini
+merupakan sumber data krusial yang berisi rencana proyek instansi di masa
+mendatang, sehingga otomatisasi pada bagian ini sangat penting guna mengatasi
+keterbatasan pemantauan manual. Dari aspek legalitas, aksesibilitas terhadap data
+pengadaan pemerintah tersebut pada dasarnya sejalan dengan pemenuhan hak
+keterbukaan informasi. Oleh karena itu, pengembangan sistem informasi yang
+mengintegrasikan data pengadaan publik ini diselaraskan dengan amanat regulasi
+mengenai standardisasi mutu tata kelola instansi sebagaimana diatur dalam UndangUndang Republik Indonesia Nomor 25 Tahun 2009 tentang Pelayanan Publik [5].
+Selain itu, data pengadaan eksternal tersebut saat ini belum terhubung dengan data
+historis
+
+internal
+
+perusahaan,
+
+sehingga
+
+sulit
+
+bagi
+
+tim
+
+manajemen
+
+untuk
+
+mengidentifikasi rekam jejak kemenangan maupun profil Sales dan PIC terkait yang
+pernah bergerak pada suatu instansi.
+Masalah lain muncul pada aspek operasional, di mana proses penyusunan
+dokumen penawaran proyek sering kali terhambat oleh fragmentasi informasi
+spesifikasi produk dan kalkulasi harga, yang memperlambat estimasi serta
+meningkatkan risiko ketidakakuratan komponen penawaran. Terlebih lagi, proses
+analisis kompetisi pasar selama ini masih mengandalkan intuisi atau perkiraan
+2
+
+subjektif, karena ketiadaan visualisasi data yang objektif mengenai dominasi
+kompetitor di wilayah tertentu serta perbandingan kekuatan antarentitas secara realtime. Oleh karena itu, diperlukan adanya sebuah pemodelan perangkat lunak yang
+sistematis untuk mentransformasi tata kelola operasional penawaran tersebut menjadi
+lebih terstruktur [7].
+Berdasarkan kompleksitas permasalahan tersebut, melalui proyek Tugas Akhir
+ini dibangun sebuah platform digital terpadu berupa Sistem Informasi Strategis
+Business Development. Sistem ini berhasil mengintegrasikan fungsi intelijen pasar
+melalui pemetaan spasial sebaran anggaran kewilayahan (Market Heatmap),
+otomatisasi kurasi data pengadaan (LPSE Scraper), dan simulasi analisis kompetitor
+yang objektif (Competitor Matrix), serta mengoptimalkan operasional tender melalui
+laboratorium rancangan penawaran (Solution Bundler) guna meningkatkan efisiensi
+kerja dan keunggulan kompetitif perusahaan secara berkelanjutan.
+1.3
+
+Deskripsi Proyek / Gambaran Umum Proyek
+Sistem Informasi Strategis Business Development (yang dikembangkan
+sebagai bagian dari ekosistem Genesys) dibangun dengan pendekatan arsitektur
+Modular-Parallel. Pendekatan ini membagi fungsionalitas sistem ke dalam empat
+modul utama yang bekerja secara independen namun tetap terintegrasi pada satu basis
+data pusat. Setelah pengguna berhasil melewati tahap autentikasi pada halaman login,
+sistem akan mengarahkan pengguna ke halaman Dashboard Strategis Business
+Development yang bertindak sebagai pusat kendali (junction). Dari dashboard ini,
+pengguna diberikan otoritas penuh untuk mengakses empat jalur operasional strategis
+berikut secara fleksibel:
+1. Modul LPSE Scraper (Akuisisi & Kurasi Data)
+Modul ini mengotomatisasi penarikan data rencana pengadaan (SiRUP) dari
+portal pengadaan eksternal pemerintah. Otomatisasi pada bagian ini menjadi
+sangat krusial karena informasi pengadaan di dalam portal pemerintah berskala
+besar memiliki karakteristik yang sangat dinamis, sehingga sulit dan tidak
+efisien jika dihimpun secara manual [3]. Data hasil penarikan via API tersebut
+akan disajikan secara langsung dalam bentuk tabel data pengadaan pada
+sistem, di mana pengguna dapat memeriksa dan menganalisis detail pengadaan
+secara berkala. Jika paket proyek dirasa sesuai dengan kapabilitas perusahaan,
+3
+
+pengguna dapat langsung menentukan dan menunjuk personel Sales internal
+yang bertanggung jawab untuk mengeksekusi proyek tersebut. Melalui aksi
+penunjukan ini, sistem akan memproses penugasan sekaligus menyimpan data
+pengadaan ke dalam Database SQL Server sebagai aset digital internal
+perusahaan yang status perkembangannya (progress tracking) dapat dipantau
+secara berkala.
+2. Modul Market Heatmap (Analisis Spasial & Intelijen Wilayah)
+Modul ini menerjemahkan data sebaran anggaran pengadaan menjadi
+visualisasi peta panas (Heatmap) spasial yang interaktif. Saat pengguna
+memilih suatu wilayah target untuk dianalisis, sistem secara dinamis
+menampilkan total pagu anggaran serta total paket pengadaan yang tersedia,
+sekaligus melakukan cross-reference ke dalam database internal SQL Server
+untuk mengidentifikasi profil kompetitor dominan. Selain itu, modul ini
+menyajikan visualisasi sebaran pada peta berupa titik koordinat (marker)
+lokasi personel Sales internal dan entitas kompetitor yang aktif beroperasi
+pada area tersebut guna menghasilkan Insight Wilayah yang komprehensif
+sebagai dasar penetapan strategi di lapangan.
+3. Modul Competitor Matrix (Simulasi Analisis Persaingan)
+Modul ini memfasilitasi pengguna untuk melakukan simulasi perbandingan
+kekuatan secara strategis antara internal perusahaan (baseline) dengan hingga
+4 entitas kompetitor sekaligus. Sistem akan menarik data Strategic
+Comparison Metrics berupa nilai skor penilaian dari database, lalu
+menyajikannya dalam grafik Radar Chart untuk menghasilkan Competitive
+Comparison Insights yang mendalam. Selain itu, modul ini dilengkapi dengan
+fitur manajemen data (Manage Competitor & Company Profile) berbasis
+fungsionalitas CRUD guna memperbarui parameter skor serta argumen
+penilaian pada Database SQL Server.
+4. Modul Solution Bundler (Laboratorium R&D)
+Modul ini berfungsi sebagai laboratorium R&D bagi tim Business
+Development untuk meracik paket kombinasi produk penawaran teknologi.
+Modul menyediakan antarmuka berupa daftar (list) draf paket terdahulu serta
+formulir peracikan komposit baru yang interaktif. Sistem secara real-time
+menarik data spesifikasi produk dari katalog basis data, memunculkan detail
+4
+
+spesifikasi teknisnya secara otomatis, serta menyediakan pilihan skema bonus
+kondisional berupa produk gratis (free product), cashback, atau voucer
+(voucher). Selanjutnya, komponen frontend melakukan kalkulasi mandiri (selfcalculation) secara rinci untuk menampilkan akumulasi total harga biaya dan
+harga jual final sebelum draf paket solusi komersial tersebut disimpan ke
+dalam Database SQL Server agar siap dipasarkan oleh tim Sales.
+1.3.1. Alur Sistem (Flowmap)
+Guna memberikan gambaran yang komprehensif mengenai mekanisme
+kerja platform yang dibangun, alur kerja sistem didekomposisi ke dalam
+beberapa sub-proses diagram alir (flowmap). Seluruh modul dioperasikan oleh
+satu entitas pengguna utama, yaitu Tim Business Development. Alur interaksi
+dirancang
+
+menggunakan
+
+pemisahan
+
+multi-kolom
+
+(swimlane)
+
+untuk
+
+memperjelas batas tanggung jawab antara tindakan pengguna (User),
+fungsionalitas otomatis aplikasi (Sistem), dan operasi transaksi data (Database
+SQL Server).
+Rincian kronologis dari urutan langkah beserta visualisasi flowmap
+pada setiap fase operasional dipaparkan secara runut sebagai berikut:
+
+5
+
+I. Tahap Autentikasi dan Inisiasi
+
+Gambar 1.1 Flowmap Tahap Autentikasi dan Inisiasi
+Penjelasan Flowmap:
+1. User membuka website Genesys.
+2. Sistem menampilkan halaman login.
+3. User menginputkan username dan password.
+4. Sistem memvalidasi kredensial ke Database SQL Server. Jika sesuai,
+sistem menampilkan Halaman Portal Genesys. Jika tidak, kembali ke
+halaman login.
+5. User memilih layanan "Business Development" pada halaman Portal.
+6. Sistem
+
+menampilkan
+
+halaman
+
+Dashboard
+
+Strategis
+
+Business
+
+Development yang berfungsi sebagai titik pusat (junction) pemilihan
+modul.
+
+6
+
+II. Modul LPSE Scraper (Akuisisi Data)
+
+Gambar 1.2 Flowmap Modul LPSE Scraper
+Penjelasan Flowmap:
+1. User memilih menu LPSE Scraper untuk memulai pencarian rencana
+pengadaan.
+2. Sistem melakukan penarikan data (SiRUP) secara otomatis dari portal
+eksternal dan langsung menyajikannya dalam bentuk tabel data
+pengadaan.
+3. User melakukan analisis dan memeriksa detail pengadaan untuk
+menentukan kesesuaian proyek dengan kapabilitas perusahaan.
+4. Apabila
+
+menemukan
+
+paket
+
+pengadaan
+
+yang
+
+potensial,
+
+User
+
+menentukan serta menunjuk personel Sales internal yang akan
+bertanggung jawab untuk mengeksekusi proyek tersebut.
+7
+
+5. Melalui aksi penunjukan tersebut, Sistem secara otomatis memproses
+penugasan sekaligus menyimpan data paket pengadaan dan entitas
+Sales terkait ke dalam Database SQL Server sebagai aset digital
+internal perusahaan.
+6. User dapat memantau secara berkala pembaruan status perkembangan
+(progress tracking) dari paket pengadaan yang telah didelegasikan
+kepada personel Sales tersebut.
+III. Modul Market Heatmap (Analisis Spasial)
+
+Gambar 1.3 Flowmap Modul Market Heatmap
+
+8
+
+Penjelasan Flowmap:
+1. User memilih menu Market Heatmap, kemudian Sistem secara
+otomatis memuat sebaran wilayah berdasarkan akumulasi data rencana
+pengadaan (SiRUP) yang tersedia.
+2. User memilih salah satu wilayah target pada peta untuk dilakukan
+analisis pasar secara lebih mendalam.
+3. Sistem memproses data mentah wilayah tersebut untuk diterjemahkan
+ke dalam koordinat spasial dan visualisasi peta panas (Heatmap).
+4. Secara dinamis, Sistem menampilkan agregasi data berupa total pagu
+anggaran (budget) dan total volume paket pengadaan pada wilayah
+yang dipilih, sekaligus melakukan cross-reference ke Database SQL
+Server untuk mengidentifikasi kompetitor serta personel Sales yang
+memiliki rekam jejak di wilayah tersebut.
+5. User mengeklik tombol "View Detail" pada wilayah terpilih untuk
+menginisiasi analisis spesifik.
+6. Sistem menampilkan halaman detail wilayah yang berfokus secara
+eksklusif pada area yang dipilih, dengan menyajikan tabel data
+pengadaan SiRUP spesifik wilayah serta daftar Satuan Kerja (Satker)
+terkait beserta jumlah paket dan total pagu anggarannya.
+7. Sistem juga menyajikan visualisasi sebaran pada peta berupa titik
+koordinat (marker) lokasi personel Sales internal serta entitas
+kompetitor yang aktif beroperasi pada cakupan wilayah tersebut.
+8. Melalui sajian data interaktif tersebut, User mendapatkan Insight
+Wilayah yang komprehensif sebagai dasar pengambilan keputusan
+strategi ekspansi pasar maupun penetapan personel di lapangan.
+
+9
+
+IV. Modul Competitor Matrix (Simulasi Strategi)
+
+Gambar 1.4 Flowmap Modul Solution Bundler
+Penjelasan Flowmap:
+1. User memilih menu Competitor Matrix, kemudian Sistem memuat
+halaman utama simulasi komparasi.
+
+10
+
+2. Sistem menampilkan antarmuka komparasi dengan menetapkan profil
+internal perusahaan (Our Company) sebagai baseline komparasi utama,
+serta menyediakan opsi penambahan hingga 4 entitas kompetitor
+sekaligus.
+3. User memilih entitas kompetitor target pada area pemilihan (input
+selector), lalu Sistem secara otomatis menarik data parameter Strategic
+Comparison Metrics berupa nilai skor yang telah tersimpan dari
+Database SQL Server.
+4. Sistem menerjemahkan akumulasi skor kriteria tersebut ke dalam
+visualisasi grafis berbentuk Radar Chart, sekaligus menyajikan
+Competitive Comparison Insights berdasarkan komparasi nilai dari
+masing-masing kompetitor.
+5. Pada halaman yang sama, User dapat mengeklik tombol "Manage
+Competitor" untuk masuk ke sub-modul manajemen data, di mana
+Sistem menyediakan fitur fungsionalitas CRUD (Create, Read,
+Update, Delete) guna menambah, mengubah, atau memperbarui
+parameter spesifikasi skor serta alasan penilaian kompetitor di
+database.
+6. User juga dapat mengeklik tombol "Company Profile" guna mengelola
+dan memperbarui data internal perusahaan sendiri yang menjadi acuan
+dasar (baseline) komparasi pada Database SQL Server.
+
+11
+
+V. Modul Solution Bundler (Laboratorium R&D)
+
+Gambar 1.5 Flowmap Modul Competitor Matrix
+Penjelasan Flowmap:
+1. User memilih menu Solution Bundler kemudian Sistem merespon
+dengan memuat dan menampilkan daftar (list) paket solution bundler
+yang sudah pernah dibuat oleh tim BizDev sebelumnya.
+12
+
+2. User mengeklik tombol "Add New Bundle" untuk memulai peracikan
+paket baru.
+3. Sistem menampilkan formulir pengisian data komponen komposit baru
+yang interaktif di layar pengguna.
+4. User mengisi identitas paket berupa nama dan deskripsi, lalu memilih
+produk-produk yang akan dibundling.
+5. Sistem secara otomatis memunculkan data spesifikasi teknis dari
+produk yang dipilih tersebut berdasarkan tarikan data katalog dari
+Database SQL Server.
+6. User mengisi nilai komponen harga (Price Components) untuk paket
+yang sedang diracik.
+7. User menentukan opsi pemberian bonus pemasaran (apakah paket
+tersebut akan diberikan insentif tambahan atau tidak).
+8. Sistem menyediakan sub-pilihan skema bonus secara kondisional
+berupa produk gratis (free product), cashback, atau voucer (voucher)
+jika user memilih untuk mengaktifkan bonus.
+9. Sistem secara otomatis melakukan kalkulasi mandiri (self-calculation)
+secara rinci untuk memunculkan akumulasi total harga biaya serta
+nominal harga jual final yang siap dipasarkan.
+10. User mengeklik opsi "Save" setelah seluruh kelengkapan data dan
+kalkulasi harga dirasa sudah sesuai.
+11. Sistem memproses kiriman data tersebut untuk disimpan ke dalam
+Database SQL Server sebagai draf paket bundling final yang siap
+didistribusikan kepada tim Sales lapangan.
+1.3.2. Batasan Proyek
+Adapun batasan proyek dalam pengerjaan Tugas Akhir ini, guna
+menjaga agar implementasi sistem tetap terarah dan sesuai dengan ruang
+lingkup yang telah disepakati bersama mitra industri, ditetapkan sebagai
+berikut:
+1. Platform dan Aksesibilitas
+Sistem
+
+dikembangkan
+
+berbasis
+
+web
+
+responsive
+
+menggunakan
+
+framework Vue.js pada sisi frontend dan CodeIgniter 4 pada sisi
+13
+
+backend, serta dapat diakses secara publik melalui jaringan internet
+menggunakan peramban (browser) pada alamat subdomain resmi
+perusahaan mitra, yaitu http://genesys.sanatasystem.net/.
+2. Ruang Lingkup Fungsionalitas
+Pengembangan sistem difokuskan secara eksklusif pada pemenuhan
+kebutuhan operasional Divisi Business Development PT Sanata System
+yang diwujudkan ke dalam empat modul utama, yaitu LPSE Scraper,
+Market Heatmap, Competitor Matrix, dan Solution Bundler.
+3. Mekanisme Akuisisi Data
+Otomatisasi penarikan data pada modul LPSE Scraper dibatasi hanya
+untuk mengambil data Rencana Umum Pengadaan (SiRUP) pemerintah
+dari portal eksternal, serta tidak mencakup otomatisasi pengisian
+dokumen tender (e-tendering) pada sistem LPSE secara langsung.
+4. Karakteristik Data Komperatif
+Parameter penilaian pada modul Competitor Matrix mengandalkan data
+kualitatif berupa nilai skor Strategic Comparison Metrics beserta
+justifikasi alasan yang diinputkan secara berkala oleh internal
+pengguna, sehingga sistem tidak melakukan prediksi kemenangan
+tender otomatis menggunakan algoritma kecerdasan buatan (Machine
+Learning).
+5. Infrastruktur Jaringan dan Server
+Penyimpanan basis data terpusat menggunakan RDBMS SQL Server
+yang dideploy secara On-Premise memanfaatkan infrastruktur server
+lokal dan alokasi Local IP Public internal PT Sanata System.
+6. Batasan Integrasi Pihak Ketiga
+Sistem yang dibangun berfokus penuh pada manajemen data internal
+korporasi dan belum diintegrasikan dengan sistem notifikasi eksternal
+otomatis (seperti WhatsApp API atau Email Gateway untuk pelaporan
+progress sales), maupun integrasi payment gateway pihak ketiga.
+7. Metode Pengujian
+Pengujian
+
+validasi
+
+kelayakan
+
+perangkat
+
+lunak
+
+dibatasi
+
+pada
+
+fungsionalitas fitur menggunakan metode Black Box Testing, serta
+
+14
+
+belum mencakup pengujian performa mendalam seperti Stress Testing
+atau Penetration Testing pada klaster Microservices.
+1.4
+
+Tujuan Proyek
+Tujuan dari pelaksanaan proyek Tugas Akhir ini adalah untuk menghasilkan
+sebuah platform digital terintegrasi yang mampu memberikan solusi nyata atas
+hambatan operasional pada divisi Business Development. Secara spesifik, target
+pencapaian proyek ini dirinci sebagai berikut:
+1. Membangun modul LPSE Scraper yang mampu mengotomatisasi penarikan
+dan kurasi data rencana pengadaan (SiRUP) pemerintah guna memotong
+inefisiensi pelacakan tender konvensional.
+2. Mengembangkan visualisasi spasial berbasis peta panas (Market Heatmap)
+untuk memetakan sebaran proyek, dominasi kompetitor, serta rekam jejak
+personel sales secara geografis berdasarkan data riil di lapangan.
+3. Mewujudkan alat simulasi interaktif melalui fitur Competitor Matrix dengan
+visualisasi Radar Chart untuk membandingkan kekuatan perusahaan terhadap
+kompetitor secara objektif.
+4. Menyediakan mekanisme "laboratorium solusi" melalui fitur Solution Bundler
+berbasis tree-view untuk meracik berbagai komponen produk dan kalkulasi
+harga otomatis secara presisi dan fleksibel.
+5. Mengintegrasikan seluruh alur data dari tahap hulu hingga hilir dalam satu
+ekosistem basis data pusat SQL Server untuk menghilangkan masalah
+fragmentasi data strategis.
+
+1.5
+
+Keuntungan Proyek
+Implementasi Sistem Informasi Strategis Business Development untuk Analisis
+Intelijen Pasar dan Optimalisasi Operasional Tender ini diharapkan mampu
+memberikan kontribusi dan keuntungan nyata bagi perusahaan, antara lain:
+1. Transformasi Efisiensi Identifikasi Peluang Bisnis
+Otomatisasi pencarian data SiRUP memangkas waktu pelacakan proyek secara
+signifikan, sehingga perusahaan mampu mendeteksi peluang tender baru
+dengan cepat tanpa terbebani volume data yang masif.
+
+15
+
+2. Peningkatan Akurasi Strategi Wilayah melalui Visualisasi Spasial
+Manajemen dapat dengan mudah membaca peta kekuatan pasar melalui
+Market Heatmap, yang mempermudah pembagian zonasi wilayah kerja bagi
+personel sales berdasarkan data potensi riil di lapangan.
+3. Objektivitas Analisis Kompetisi dalam Pengambilan Keputusan
+Grafik Radar Chart menghilangkan risiko penilaian subjektif terhadap
+kapabilitas perusahaan, sehingga pihak manajemen dapat merumuskan strategi
+pemenangan tender secara akurat berdasarkan rekam jejak pencapaian riil.
+4. Optimalisasi Nilai Jual melalui Presisi "Laboratorium Solusi"
+Fitur Solution Bundler meminimalkan risiko kesalahan kalkulasi harga serta
+membantu tim meramu solusi produk-jasa yang kompetitif dan tepat guna
+sesuai kebutuhan pelanggan.
+5. Sinkronisasi Data Eksternal dan Konteks Strategis Internal
+Keterhubungan data pengadaan publik dengan histori internal mempermudah
+tim melakukan strategi retention (pendekatan ulang) pada instansi target
+melalui pelacakan cepat terhadap performa sales dan PIC di masa lalu.
+
+16
+
+BAB II
+PERENCANAAN PROYEK
+2.1
+
+Teknologi Digunakan
+Dalam pelaksanaan proyek Tugas Akhir ini, Sistem Informasi Strategis
+Business Development telah sukses dikembangkan dan diimplementasikan dengan
+memanfaatkan arsitektur modern yang menjamin stabilitas, modularitas, serta efisiensi
+pemrosesan data strategis. Landasan teknologi (tech stack) yang diterapkan dalam
+ekosistem sistem ini dirinci sebagai berikut:
+1. Arsitektur Microservices
+Pendekatan arsitektur ini diimplementasikan untuk memisahkan fungsionalitas
+inti platform Genesys menjadi beberapa layanan mandiri (decoupled services)
+yang berjalan secara paralel. Struktur ini diterapkan agar pemrosesan data
+masif pada modul hulu seperti LPSE Scraper tidak membebani kinerja modul
+analisis hilir seperti Market Heatmap atau Competitor Matrix, sekaligus
+mempermudah proses pemeliharaan komponen kode secara parsial. Penerapan
+arsitektur terdistribusi ini juga bertujuan untuk meningkatkan fault tolerance
+(ketahanan terhadap kegagalan) sistem, di mana pembagian fungsi ke dalam
+layanan-layanan otonom akan memastikan bahwa kendala atau kerusakan pada
+salah satu service tidak akan berdampak secara langsung pada kelangsungan
+operasional layanan lainnya [8].
+2. Nginx Web Server
+Diimplementasikan sebagai web server utama sekaligus bertindak sebagai
+reverse proxy dan load balancer. Komponen ini bertanggung jawab penuh
+dalam mengamankan, mengarahkan, dan mendistribusikan lalu lintas
+permintaan (routing HTTP requests) dari sisi klien menuju endpoint API dari
+masing-masing klaster microservices secara responsif.
+3. Backend PHP (Framework CodeIgniter 4)
+Digunakan sebagai mesin penggerak utama pada sisi server (backend).
+CodeIgniter 4 dipilih karena memiliki performa yang ringan (small footprint),
+tingkat keamanan yang baik, serta eksekusi yang cepat untuk menangani
+logika bisnis yang kompleks, memproses fungsi otomatisasi scraping data
+17
+
+SiRUP, kalkulasi otomatis pada Solution Bundler, serta menjembatani
+pertukaran data antar-layanan melalui arsitektur RESTful API [4].
+4. Database SQL Server
+Sistem manajemen basis data (RDBMS) tingkat perusahaan ini digunakan
+untuk mengelola seluruh aset informasi strategis secara terpusat. SQL Server
+bertugas mengamankan integritas data, menangani relasi skema tabel kurasi
+pengadaan, memproses data koordinat wilayah spasial, hingga menyimpan
+rekam jejak performa sales internal dan histori kemenangan proyek.
+5. Frontend (Vue.js, Tailwind CSS, dan Alpine.js)
+Kombinasi ketiga teknologi ini berhasil mewujudkan antarmuka pengguna
+(user interface) yang modern, reaktif, dan berorientasi pada kenyamanan
+pengguna (user experience):
+a. Vue.js diterapkan untuk membangun komponen reaktif yang dinamis,
+mereduksi waktu muat halaman saat menampilkan visualisasi grafik
+interaktif Radar Chart pada modul Competitor Matrix, serta mengelola
+manipulasi DOM dan interaksi mikro (micro-interactions) pada
+komponen drop-down maupun transisi menu di halaman dashboard.
+b. Tailwind CSS digunakan sebagai framework CSS berbasis utility-first
+untuk menciptakan desain antarmuka yang bersih, minimalis,
+konsisten, serta adaptif di berbagai resolusi layar perangkat (responsive
+design).
+2.2
+
+Pembagian Tugas dan Pelaksanaan
+Pengerjaan proyek Tugas Akhir ini dilakukan secara kolaboratif oleh tim yang
+terdiri dari dua orang mahasiswa. Agar pelaksanaan pengembangan sistem berjalan
+secara efektif dan terstruktur sesuai dengan arsitektur Microservices yang diterapkan,
+dilakukan pembagian tanggung jawab yang spesifik berdasarkan kompetensi teknis
+masing-masing anggota tim.
+Rincian pembagian tugas, peran, dan spesialisasi fungsional dalam tim proyek
+dirinci pada Tabel 2.1 berikut:
+
+18
+
+Tabel 2.1 Pembagian Tugas Anggota Tim Proyek
+No
+
+Nama / NIM
+
+1.
+
+I Komang Syama
+
+Uraian Tugas & Tanggung Jawab
+1. Lead System Analyst
+
+Sundara
+
+Menyusun dokumentasi perancangan sistem
+
+NIM. 2315323019
+
+menggunakan pemodelan diagram UML
+2. Integration Owner
+Mengembangkan komponen reaktif (Vue.js)
+dan
+
+logika
+
+spasial
+
+untuk
+
+modul
+
+Market
+
+Heatmap serta visualisasi Competitor Matrix
+3. Backend Intelligence
+Mengembangkan logika backend (CodeIgniter
+4) untuk modul LPSE Scraper dan otomatisasi
+integrasi data SiRUP
+4. UI/UX Specialist
+Membangun antarmuka pengguna responsif
+menggunakan Tailwind CSS dan Alpine.js pada
+seluruh modul.
+2.
+
+Elnanda Raya
+
+1. System Architect
+
+Alfatsyach
+
+Mengelola
+
+NIM. 2315323059
+
+mengonfigurasi Nginx sebagai web server dan
+
+arsitektur
+
+Microservices
+
+serta
+
+reverse proxy
+2. DB Operations
+Merancang skema tabel SQL Server untuk
+kurasi pengadaan, histori kompetisi, dan profil
+internal
+3. Strategic Frontend
+Mengembangkan antarmuka komponen reaktif
+sisi klien untuk visualisasi bagan pada modul
+Solution Bundler dan Competitor Matrix.
+4. Backend Operation
+Merancang logika bisnis (CodeIgniter 4) dan
+algoritma kalkulasi tree-view pada modul
+Solution Bundler.
+19
+
+Proyek Tugas Akhir ini dilaksanakan dalam kurun waktu 4 (empat) bulan,
+terhitung mulai tanggal 2 Februari 2026 hingga 25 Mei 2026. Seluruh tahapan
+aktivitas pengembangan perangkat lunak, mulai dari analisis kebutuhan hingga
+dokumentasi akhir, telah diselesaikan secara linier mengikuti model Waterfall
+sebagaimana disajikan pada Tabel 2.2 berikut:
+Tabel 2.2 Timeline Pelaksanaan Aktivitas Proyek Tahun 2026
+No Aktivitas Proyek
+1.
+
+Feb
+
+Mar
+
+Apr
+
+Mei
+
+Keterangan
+
+Analisis Kebutuhan:
+Wawancara manajemen PT
+Sanata System & observasi
+
+Selesai
+
+✔
+
+(Minggu 1-2)
+
+proses manual BizDev.
+2.
+
+Perancangan Sistem: Desain
+diagram UML, skema SQL
+Server, dan perancangan
+
+Selesai
+
+✔
+
+(Minggu 3-4)
+
+UI/UX.
+3.
+
+Implementasi (Coding):
+✔
+
+Pengembangan Microservices,
+
+✔
+
+✔
+
+Backend CI4, dan Frontend.
+4.
+
+Pengujian Sistem: Eksekusi
+✔
+
+Black Box Testing & validasi
+akurasi kalkulasi logika.
+5.
+
+Pemeliharaan & Dokumentasi:
+✔
+
+Penyusunan dokumen final
+Laporan Akhir Tugas Akhir.
+2.3
+
+Selesai
+(Minggu 5-14)
+Selesai
+(Minggu 15)
+Selesai
+(Minggu 16)
+
+Perancangan Proyek
+Perancangan proyek dijabarkan secara komprehensif sesuai dengan topik rekayasa
+perangkat
+
+lunak
+
+menggunakan
+
+yang
+
+paradigma
+
+dikerjakan.
+
+Mengingat
+
+pemrograman
+
+platform
+
+berorientasi
+
+Genesys
+
+objek
+
+dibangun
+
+(Object-Oriented
+
+Programming) dengan arsitektur modern Microservices dan pola komunikasi
+RESTful API, maka perancangan proyek difokuskan sepenuhnya pada pemodelan
+sistem informasi strategis tanpa melibatkan perancangan jaringan infrastruktur baru
+20
+
+maupun elemen multimedia interaktif berskala besar. Detail perancangan proyek
+dirinci ke dalam sub-bagian berikut:
+2.3.1. Perancangan Sistem (Rancang Bangun Sistem)
+Perancangan sistem berfungsi sebagai cetak biru (blueprint) teknis
+untuk mentransformasikan kebutuhan fungsional divisi Business Development
+ke dalam arsitektur perangkat lunak. Instrumen perancangan rancang bangun
+sistem ini meliputi beberapa pemodelan terstruktur sebagai berikut:
+A. Desain Rancangan UML (Unified Modeling Language)
+Pemodelan
+
+UML
+
+digunakan
+
+untuk
+
+mendokumentasikan,
+
+menspesifikasikan, dan mengonstruksikan artefak dari sistem perangkat
+lunak berbasis objek secara komprehensif [6]. Diagram UML yang
+diimplementasikan pada sistem ini meliputi:
+1. Use Case Diagram: Menggambarkan batasan sistem (system
+boundary) serta interaksi fungsional antara entitas User (Tim
+Business Development) terhadap modul-modul strategis di dalam
+platform Genesys.
+2. Activity Diagram: Menjabarkan alur aktivitas operasional dan
+logika kodingan di dalam sistem secara paralel, mulai dari proses
+akuisisi data eksternal hingga visualisasi matriks.
+3. Sequence Diagram: Menggambarkan interaksi pengiriman data dan
+kronologi pesan (HTTP Request/Response) antar-objek atau antarkomponen service melalui RESTful API
+Sajian visual dari pemodelan diagram Unified Modeling Language (UML)
+yang merepresentasikan logika, fungsionalitas, serta interaksi struktural
+dijabarkan melalui beberapa visualisasi diagram berikut:
+
+21
+
+1. Use Case Diagram
+
+Gambar 2.1 Use Case Diagram Sistem Informasi Strategis Business
+Development
+Gambar
+
+2.1
+
+menampilkan
+
+use
+
+case
+
+diagram
+
+yang
+
+menggambarkan batasan sistem (system boundary) serta hak interaksi
+fungsional Tim Business Development sebagai aktor tunggal di dalam
+platform Genesys. Berdasarkan visualisasi diagram tersebut, seluruh
+fungsionalitas sistem dikelompokkan menjadi dua lapis interaksi
+struktural, yaitu fungsi utama operasional dan fungsi perluasan
+spesifik.
+Aktor memiliki otoritas penuh untuk mengeksekusi dua
+interaksi hulu, yaitu Melakukan Autentikasi (Login) sebagai gerbang
+validasi keamanan identitas pengguna, serta Mengakses Dashboard
+Portal Gateway yang bertindak sebagai titik pusat (junction) navigasi
+antarmuka.
+Integrasi antar-modul di dalam sistem dikunci menggunakan
+relasi keterikatan include terhadap objek Dashboard Portal Gateway.
+22
+
+Hal ini merepresentasikan bahwa fungsionalitas makro yang meliputi
+Mengelola Modul LPSE Scraper, Mengakses Modul Market Heatmap,
+Simulasi Modul Competitor Matrix, dan Meracik Komponen Modul
+Solution Bundler hanya dapat diinisialisasi dan dieksekusi secara sah
+apabila pengguna telah berhasil melewati fase inisiasi halaman portal
+utama.
+Lebih lanjut, guna mengakomodasi kedalaman fungsionalitas di
+tingkat operasional, beberapa modul utama dilengkapi dengan relasi
+perluasan extend. Modul LPSE Scraper memperluas fiturnya pada
+fungsi Menugaskan Proyek ke Sales (Assign Project) untuk
+mendelegasikan paket tender hasil kurasi secara spesifik. Modul
+Market Heatmap memperluas analisis geospasialnya melalui fungsi
+Melihat Detail Wilayah & Satker (View Detail) guna mengekstraksi
+parameter spasial anggaran daerah secara komprehensif. Sementara itu,
+Modul Competitor Matrix didukung oleh dua anak fungsi perluasan
+struktural, yaitu Mengelola Data Master Kompetitor (Manage
+Competitor) dan Mengelola Profil Perusahaan (Company Profile) yang
+berfungsi sebagai instrumen manipulasi data (CRUD data master)
+parameter penilaian kualitatif ke dalam Database SQL Server.
+
+23
+
+2. Activity Diagram
+1) Proses Autentikasi dan Inisiasi Portal
+
+Gambar 2.2 Activity Diagram Proses Autentikasi dan Inisiasi Portal
+Gambar
+
+2.2
+
+menampilkan
+
+activity
+
+diagram
+
+login
+
+yang
+
+menggambarkan alur autentikasi pengguna pada platform Genesys.
+Proses dimulai ketika pengguna, yaitu Tim Business Development,
+mengakses website resmi perusahaan dan sistem menampilkan
+halaman login. Pengguna kemudian menginputkan username
+beserta password pada form yang tersedia. Setelah tombol login
+ditekan, sistem secara otomatis melakukan validasi kredensial
+dengan memeriksa kesesuaian data ke dalam Database SQL Server.
+Jika data otentikasi dinyatakan valid, sistem akan memberikan hak
+akses penuh dan mengarahkan pengguna ke Halaman Portal
+Genesys untuk memilih layanan "Business Development" menuju
+Dashboard Utama yang bertindak sebagai titik pusat (junction)
+pemilihan modul. Sebaliknya, jika data tidak cocok, sistem akan
+menampilkan pesan kesalahan (error message) dan mengembalikan
+pengguna ke halaman login untuk melakukan input ulang. Proses
+24
+
+ini berfungsi sebagai pengaman hulu sistem guna memastikan hak
+akses hanya diberikan kepada personel yang sah.
+2) Modul LPSE Scraper (Akuisisi Data)
+
+Gambar 2.3 Activity Diagram Modul LPSE Scraper
+Gambar 2.3 menampilkan activity diagram untuk Modul LPSE
+Scraper yang memetakan alur kerja otomatisasi akuisisi data
+rencana pengadaan (SiRUP) pemerintah. Aktivitas diawali ketika
+pengguna memilih menu LPSE Scraper pada dashboard. Sistem
+kemudian merespon dengan melakukan penarikan data secara
+otomatis dari portal eksternal dan langsung menyajikannya dalam
+bentuk tabel data pengadaan di layar pengguna. Pengguna
+melakukan analisis, memeriksa detail paket pengadaan pada tabel,
+dan melakukan kurasi manual untuk menilai kesesuaian proyek
+dengan kapabilitas perusahaan. Apabila ditemukan paket potensial,
+pengguna menentukan serta menunjuk personel Sales internal
+25
+
+melalui aksi klik "Assign" (Tugaskan). Sistem akan memproses
+penugasan tersebut secara otomatis dan melempar instruksi query
+untuk menyimpan data paket proyek beserta asosiasi ID Sales
+terkait ke dalam Database SQL Server sebagai aset digital internal
+perusahaan. Pengguna kemudian dapat memantau pembaruan status
+perkembangan (progress tracking) paket tersebut secara berkala.
+3) Modul Market Heatmap (Analisis Spasial)
+
+Gambar 2.4 Activity Diagram Modul Market Heatmap
+Gambar 2.4 menampilkan activity diagram Modul Market Heatmap
+yang menggambarkan proses penerjemahan data sebaran anggaran
+menjadi visualisasi geografis interaktif. Aktivitas dimulai saat
+pengguna memilih menu Market Heatmap, di mana sistem akan
+langsung memuat peta sebaran wilayah berdasarkan akumulasi data
+SiRUP di database. Ketika pengguna memilih salah satu wilayah
+26
+
+target, sistem memproses data mentah tersebut ke dalam koordinat
+spasial untuk merender visualisasi peta panas (Heatmap). Secara
+simultan, sistem menampilkan agregasi total pagu anggaran serta
+volume paket, sekaligus melakukan cross-reference ke Database
+SQL Server untuk mengidentifikasi kompetitor dominan dan rekam
+jejak Sales di area tersebut. Alur berlanjut saat pengguna
+mengeklik tombol "View Detail", di mana sistem akan mengalihkan
+fokus layar ke area terpilih dan menyajikan tabel data SiRUP
+spesifik, daftar Satuan Kerja (Satker), serta visualisasi penanda
+(marker) titik koordinat lokasi riil personel Sales dan kompetitor di
+lapangan. Aktivitas ini bertujuan menghasilkan insight wilayah
+yang komprehensif bagi manajemen.
+
+27
+
+4) Modul Competitor Matrix (Simulasi Strategi)
+
+Gambar 2.5 Activity Diagram Modul Competitor Matrix
+Gambar 2.5 menampilkan activity diagram Modul Competitor
+Matrix yang memetakan logika simulasi komparasi kekuatan
+entitas
+
+persaingan
+
+tender.
+
+Proses
+
+diawali
+
+dengan
+
+sistem
+
+menampilkan antarmuka komparasi yang mengunci profil internal
+perusahaan (Our Company) sebagai baseline utama. Pengguna
+dapat memilih hingga 4 entitas kompetitor pada input selector,
+yang
+
+memicu
+
+sistem
+
+untuk
+
+menarik
+
+parameter
+
+Strategic
+
+Comparison Metrics berupa nilai skor dari Database SQL Server.
+Sistem lalu mengalkulasi skor tersebut dan menerjemahkannya ke
+28
+
+dalam
+
+grafik
+
+Radar
+
+Chart
+
+interaktif
+
+beserta
+
+Competitive
+
+Comparison Insights berbasis nilai dari masing-masing kompetitor.
+Selain alur utama komparasi, diagram ini juga memetakan
+percabangan aktivitas CRUD (Create, Read, Update, Delete)
+melalui tombol "Manage Competitor" dan "Company Profile", di
+mana pengguna dapat menambah atau memperbarui spesifikasi
+skor serta alasan penjustifikasian penilaian di database.
+5) Modul Solution Bundler (Laboratorium R&D)
+
+Gambar 2.6 Activity Diagram Modul Solution Bundler
+
+29
+
+Gambar 2.6 menampilkan activity diagram Modul Solution
+Bundler yang menggambarkan mekanisme perancangan paket
+penawaran proyek teknologi secara terstruktur melalui kolaborasi
+tiga swimlane utama, yaitu User, Sistem, dan Database. Aktivitas
+dimulai saat pengguna mengakses halaman utama modul, di mana
+sistem merespon dengan mengeksekusi aktivitas Membaca Data
+Master Paket Bundling dari Database SQL Server untuk
+menampilkan daftar koleksi paket yang sudah ada.
+Ketika pengguna mengeklik tombol "Add New Bundle", sistem
+akan merespon dengan menyajikan formulir pengisian komponen
+komposit baru yang interaktif. Pengguna kemudian memasukkan
+identitas
+
+paket
+
+serta
+
+memilih
+
+produk-produk
+
+yang
+
+akan
+
+dikombinasikan. Pilihan produk ini memicu aktivitas sistem untuk
+melakukan Mengambil Data Spesifikasi dan Katalog Produk
+langsung dari database secara real-time.
+Alur dilanjutkan dengan aktivitas pengguna menginputkan nilai
+komponen harga (Price Components) serta menentukan opsi
+insentif pemasaran. Jika opsi bonus diaktifkan, sistem secara
+kondisional menyediakan pilihan skema berupa produk gratis (free
+product), cashback, atau voucer (voucher). Setelah seluruh
+parameter terpenuhi, sistem secara otomatis melakukan kalkulasi
+mandiri (self-calculation) secara rinci untuk memunculkan
+akumulasi total harga biaya serta nominal harga jual final di layar
+pengguna.
+Pada tahap akhir, setelah seluruh kalkulasi dirasa sesuai, pengguna
+mengeklik opsi "Save". Aksi ini memicu sistem untuk menjalankan
+fungsi Menyimpan Data Paket Bundling Final ke dalam database
+SQL Server, sehingga draf paket bundling tersebut resmi terkunci
+dan siap didistribusikan kepada tim Sales lapangan.
+
+30
+
+3. Sequence Diagram
+1) Proses Autentikasi dan Inisiasi Portal
+
+Gambar 2. 7 Sequence Diagram Proses Autentikasi dan Inisiasi
+Portal
+Gambar 2.7 menampilkan sequence diagram untuk proses login
+yang menggambarkan kronologi interaksi antar-objek dalam sistem
+saat melakukan validasi identitas pengguna. Proses diawali ketika
+Tim Business Development (Actor) memasukkan kredensial berupa
+username dan password pada objek antarmuka Halaman_Login
+(Frontend).
+
+Ketika
+
+tombol
+
+login
+
+ditekan,
+
+objek
+
+halaman
+
+mengirimkan pesan HTTP Post Request berisi data otentikasi
+menuju
+
+objek
+
+Auth_Service
+
+(Backend
+
+API).
+
+Selanjutnya,
+
+Auth_Service melakukan eksekusi query validasi ke objek
+Database_SQL_Server. Jika data ditemukan dan cocok, database
+akan mengembalikan respon data valid, lalu Auth_Service
+meneruskan token akses ke Halaman_Login untuk mengarahkan
+pengguna ke Dashboard_Utama. Sebaliknya, jika data tidak cocok,
+objek database mengembalikan respon kosong yang memicu sistem
+untuk
+
+memunculkan
+
+notifikasi
+
+kesalahan
+
+pada
+
+antarmuka
+
+pengguna.
+
+31
+
+2) Modul LPSE Scraper (Akuisisi Data)
+
+Gambar 2.8 Sequence Diagram Modul LPSE Scraper
+Gambar 2.8 menampilkan sequence diagram Modul LPSE Scraper
+yang memetakan kronologi transaksi data pengadaan. Proses
+dimulai saat pengguna mengeklik menu scraper pada objek
+Dashboard_Utama, yang memicu pemanggilan fungsi muat
+halaman pada objek antarmuka Modul_LPSE_Scraper. Objek
+halaman kemudian melakukan HTTP Get Request secara otomatis
+ke objek Scraper_Service (Backend). Scraper_Service akan
+menjalankan fungsi otomasi penarikan data langsung ke portal
+SiRUP eksternal, mengolah data mentah menjadi terstruktur, lalu
+mengirimkannya kembali untuk ditampilkan dalam bentuk tabel di
+Modul_LPSE_Scraper. Ketika pengguna memilih paket proyek
+potensial dan memilih personel untuk didelegasikan, objek
+antarmuka mengirimkan fungsi assignSales() ke Scraper_Service.
+Objek backend kemudian mengirimkan perintah insert/update
+query ke Database_SQL_Server untuk mengunci status keterikatan
+paket dengan ID Sales. Database mengembalikan respon sukses,
+dan halaman antarmuka menampilkan pembaruan status penugasan.
+
+32
+
+3) Modul Market Heatmap (Analisis Spasial)
+
+Gambar 2.9 Sequence Diagram Modul Market Heatmap
+Gambar 2.9 menampilkan sequence diagram Modul Market
+Heatmap yang menggambarkan urutan pertukaran pesan dalam
+visualisasi geospasial anggaran. Alur kronologis dimulai ketika
+pengguna mengakses menu peta, memicu Modul_Market_Heatmap
+(Frontend) untuk meminta parameter data wilayah melalui objek
+Geospatial_Service (Backend). Objek backend melakukan query
+selection ke Database_SQL_Server untuk menarik koordinat
+wilayah beserta total pagu anggaran terakumulasi. Setelah data
+dikembalikan ke frontend, antarmuka merender visualisasi peta
+panas (Heatmap). Saat pengguna memilih salah satu wilayah target
+dan mengeklik "View Detail", objek antarmuka mengirimkan pesan
+permintaan
+
+data
+
+spesifik
+
+berdasarkan
+
+ID
+
+Wilayah
+
+ke
+
+Geospatial_Service. Backend memproses cross-reference data
+kompetitor
+
+dan
+
+data
+
+penugasan
+
+Sales
+
+di
+
+database,
+
+lalu
+
+mengembalikan objek data gabungan ke antarmuka untuk
+memunculkan titik koordinat penanda (marker) riil di atas peta
+beserta tabel rincian Satker.
+
+33
+
+4) Modul Competitor Matrix (Simulasi Strategi)
+
+Gambar 2.10 Sequence Diagram Modul Competitor Matrix
+Gambar 2.10 menampilkan sequence diagram Modul Competitor
+Matrix yang memetakan urutan eksekusi simulasi komparasi
+kapabilitas.
+
+Urutan
+
+dimulai
+
+ketika
+
+pengguna
+
+membuka
+
+Modul_Competitor_Matrix (Frontend), di mana objek halaman
+secara otomatis meminta data profil internal perusahaan (Our
+Company) dari Strategy_Service (Backend) untuk dijadikan garis
+dasar (baseline). Ketika pengguna memilih hingga 4 kompetitor
+pembanding pada komponen input selector, objek antarmuka
+mengirimkan deretan ID kompetitor terpilih ke Strategy_Service.
+Objek backend melakukan query request ke Database_SQL_Server
+untuk mengambil seluruh nilai skor Strategic Comparison Metrics
+milik
+
+entitas-entitas
+
+tersebut.
+
+Database
+
+mengembalikan
+
+sekumpulan data nilai, lalu Strategy_Service melakukan kalkulasi
+matriks
+
+kesenjangan
+
+sebelum
+
+mengirimkannya kembali
+
+ke
+
+antarmuka. Akhirnya, objek antarmuka merender data numerik
+tersebut ke dalam komponen grafik Radar_Chart secara interaktif
+beserta teks penjustifikasiannya.
+
+34
+
+5) Modul Solution Bundler (Laboratorium R&D)
+
+Gambar 2.11 Sequence Diagram Modul Solution Bundler
+Gambar 2.11 menampilkan sequence diagram Modul Solution
+Bundler yang memetakan runtunan pesan dan alur interaksi
+antarmuka dalam perancangan paket penawaran produk teknologi
+secara kronologis. Proses diawali ketika pengguna mengakses
+menu Solution Bundler, memicu komponen Frontend mengirimkan
+pesan HTTP GET Request menuju objek Strategy_Service
+(Backend). Objek ini mengeksekusi fungsi Membaca Data Master
+Paket Bundling pada Database_SQL_Server untuk menarik seluruh
+daftar draf penawaran lama dan merendernya ke layar pengguna.
+Langkah berikutnya terjadi ketika pengguna mengeklik tombol
+"Add New Bundle", yang direspon sistem dengan memunculkan
+formulir input interaktif. Saat pengguna memasukkan identitas
+paket dan memilih produk yang akan dikombinasikan, Frontend
+mengirimkan pesan permintaan data spesifikasi secara real-time ke
+35
+
+pihak Backend. Proses ini diteruskan melalui fungsi Mengambil
+Data Spesifikasi dan Katalog Produk dari database, yang hasilnya
+dikembalikan ke sistem untuk memunculkan informasi spesifikasi
+teknis produk secara otomatis di layar.
+Alur interaksi berlanjut saat pengguna menginputkan nilai
+komponen harga (Price Components) serta menentukan parameter
+bonus. Apabila opsi insentif bonus diaktifkan, objek antarmuka
+secara kondisional memunculkan sub-pilihan skema berupa produk
+gratis (free product), cashback, atau voucer (voucher) untuk dipilih
+oleh pengguna. Setelah seluruh data terpenuhi, objek Frontend
+secara dinamis melakukan kalkulasi mandiri (self-calculation)
+untuk menyajikan rincian total biaya akumulasi serta nominal harga
+jual final.
+Akhir dari fase transaksi ditandai ketika pengguna mengeklik opsi
+"Save". Komponen Frontend akan mengirimkan HTTP POST
+Request berisi struktur payload JSON paket komposit ke
+Strategy_Service, yang kemudian dikonversi menjadi instruksi
+Menyimpan Data Paket Bundling Final ke dalam database SQL
+Server. Database mengirimkan status konfirmasi sukses yang
+direspon balik oleh sistem dengan menampilkan pesan notifikasi
+berhasil di layar pengguna.
+B. Rancangan ERD (Entity Relationship Diagram) dan Konseptual
+Database
+Rancangan basis data dilakukan untuk memetakan seluruh entitas data
+strategis termasuk data penarikan SiRUP, pemetaan titik lokasi, profil
+perusahaan, hingga parameter skor kompetitor beserta hubungan
+kardinalitas relasinya. Pemodelan ini menjamin integritas dan efisiensi
+penyimpanan data pada RDBMS SQL Server.
+
+36
+
+Gambar 2.12 Entity Relationship Diagram (ERD) Sistem Genesys Modul
+Business Development
+Gambar 2.12 menampilkan rancangan Entity Relationship Diagram (ERD)
+yang merepresentasikan arsitektur pemodelan basis data terdistribusi pada
+platform Genesys. Selaras dengan pendekatan arsitektur microservices,
+struktur data diisolasi secara modular ke dalam dua kelompok database
+utama, yaitu kluster Otorisasi_Portal dan kluster Operasional_BizDev
+demi menjamin keamanan serta kemandirian layanan (service autonomy).
+Hubungan interaksi data lintas kluster dijembatani melalui mekanisme
+Logical Foreign Key pada tingkat kode program aplikasi. Hal ini terlihat
+pada entitas db_portal_users yang memegang kunci logis terhadap entitas
+db_bizdev_sirup_assignments melalui kolom sales_user_id untuk delegasi
+personel Sales dan kolom assigned_by untuk pencatatan aktor Business
+Development yang memberikan instruksi penugasan proyek hasil kurasi
+LPSE Scraper.
+Pada modul Competitor Matrix, simulasi analisis persaingan tender
+difasilitasi oleh hubungan komparasi (non-identifying relationship) satuke-satu (1:1) antara entitas db_bizdev_mkt_company_profile sebagai
+37
+
+parameter acuan dasar (baseline) internal perusahaan dengan entitas
+db_bizdev_mkt_competitor_master selaku pusat data intelijen pasar dari
+perusahaan pesaing eksternal. Sementara itu, fungsionalitas modul Market
+Heatmap mengekstraksi data spasial secara dinamis langsung melalui
+agregasi nilai pagu pada entitas db_bizdev_sirup_assignments tanpa
+membutuhkan dependensi tabel fisik tambahan.
+Terakhir, pada modul Solution Bundler, integritas data racikan kombinasi
+produk komersial dijaga secara ketat melalui relasi fisik satu-ke-banyak
+(1:N atau One-to-Many) berbasis kekuncian bundle_id. Entitas induk
+db_bizdev_rnd_bundles yang menyimpan logika skema bonus kondisional
+mengikat entitas anak db_bizdev_rnd_bundle_items untuk repositori
+varian
+
+item
+
+produk
+
+terpilih,
+
+serta
+
+mengunci
+
+entitas
+
+db_bizdev_rnd_bundle_price_components yang mencatat rincian ruparupa komponen biaya operasional penawaran secara presisi.
+C. Desain Tabel
+Desain tabel memberikan spesifikasi basis data yang merepresentasikan
+skema fisik dari ERD. Spesifikasi ini mencakup penamaan kolom (field),
+tipe data (integer, varchar, datetime, float), batasan (constraint), serta
+penentuan Primary Key (PK) dan Foreign Key (FK).
+Desain tabel di bawah ini merupakan penjabaran skema fisik dari struktur
+ERD yang diimplementasikan ke dalam SQL Server. Spesifikasi ini
+merinci nama kolom (field), tipe data, batasan (constraint), serta penentuan
+Primary Key (PK) dan Foreign Key (FK) pada setiap tabel sistem:
+1. Tabel Pengguna (users)
+Tabel ini berada di dalam database db_portal yang berfungsi khusus
+untuk menyimpan data kredensial, level otorisasi, serta status aktivitas
+seluruh pengguna yang memiliki hak akses untuk mengoperasikan
+ekosistem platform Genesys.
+
+38
+
+Tabel 2.3 Struktur Tabel users
+Nama Field
+
+Tipe Data
+
+Constraint
+
+Keterangan
+
+id
+
+BIGINT
+
+PK,
+
+ID indeks unik sistem (Auto
+
+id_user
+
+VARCHAR (100)
+
+Not Null
+
+username
+
+VARCHAR (100)
+
+Not Null
+
+name
+
+VARCHAR (255)
+
+Not Null
+
+nickname
+
+VARCHAR (50)
+
+Nullable
+
+email
+
+VARCHAR (100)
+
+Not Null
+
+Identity
+
+Increment)
+UUID atau kode string unik
+identitas pengguna
+Nama akun unik untuk
+kebutuhan otentikasi login
+Nama lengkap personel
+pengguna sistem
+Nama panggilan atau inisial
+singkat dari pengguna
+Alamat surat elektronik
+(email) resmi pengguna
+Kata sandi akun yang
+
+password
+
+VARCHAR (255)
+
+Not Null
+
+disimpan dalam bentuk
+enkripsi
+
+phone_number
+
+VARCHAR (20)
+
+Nullable
+
+avatar
+
+VARCHAR (255)
+
+Nullable
+
+user_level
+
+VARCHAR (50)
+
+Nullable
+
+user_code
+
+VARCHAR (10)
+
+Nullable
+
+Nomor kontak telepon aktif
+personel pengguna
+Nama file atau jalur tautan
+(path) foto profil pengguna
+Tingkatan hak akses pengguna
+(seperti Staff atau Manager)
+Kode registrasi internal unik
+khusus untuk identifikasi
+Status keaktifan akun
+
+status
+
+NVARCHAR (40)
+
+Not Null
+
+pengguna (seperti
+Active/Inactive)
+Catatan waktu terakhir kali
+
+last_seen_at
+
+DATETIME
+
+Nullable
+
+pengguna beraktivitas di
+sistem
+
+created_at
+
+DATETIME
+
+Nullable
+
+updated_at
+
+DATETIME
+
+Nullable
+
+Catatan waktu saat pembuatan
+data akun pertama kali
+Catatan waktu saat data akun
+mengalami perubahan terakhir
+
+39
+
+2. Tabel Penugasan Paket SiRUP (sirup_assignments)
+Tabel ini berada di dalam database db_bizdev yang berfungsi sebagai
+pusat data operasional untuk menyimpan hasil akuisisi data otomatis
+dari modul LPSE Scraper , pencatatan delegasi proyek kepada personel
+Sales , serta pemantauan status eksekusi dan perkembangan progres
+lapangan yang telah dilakukan oleh tim Sales tersebut.
+Tabel 2.4 Struktur Tabel sirup_assignments
+Nama Field
+
+Tipe Data
+
+Constraint
+
+id
+
+INT
+
+PK, Identity
+
+package_id
+package_name
+
+VARCHAR
+(50)
+VARCHAR
+(1000)
+
+sales_user_id
+
+INT
+
+assigned_by
+
+INT
+
+status
+priority
+deadline
+notes
+
+raw_payload
+
+VARCHAR
+(30)
+VARCHAR
+(20)
+DATE
+NVARCHAR
+(MAX)
+NVARCHAR
+(MAX)
+
+Not Null
+Not Null
+
+Keterangan
+ID indeks unik penugasan
+proyek (Auto Increment)
+ID resmi paket pengadaan dari
+portal SiRUP eksternal
+Nama paket rencana pengadaan
+teknologi instansi
+
+Not Null,
+
+ID referensi personel Sales yang
+
+FK
+
+ditunjuk mengeksekusi proyek
+
+Not Null
+Not Null
+Not Null
+Not Null
+Nullable
+
+ID personel Tim BizDev yang
+memberikan penugasan
+Status perkembangan delegasi
+tender (progress tracking)
+Tingkat prioritas eksekusi tender
+(seperti High/Medium/Low)
+Batas waktu menghubungi pihak
+eksternal pengadaan.
+Catatan tambahan atau instruksi
+khusus terkait proyek
+Data mentah berskala besar
+
+Nullable
+
+(JSON) hasil tarikan mesin
+scraper
+
+created_at
+
+DATETIME2
+
+Not Null
+
+updated_at
+
+DATETIME2
+
+Not Null
+
+Catatan waktu pembuatan data
+penugasan proyek
+Catatan waktu pembaruan data
+penugasan terakhir
+Catatan waktu penghapusan data
+
+deleted_at
+
+DATETIME2
+
+Nullable
+
+jika dilakukan pembatalan (Soft
+Delete)
+
+40
+
+3. Tabel Profil Perusahaan (mkt_company_profile)
+Tabel ini berada di dalam database db_bizdev yang berfungsi untuk
+menyimpan data profil, informasi legal/jejaring, serta bobot nilai
+parameter kekuatan internal perusahaan (Our Company) sebagai acuan
+dasar (baseline) komparasi strategi.
+Tabel 2.5 Tabel Profil Perusahaan
+Nama Field
+company_id
+
+Tipe Data
+INT
+
+Constraint
+PK,
+Identity
+
+company_photo
+
+VARCHAR (255)
+
+Nullable
+
+company_name
+
+VARCHAR (255)
+
+Not Null
+
+Keterangan
+ID indeks unik profil
+internal perusahaan
+(Auto Increment)
+Jalur tautan (path) berkas
+logo atau foto perusahaan
+Nama resmi entitas
+perusahaan internal
+Tahun berdiri atau
+
+join_year
+
+INT
+
+Nullable
+
+bergabungnya perusahaan
+di pasar
+Deskripsi rumpun produk
+
+focus_product
+
+TEXT
+
+Nullable
+
+atau solusi teknologi utama
+yang difokuskan
+Daftar merek dagang
+
+handled_brands
+
+TEXT
+
+Nullable
+
+(brands) atau prinsipal yang
+dipegang resmi
+
+location
+website s.d
+other_link
+
+VARCHAR (255)
+
+Nullable
+
+Alamat domisili kantor
+pusat perusahaan
+Kumpulan kolom tautan
+
+VARCHAR (255)
+
+Nullable
+
+eksternal (Website, IG, FB,
+LinkedIn)
+Skor kuantitatif kekuatan
+
+solution_strength
+
+INT
+
+Not Null
+
+solusi teknologi
+(Skala 1-10)
+
+reason_solution_
+strength
+
+Narasi argumen/justifikasi
+TEXT
+
+Nullable
+
+pemberian skor kekuatan
+solusi
+Skor kuantitatif keunggulan
+
+pricing_strategy
+
+INT
+
+Not Null
+
+strategi harga di pasar
+(Skala 1-10)
+
+41
+
+reason_pricing_
+strategy
+
+Narasi argumen/justifikasi
+TEXT
+
+Nullable
+
+pemberian skor strategi
+harga
+Skor kuantitatif tingkat
+
+client_proximity
+
+INT
+
+Not Null
+
+kedekatan/retensi dengan
+klien (Skala 1-10)
+
+reason_client_
+proximity
+operational_
+capacity
+
+Narasi argumen/justifikasi
+TEXT
+
+Nullable
+
+klien
+Skor kuantitatif kapasitas
+INT
+
+Not Null
+
+Narasi argumen/justifikasi
+TEXT
+
+Nullable
+
+capacity
+administrative_
+dominance
+
+Skor kelengkapan
+INT
+
+Not Null
+
+administrasi dan legalitas
+tender (Skala 1-10)
+Narasi argumen/justifikasi
+
+TEXT
+
+Nullable
+
+dominance
+created_at
+
+pemberian skor kapasitas
+operasional
+
+reason_
+administrative_
+
+operasional tim di lapangan
+(Skala 1-10)
+
+reason_
+operational_
+
+pemberian skor kedekatan
+
+pemberian skor dominasi
+administrasi
+
+DATETIME2
+
+Not Null
+
+Log waktu sistem saat data
+company dibuat
+Log waktu sistem saat data
+
+updated_at
+
+DATETIME2
+
+Not Null
+
+company mengalami
+perubahan
+
+deleted_at
+
+DATETIME2
+
+Nullable
+
+Log waktu sistem saat data
+dihapus (Soft Delete)
+
+4. Tabel Master Kompetitor (mkt_competitor_master)
+Tabel ini berada di dalam database db_bizdev dengan struktur yang
+identik dengan profil internal, berfungsi khusus sebagai repositori data
+intelijen pasar untuk memetakan parameter kekuatan, rekam jejak, dan
+tautan informasi dari seluruh entitas kompetitor pesaing.
+
+42
+
+Tabel 2.6 Tabel Master Kompetitor
+Nama Field
+
+Tipe Data
+
+Constraint
+
+Keterangan
+ID indeks unik data master
+
+competitor_id
+
+INT
+
+PK, Identity
+
+kompetitor pesaing
+(Auto Increment)
+
+competitor_photo
+
+competitor_name
+
+VARCHAR
+(255)
+VARCHAR
+(255)
+
+Jalur tautan (path) berkas
+Nullable
+
+logo atau foto profil entitas
+kompetitor
+Nama resmi dari entitas
+
+Not Null
+
+perusahaan kompetitor
+pesaing
+Tahun mulai aktif atau
+
+join_year
+
+INT
+
+Nullable
+
+berdirinya kompetitor di
+kancah industri
+Deskripsi rumpun produk
+
+focus_product
+
+TEXT
+
+Nullable
+
+atau solusi IT utama yang
+dijual kompetitor
+Daftar merek dagang
+
+handled_brands
+
+TEXT
+
+Nullable
+
+(brands) atau prinsipal yang
+dipegang kompetitor
+
+location
+
+VARCHAR
+(255)
+
+website s.d
+
+VARCHAR
+
+other_link
+
+(255)
+
+Alamat domisili kantor
+Nullable
+
+pusat atau cabang
+operasional kompetitor
+Kumpulan kolom tautan
+
+Nullable
+
+eksternal (Website, IG, FB,
+LinkedIn)
+Skor kuantitatif kekuatan
+
+solution_strength
+
+INT
+
+Not Null
+
+solusi teknologi
+(Skala 1-10)
+
+reason_solution_
+strength
+
+Narasi argumen/justifikasi
+TEXT
+
+Nullable
+
+pemberian skor kekuatan
+solusi
+Skor kuantitatif keunggulan
+
+pricing_strategy
+
+INT
+
+Not Null
+
+strategi harga di pasar
+(Skala 1-10)
+
+reason_pricing_
+strategy
+client_proximity
+
+Narasi argumen/justifikasi
+TEXT
+
+Nullable
+
+pemberian skor strategi
+harga
+
+INT
+
+Not Null
+
+Skor kuantitatif tingkat
+
+43
+
+kedekatan/retensi dengan
+klien (Skala 1-10)
+reason_client_
+proximity
+operational_
+capacity
+
+Narasi argumen/justifikasi
+TEXT
+
+Nullable
+
+klien
+Skor kuantitatif kapasitas
+INT
+
+Not Null
+
+Narasi argumen/justifikasi
+TEXT
+
+Nullable
+
+capacity
+administrative_
+dominance
+
+pemberian skor kapasitas
+operasional
+Skor kelengkapan
+
+INT
+
+Not Null
+
+administrasi dan legalitas
+tender (Skala 1-10)
+
+reason_
+administrative_
+
+operasional tim di lapangan
+(Skala 1-10)
+
+reason_
+operational_
+
+pemberian skor kedekatan
+
+Narasi argumen/justifikasi
+TEXT
+
+Nullable
+
+dominance
+
+pemberian skor dominasi
+administrasi
+Catatan waktu sistem saat
+
+created_at
+
+DATETIME2
+
+Not Null
+
+baris data kompetitor ini
+dibuat
+Catatan waktu sistem saat
+
+updated_at
+
+DATETIME2
+
+Not Null
+
+terjadi perubahan data
+kompetitor terakhir
+Catatan waktu sistem untuk
+
+deleted_at
+
+DATETIME2
+
+Nullable
+
+mendukung fitur Soft Delete
+data kompetitor
+
+5. Tabel Master Bundling R&D (rnd_bundles)
+Tabel ini berada di dalam database db_bizdev yang berfungsi sebagai
+repositori utama untuk menyimpan data dasar paket kombinasi produk
+penawaran, identitas rancangan proyek teknologi, serta parameter
+penentu logika skema bonus komersial yang diinisiasi oleh tim
+Business Development.
+
+44
+
+Tabel 2.7 Tabel Master Bundling R&D
+Nama Field
+
+Tipe Data
+
+Constraint
+
+Keterangan
+ID indeks unik berformat
+
+bundle_id
+
+VARCHAR (36)
+
+PK
+
+UUID untuk identitas paket
+racikan
+Nama resmi proyek atau
+
+project_name
+
+VARCHAR (255)
+
+Not Null
+
+draf paket penawaran
+teknologi
+Narasi deskripsi atau
+
+description
+
+TEXT
+
+Nullable
+
+penjelasan umum ruang
+lingkup paket
+Detail spesifikasi komposit
+
+specification
+
+TEXT
+
+Nullable
+
+gabungan dari produkproduk di dalam paket
+Jenis skema insentif bonus
+
+bonus_type
+
+VARCHAR (20)
+
+Not Null
+
+yang dipilih (Free Product /
+Cashback / Voucher)
+Referensi ID produk
+
+bonus_
+product_id
+
+VARCHAR (36)
+
+Nullable
+
+katalog eksternal yang
+dijadikan sebagai produk
+gratis
+
+bonus_
+product_qty
+bonus_
+cashback_value
+bonus_
+voucher_code
+bonus_
+voucher_value
+
+Kuantitas jumlah unit
+INT
+
+Not Null
+
+produk hadiah gratis yang
+disertakan
+Nominal nilai pengembalian
+
+DECIMAL
+
+Not Null
+
+uang tunai (cashback)
+dalam transaksi
+Kode unik kupon/voucer
+
+VARCHAR (100)
+
+Nullable
+
+pemasaran yang diaktifkan
+dalam paket
+Besaran nilai nominal
+
+DECIMAL
+
+Not Null
+
+pemotongan harga yang
+dibawa oleh kode voucer
+Status pelacakan draf
+
+status
+
+VARCHAR (20)
+
+Not Null
+
+(draft / finalized) dari
+dokumen racikan
+UUID identitas personel tim
+
+created_by
+
+VARCHAR (36)
+
+Nullable
+
+BizDev yang menyusun
+rancangan bundling
+
+45
+
+Catatan waktu sistem saat
+created_at
+
+DATETIME2
+
+Nullable
+
+baris draf paket bundling ini
+dibuat
+Catatan waktu sistem saat
+
+updated_at
+
+DATETIME2
+
+Nullable
+
+terjadi perubahan data draf
+terakhir kali
+
+6. Tabel Item Bundling R&D (rnd_bundle_items)
+Tabel ini bertindak sebagai tabel anak (child table) dari entitas utama
+rnd_bundles di database db_bizdev yang berfungsi secara khusus untuk
+merekam detail rincian varian produk komersial beserta kuantitasnya
+yang dimasukkan ke dalam satu paket kombinasi.
+Tabel 2.8 Tabel Detail Item Bundling R&D
+Nama Field
+id
+
+Tipe Data
+BIGINT
+
+Constraint
+PK,
+Identity
+
+Keterangan
+ID indeks unik baris data
+item komposit
+(Auto Increment)
+Relasi kunci tamu
+
+bundle_id
+
+VARCHAR (36)
+
+Not Null,
+
+(Foreign Key) merujuk
+
+FK
+
+pada kolom bundle_id di
+tabel rnd_bundles
+Kode ID identitas unik
+
+product_uuid
+
+VARCHAR (255)
+
+Not Null
+
+produk katalog komersial
+yang dipilih
+Jumlah kuantitas unit
+
+qty
+
+INT
+
+Not Null
+
+produk yang dimasukkan ke
+dalam paket komposit
+Nilai nominal harga produk
+
+price_at_addition
+
+DECIMAL
+
+Not Null
+
+secara real-time saat
+dimasukkan ke paket
+Catatan waktu sistem saat
+
+created_at
+
+DATETIME2
+
+Nullable
+
+item produk ini
+ditambahkan ke draf paket
+
+46
+
+7. Tabel Komponen Harga Bundling (rnd_bundle_price_components)
+Tabel ini berada di dalam database db_bizdev yang berfungsi sebagai
+pelengkap arsitektur modular untuk menampung rincian komponen
+biaya operasional pendukung eksternal (seperti jasa instalasi,
+pengiriman, lisensi, atau akomodasi tim) yang membentuk nilai
+kalkulasi total harga penawaran di luar harga produk utama.
+Tabel 2.9 Tabel Komponen Harga Bundling
+Nama Field
+id
+
+Tipe Data
+BIGINT
+
+Constraint
+PK,
+Identity
+
+Keterangan
+ID indeks unik komponen
+biaya penawaran
+(Auto Increment)
+Relasi kunci tamu
+
+bundle_id
+
+VARCHAR (36)
+
+Not Null,
+
+(Foreign Key) merujuk
+
+FK
+
+pada kolom bundle_id di
+tabel rnd_bundles
+Nama peruntukan
+
+component_name
+
+VARCHAR (255)
+
+Not Null
+
+komponen biaya tambahan
+(misalnya: Jasa
+Implementasi)
+Nilai nominal besaran harga
+
+base_price
+
+DECIMAL
+
+Not Null
+
+dasar untuk komponen
+biaya operasional tersebut
+Catatan waktu sistem saat
+
+created_at
+
+DATETIME2
+
+Nullable
+
+data komponen biaya ini
+pertama kali direkam
+Catatan waktu sistem saat
+
+updated_at
+
+DATETIME2
+
+Nullable
+
+terjadi perubahan rincian
+harga biaya terakhir kali
+
+2.3.2. Perancangan Jaringan
+Topik utama proyek Tugas Akhir ini berfokus penuh pada rekayasa
+perangkat lunak dan manajemen data strategis korporasi. Oleh karena itu,
+proyek ini tidak melakukan perancangan, instalasi, atau konfigurasi topologi
+jaringan komputer dari skala nol. Namun, demi mendukung aspek ketersediaan
+(availability) agar platform dapat diakses secara publik melalui alamat
+47
+
+http://genesys.sanatasystem.net/,
+
+implementasi
+
+sistem
+
+memanfaatkan
+
+infrastruktur jaringan lokal (On-Premise) yang telah tersedia di PT Sanata
+System.
+Integrasi sistem memanfaatkan satu alokasi Local IP Public statis
+perusahaan yang dikonfigurasikan bersama divisi jaringan internal. Jalur lalu
+lintas data diatur melewati Web Server Nginx yang bertindak sebagai Reverse
+Proxy untuk mendistribusikan permintaan pengguna secara aman menuju
+klaster port Microservices di dalam jaringan internal korporasi.
+2.4
+
+Anggaran Biaya
+Meskipun proyek Tugas Akhir ini berbasis pada studi kasus riil di PT Sanata
+System, penyusunan anggaran biaya tetap diperlukan sebagai representasi nilai
+ekonomi dari implementasi perangkat lunak yang dibangun. Rencana pembiayaan
+pada proyek ini berhasil ditekan secara optimal karena infrastruktur hosting utama
+memanfaatkan fasilitas internal perusahaan, di mana deployment sistem diaplikasikan
+langsung pada server lokal PT Sanata System menggunakan alokasi local IP Public
+kantor.
+Sistem diakses secara publik melalui alamat subdomain resmi perusahaan,
+yaitu http://genesys.sanatasystem.net/. Alokasi pembiayaan murni ditekan seminimal
+mungkin karena pemanfaatan infrastruktur jaringan, konfigurasi gateway, serta
+pemeliharaan server komputasi sepenuhnya menggunakan alokasi sumber daya
+eksisting yang disediakan oleh pihak perusahaan. Rincian kebutuhan nilai ekonomis
+atau taksiran biaya proyek disajikan pada Tabel 2.10 berikut:
+Tabel 2.10 Rincian Anggaran Biaya Realisasi Proyek
+No
+
+Komponen
+
+Spesifikasi /
+
+Kebutuhan
+
+Justifikasi Kebutuhan
+
+Jumlah
+
+Biaya
+Satuan
+
+Total Biaya
+
+Menggunakan alokasi
+subdomain resmi
+1.
+
+Domain
+
+perusahaan
+
+Sistem
+
+(.sanatasystem.net)
+untuk akses web
+
+Rp0
+-
+
+(Corporate
+
+Rp0
+
+Facility)
+
+platform Genesys.
+48
+
+Menggunakan
+dedicated PC server
+3.
+
+Infrastruktur
+
+lokal dan alokasi IP
+
+Server &
+
+Public internal PT
+
+Hosting
+
+Sanata System
+
+Rp0
+-
+
+(Corporate
+
+Rp0
+
+Facility)
+
+bersama divisi
+jaringan.
+TOTAL
+
+Rekapitulasi Pengeluaran Proyek
+
+Rp0
+
+49
+
+BAB III
+PELAKSANAAN PROYEK
+3.1
+
+Hasil Proyek Aplikasi
+Hasil proyek aplikasi Sistem Informasi Strategis Business Development untuk
+Analisis Intelijen Pasar dan Optimalisasi Operasional Tender di PT Sanata System
+dijabarkan melalui runtunan antarmuka pengguna (user interface) berikut:
+1. Halaman Login
+
+Gambar 3.1 Antarmuka Halaman Login Portal Gateway
+Gambar 3.1 menampilkan implementasi antarmuka halaman login yang bertindak
+sebagai gerbang otentikasi hulu sistem. Halaman ini memuat form input untuk
+username dan password pengguna. Melalui Auth_Service, kredensial yang
+dimasukkan akan divalidasi langsung secara aman ke tabel dbo.users di dalam
+db_portal guna memastikan aspek keamanan hak akses sebelum pengguna
+dialihkan ke sistem utama.
+
+50
+
+2. Halaman Dashboard Portal
+
+Gambar 3.2 Antarmuka Halaman Dashboard Portal Gateway
+Gambar 3.2 menampilkan antarmuka Dashboard Portal Gateway setelah
+pengguna berhasil melakukan proses login. Halaman ini berfungsi sebagai hub
+pusat (junction) yang menyajikan pilihan menu modul layanan terintegrasi pada
+platform Genesys. Pengguna dapat memilih menu "Business Development" untuk
+dialihkan menuju ekosistem operasional intelijen bisnis.
+3. Halaman Dashboard Business Development
+
+Gambar 3.3 Antarmuka Dashboard Utama Business Development
+51
+
+Gambar 3.3 menampilkan antarmuka utama dashboard strategis modul Business
+Development. Dashboard ini menyajikan ringkasan informasi berupa data total
+kompetitor yang terdata di pasar dan status penugasan proyek ke personel Sales,
+serta menampilkan visualisasi performance trend operasional tender perusahaan.
+Selain itu, pada halaman utama ini terdapat visualisasi komponen peta (maps)
+seluruh Indonesia yang dapat dipilih pada setiap daerah, yang secara responsif
+akan memberikan rekomendasi wilayah dengan tingkat peluang pengadaan proyek
+teknologi yang tinggi guna mendukung pengambilan keputusan strategi ekspansi
+pasar oleh pihak manajemen.
+4. Halaman LPSE Scraper
+
+Gambar 3.4 Antarmuka Modul LPSE Scraper (Akuisisi Data)
+Gambar 3.4 menampilkan antarmuka utama modul LPSE Scraper yang
+menyajikan hasil otomatisasi penarikan data rencana pengadaan (SiRUP)
+pemerintah dari portal eksternal secara real-time. Data yang berhasil diakuisisi
+disajikan dalam bentuk tabel terstruktur yang informatif, lengkap dengan
+parameter pencarian dan kurasi paket proyek teknologi.
+
+52
+
+5. Tampilan Detail Paket Pengadaan dan Fitur Assign Sales
+
+Gambar 3.5 Antarmuka Detail Paket Pengadaan dan Fungsi Assign Sales
+Gambar 3.5 menampilkan jendela modal detail ketika salah satu paket proyek
+dipilih oleh pengguna. Antarmuka ini menyajikan deskripsi lengkap paket
+pengadaan serta menyediakan tombol aksi fungsional untuk mendelegasikan
+proyek tersebut secara instan kepada personel Sales terkait melalui penguncian
+data pada kolom sales_user_id di database db_bizdev.
+6. Halaman Penugasan Sales dan Progress Monitoring
+
+Gambar 3.6 Antarmuka Halaman Penugasan Sales dan Pemantauan Status
+53
+
+Gambar 3.6 menampilkan halaman repositori data pengadaan yang telah
+didelegasikan kepada tim Sales. Antarmuka ini menyajikan daftar penugasan
+lengkap dengan indikator tingkat prioritas, tenggat waktu, serta kolom pembaruan
+status eksekusi progres lapangan secara berkala untuk mempermudah fungsi
+progress tracking oleh divisi BizDev.
+7. Halaman Market Heatmap
+
+Gambar 3.7 Antarmuka Modul Market Heatmap (Analisis Spasial)
+Gambar 3.7 menampilkan implementasi antarmuka visualisasi geospasial Market
+Heatmap. Halaman ini memanfaatkan pustaka peta interaktif untuk merender
+gradasi warna peta panas (heatmap) berdasarkan akumulasi total pagu anggaran
+daerah yang diekstrak secara dinamis dari database, guna memetakan potensi
+pasar secara makro.
+
+54
+
+8. Tampilan Interaksi Klik Wilayah Spasial
+
+Gambar 3.8 Tampilan Informasi Agregasi Anggaran dan Entitas Kewilayahan
+Gambar 3.8 menampilkan respon antarmuka ketika pengguna mengeklik salah
+satu wilayah target pada peta. Sistem secara responsif memunculkan jendela
+informasi ringkas yang menyajikan total pagu/budget dan total pengadaan di
+wilayah tersebut, jumlah kompetitor serta personel Sales internal yang ditugaskan
+di sana.
+
+55
+
+9. Halaman View Detail Wilayah Terpilih
+
+Gambar 3.9 Antarmuka Halaman View Detail Wilayah Terpilih (Peta Detail dan
+Daftar Satuan Kerja)
+
+Gambar 3.10 Antarmuka Halaman View Detail Wilayah Terpilih (Daftar Paket
+Pengadaan)
+Gambar 3.9 dan Gambar 3.10 menampilkan halaman analisis mikro dari wilayah
+target yang dipilih. Antarmuka ini memuat peta detail dengan titik penanda
+(marker) lokasi riil tim sales dan kompetitor, daftar Satuan Kerja (Satker/Work
+
+56
+
+Unit) yang memiliki anggaran, daftar entitas kompetitor terkait, serta tabel khusus
+yang mendaftar paket pengadaan eksklusif di wilayah tersebut.
+10. Halaman Competitor Matrix
+
+Gambar 3.11 Antarmuka Modul Competitor Matrix (Simulasi Strategi)
+Gambar 3.11 menampilkan halaman utama modul Competitor Matrix yang
+bertindak sebagai laboratorium simulasi strategi persaingan tender. Halaman ini
+menyediakan antarmuka awal untuk menginisiasi komparasi serta menyediakan
+tombol akses menuju manajemen data profil internal dan manipulasi data
+kompetitor.
+
+57
+
+11. Halaman Company Profile
+
+Gambar 3. 12 Antarmuka Pengelolaan Profil dan Skor Internal Perusahaan
+Gambar 3.12 menampilkan antarmuka halaman Company Profile untuk mengelola
+data master internal korporasi. Pengguna dapat melengkapi informasi legalitas,
+fokus produk, serta melakukan update parameter penilaian skor kualitatif Strategic
+Comparison Metrics (seperti kekuatan solusi dan kapasitas operasional) pada tabel
+mkt_company_profile.
+12. Halaman Manage Competitor
+
+Gambar 3. 13 Antarmuka Halaman Manage Competitor
+58
+
+Gambar 3.13 menampilkan halaman repositori data master kompetitor luar.
+Antarmuka ini menyajikan daftar seluruh perusahaan pesaing yang terdata di
+dalam sistem, serta tombol aksi untuk melakukan perubahan data master (CRUD).
+13. Halaman Add dan Edit Competitor
+
+Gambar 3. 14 Antarmuka Formulir Tambah dan Ubah Data Kompetitor
+Gambar 3.14 menampilkan implementasi halaman formulir dinamis untuk
+menambah (Add) atau memperbarui (Edit) data intelijen kompetitor. Pengguna
+dapat memasukkan nama entitas, fokus produk, serta menginputkan nilai skor
+kriteria kualitatif beserta argumen penjustifikasiannya untuk disimpan ke dalam
+tabel mkt_competitor_master.
+
+59
+
+14. Halaman Competitor Matrix Saat Komparasi
+
+Gambar 3. 15 Antarmuka Pemilihan Entitas Simulasi Komparasi
+Gambar 3.15 menampilkan antarmuka proses simulasi di mana pengguna
+memanfaatkan komponen input selector untuk memilih hingga maksimal 4 entitas
+kompetitor pembanding. Pemilihan ini memicu Strategy_Service di bagian
+backend untuk menarik array data nilai kriteria dari database secara simultan.
+15. Tampilan Hasil Analisis Komparasi dan Radar Visual
+
+Gambar 3. 16 Antarmuka Hasil Analisis Komparasi Grafik Radar Chart
+
+60
+
+Gambar 3.16 menampilkan halaman luaran hasil analisis simulasi strategi berupa
+visualisasi
+
+grafik
+
+laba-laba
+
+(Radar
+
+Chart).
+
+Antarmuka
+
+interaktif
+
+ini
+
+mempertemukan garis baseline internal perusahaan dengan grafik kekuatan
+kompetitor, lengkap dengan sajian perbandingan nilai skor numerik serta
+ringkasan teks competitive comparison insights sebagai bahan keputusan
+manajemen.
+16. Halaman Daftar (List) Paket Solution Bundler
+
+Gambar 3. 17 Antarmuka Daftar (List) Paket Solution Bundler
+Gambar 3.17 menampilkan implementasi antarmuka utama modul Solution
+Bundler yang bertindak sebagai repositori digital bagi tim Business Development.
+Halaman ini merespon dengan memuat dan menyajikan daftar (list) seluruh
+koleksi draf paket solusi teknologi yang telah berhasil diracik dan disimpan oleh
+tim BizDev sebelumnya.
+
+61
+
+17. Halaman Pembuatan Paket Baru (Create New Bundle)
+
+Gambar 3.18 Antarmuka Formulir Peracikan Paket Bundling (Identitas Bundle
+dan Pilihan Produk)
+
+Gambar 3.19 Antarmuka Formulir Peracikan Paket Bundling (Komponen Harga
+dan Bonus)
+
+62
+
+Gambar 3.20 Antarmuka Formulir Peracikan Paket Bundling (Total Harga
+Bundle)
+Gambar 3.18, Gambar 3.19 dan Gambar 3.20 menampilkan respon antarmuka
+ketika pengguna mengeklik tombol "Add New Bundle". Sistem secara responsif
+akan mengalihkan layar dan memuat halaman formulir interaktif tempat pengguna
+memasukkan identitas paket, deskripsi, serta memilih kombinasi produk. Pada
+halaman ini, komponen frontend secara otomatis menampilkan spesifikasi teknis
+katalog produk dari database dan mengeksekusi kalkulasi mandiri (selfcalculation) komponen harga, serta menyediakan sub-pilihan skema bonus
+kondisional (produk gratis, cashback, atau voucer) secara real-time sebelum data
+disimpan.
+
+63
+
+18. Halaman Tampilan Detail Paket (View / Show Solution Bundle)
+
+Gambar 3.21 Antarmuka Tampilan Detail Paket Solution Bundle (Detail
+Indentitas Bundle)
+
+Gambar 3.22 Antarmuka Tampilan Detail Paket Solution Bundle (Pilihan Bundle
+Produk, Komponen Harga, dan Bonus)
+
+64
+
+Gambar 3.23 Antarmuka Tampilan Detail Paket Solution Bundle (Harga Jual
+Akhir)
+Gambar 3.21, Gambar 3.22 dan Gambar 3.23 menampilkan antarmuka View /
+Show dari draf paket solusi komersial final yang telah resmi dikunci dan disimpan
+ke dalam database SQL Server. Halaman ini menyajikan rincian utuh akumulasi
+total biaya operasional serta nominal harga jual akhir, sehingga racikan produk
+tersebut siap didistribusikan dan dipasarkan oleh tim Sales di lapangan.
+3.2
+
+Implementasi Proyek
+Implementasi proyek perangkat lunak platform Genesys (Sistem Informasi
+Strategis Business Development) didefinisikan ke dalam dua klaster evaluasi utama,
+yaitu fase lingkungan rilis sistem (deployment) pada infrastruktur PT Sanata System
+dan fase validasi kualitas perangkat lunak melalui matriks pengujian fungsional
+(Black Box Testing).
+3.2.1. Hasil Implementasi Sistem pada Mitra Industri
+Ekosistem digital platform Genesys telah sukses diimplementasikan
+dan dikonfigurasikan secara On-Premise memanfaatkan alokasi infrastruktur
+dedicated PC server internal milik PT Sanata System. Seluruh klaster layanan
+mandiri (service autonomy) backend berbasis CodeIgniter 4 telah berjalan
+secara independen guna melayani permintaan data dari sisi klien secara
+paralel. Struktur isolasi basis data tingkat perusahaan yang mendukung
+65
+
+kemandirian arsitektur microservices ini diwujudkan melalui pemisahan skema
+basis data fisik pada RDBMS SQL Server. Bukti konfigurasi klaster basis data
+terdistribusi pada server lokal perusahaan diperlihatkan pada Gambar 3.24
+
+Gambar 3.24 Dokumentasi Struktur Database-per-Service pada SQL Server
+Selanjutnya, jalur lalu lintas data dan keamanan akses publik telah
+berhasil dikunci dan diarahkan melewati Web Server Nginx yang bertindak
+sebagai Reverse Proxy dan Load Balancer. Sistem kini telah dapat diakses
+secara publik dan responsif oleh tim Business Development maupun pimpinan
+perusahaan melalui peramban (browser) pada alamat subdomain resmi
+korporasi, yaitu http://genesys.sanatasystem.net/. Bukti status kelayakan rilis
+publik aplikasi dan validasi web server Nginx melalui konsol peramban
+diperlihatkan pada Gambar 3.25.
+
+66
+
+Gambar 3.25 Dokumentasi Verifikasi Akses Publik dan Reverse Proxy Nginx
+3.2.2. Hasil Pengujian Kelayakan Sistem (Black Box Testing)
+Validasi
+
+fungsionalitas
+
+fitur
+
+dilakukan
+
+secara
+
+menyeluruh
+
+menggunakan metode Black Box Testing untuk memastikan bahwa seluruh
+komponen masukan (input) antarmuka berhasil memicu respon keluaran
+(output) aplikasi yang sesuai dengan spesifikasi kebutuhan divisi Business
+Development [2].
+Pengujian difokuskan pada ketepatan hak akses peran (Role-Based
+Access Control), fungsi otomatisasi kurasi data via API (LPSE Scraper),
+reaktivitas peta panas spasial (Market Heatmap), akurasi visualisasi grafik
+komparasi (Competitor Matrix), serta presisi nilai akumulasi otomatis harga
+(Solution Bundler). Rangkuman hasil eksekusi pengujian kelayakan fungsional
+sistem disajikan secara detail pada Tabel 3.1 berikut:
+
+67
+
+Tabel 3.1 Hasil Pengujian Fungsionalitas Aplikasi Strategis Business
+Development
+No
+
+1
+
+Komponen /
+
+Skenario Pengujian
+
+Fitur Modul
+
+Fungsional
+
+Hasil yang Diharapkan
+
+Input username dan
+
+Sistem memvalidasi ke
+
+Autentikasi
+
+password pada
+
+db_portal dan
+
+Kredensial
+
+Form Login Portal
+
+mengarahkan ke
+
+Gateway.
+
+Dashboard Utama.
+
+Status Kelayakan
+
+Berhasil / Sukses
+
+Menginisiasi
+2
+
+Modul
+
+otomatisasi
+
+Data eksternal pemerintah
+
+LPSE
+
+penarikan data
+
+berhasil ditarik dan tersaji
+
+Scraper
+
+rencana pengadaan
+
+dalam tabel terstruktur.
+
+Berhasil / Sukses
+
+SiRUP via API.
+Mengeklik tombol
+3
+
+Fungsi
+Assign Sales
+
+"Assign" untuk
+mendelegasikan
+proyek ke personel
+Sales.
+
+Modul
+4
+
+Market
+Heatmap
+Modul
+
+5
+
+Competitor
+Matrix
+
+Pengelolaan
+Data Master
+
+menyimpan ID Sales ke
+
+wilayah dan
+
+gradasi heatmap anggaran
+
+mengeklik area
+
+serta marker lokasi tim
+
+koordinat target
+
+lapangan.
+
+Memilih hingga 4
+
+Backend menarik array
+
+entitas kompetitor
+
+skor kriteria kualitatif dan
+
+pada komponen
+
+merendernya ke grafik
+
+input selector.
+
+Radar Chart.
+
+CRUD pada submodul Manage
+Competitor &
+Meracik kombinasi
+
+Modul
+
+komposit produk
+
+Solution
+
+baru dan
+
+Bundler
+
+mengaktifkan skema
+insentif bonus.
+
+Berhasil / Sukses
+
+database.
+Antarmuka memunculkan
+
+Company Profile.
+
+7
+
+progress tracking dan
+
+Memuat peta spasial
+
+Mengeksekusi aksi
+6
+
+Sistem mengunci status
+
+Berhasil / Sukses
+
+Berhasil / Sukses
+
+Perubahan nilai skor
+Strategic Comparison
+Metrics berhasil
+
+Berhasil / Sukses
+
+diperbarui di database.
+Frontend mengeksekusi
+self-calculation harga jual
+final secara real-time
+
+Berhasil / Sukses
+
+sebelum disimpan.
+
+68
+
+BAB IV
+PENUTUP
+4.1
+
+Kesimpulan
+Berdasarkan hasil perancangan, implementasi, dan pengujian yang telah dilaksanakan
+pada Sistem Informasi Strategis Business Development (platform Genesys) di PT
+Sanata System, maka dapat ditarik beberapa kesimpulan secara terukur sebagai
+berikut:
+1. Proyek Tugas Akhir ini telah berhasil mentransformasi 90% proses
+operasional dan analisis data konvensional divisi Business Development yang
+sebelumnya manual menjadi ekosistem digital terpadu dan sistematis berbasis
+web.
+2. Pengembangan modul LPSE Scraper sukses mengotomatisasi penarikan dan
+kurasi draf rencana pengadaan (SiRUP) pemerintah dari portal eksternal
+melalui integrasi endpoint API secara real-time, sehingga mampu memotong
+inefisiensi waktu pelacakan serta mendelegasikan penugasan proyek kepada
+personel Sales secara instan.
+3. Modul Market Heatmap berhasil menerjemahkan agregasi total pagu anggaran
+kewilayahan menjadi visualisasi geospasial peta panas (heatmap) interaktif
+dan sebaran titik koordinat penanda (marker) guna mempermudah manajemen
+dalam membaca peta kekuatan dan zonasi potensi pasar secara akurat.
+4. Modul Competitor Matrix sukses menyajikan alat simulasi komparasi
+kapabilitas strategis antara internal perusahaan dengan entitas pesaing berbasis
+grafik Radar Chart, sehingga berhasil mereduksi subjektivitas dan
+menghilangkan bias penilaian dalam menentukan posisi tawar korporasi.
+5. Modul
+
+Solution
+
+Bundler
+
+telah
+
+berhasil
+
+diimplementasikan
+
+sebagai
+
+laboratorium R&D yang memfasilitasi peracikan komponen produk teknologi,
+mendukung kalkulasi harga otomatis secara presisi (self-calculation di sisi
+client), serta memberikan fleksibilitas skema bonus kondisional yang siap
+didistribusikan kepada tim lapangan.
+6. Arsitektur sistem yang dibangun berbasis Microservices dengan isolasi data
+terdistribusi pada database SQL Server (db_portal dan db_bizdev) serta
+69
+
+dikelola melalui Web Server Nginx terbukti berjalan stabil, responsif, dan
+menjamin kemandirian layanan (service autonomy).
+7. Pengujian kelayakan sistem fungsional menggunakan metode Black Box
+Testing menunjukkan bahwa seluruh fitur antarmuka, hak akses peran (RoleBased Access Control), dan respon output pada platform Genesys telah
+berjalan dengan sukses dan sesuai dengan spesifikasi kebutuhan pengguna.
+4.2
+
+Saran
+Guna mendukung keberlanjutan dan pengembangan platform Genesys ke arah yang
+lebih kompleks di masa mendatang, beberapa saran strategis yang dapat diusulkan
+adalah sebagai berikut:
+1. Pengembangan Skala
+
+Produksi
+
+dan Infrastruktur:
+
+Melakukan
+
+proses
+
+deployment sistem dari lingkungan server lokal (On-Premise) menuju
+arsitektur cloud native serta menerapkan teknologi container orchestration
+(seperti Docker atau Kubernetes) guna menjamin stabilitas performa saat
+menangani lonjakan volume data pengguna berskala besar.
+2. Mengembangkan fungsionalitas akuisisi data pada modul LPSE Scraper agar
+dapat terintegrasi secara langsung dengan API Data Integrator milik portal
+resmi inaproc.id. Integrasi tingkat lanjut ini ditujukan agar sistem mampu
+melakukan pemantauan komprehensif terhadap rekam jejak sebuah paket
+pengadaan secara mendalam, khususnya dalam mendeteksi dan melacak status
+realisasi eksekusi proyek secara real-time, guna mengetahui apakah suatu
+paket tender teknologi telah resmi dieksekusi oleh entitas vendor kompetitor
+tertentu atau belum.
+3. Peningkatan Kecerdasan Buatan: Mengembangkan fungsionalitas modul
+analisis kompetisi pada Competitor Matrix dengan menyisipkan algoritma
+kecerdasan
+
+buatan
+
+(Machine
+
+Learning)
+
+guna
+
+menghasilkan
+
+prediksi
+
+probabilitas kemenangan tender proyek secara otomatis berdasarkan data
+historis.
+4. Perluasan Pengujian Keamanan: Melakukan pengujian performa mendalam
+(Stress Testing) serta pengujian penetrasi keamanan siber (Penetration
+Testing) pada setiap klaster endpoint RESTful API lintas database demi
+memitigasi risiko serangan siber sperti injection atau brute-force.
+70
+
+DAFTAR PUSTAKA
+[1]
+
+C. A. Cholik, “Perkembangan Teknologi Informasi Komunikasi ICT Dalam Berbagai
+Bidang,” vol. 2, no. 2, pp. 2746–1209, May 2021.
+
+[2]
+
+L. C. Hermawan, Moh. R. Mubarok, H. Mairudin, A. Mahdiyan, and Y. Yulianti,
+“Pengujian Black Box pada Aplikasi Verifikasi Data Nasabah dengan Menggunakan
+Metode Boundary Value Analysis Kasus,” Jurnal Teknologi Sistem Informasi dan
+Aplikasi, vol. 3, no. 3, p. 119, Aug. 2020.
+
+[3]
+
+L. Hidayati, L. P. Kusuma, D. Agustini, and V. Y. P. Ardhana, “Implementasi Web
+Scraping Untuk Pengumpulan Data Media Sosial Lingkup Pemerintah Provinsi NTB,”
+Jurnal Sistem Informasi dan Informatika (Simika), vol. 7, no. 1, pp. 63–72, 2024.
+
+[4]
+
+M. Barkah Sejati, “STUDI PERBANDINGAN FRAMEWORK LARAVEL DAN
+CODEIGNITER 3: OPTIMALISASI PERFORMA APLIKASI WEB,” vol. 12, no. 2,
+2025.
+
+[5]
+
+Republik Indonesia, Undang-Undang Republik Indonesia Nomor 25 Tahun 2009
+tentang Pelayanan Publik. Jakarta: Sekretariat Negara, 2009.
+
+[6]
+
+Siska Narulita, Ahmad Nugroho, and M. Zakki Abdillah, “Diagram Unified
+Modelling Language (UML) untuk Perancangan Sistem Informasi Manajemen
+Penelitian dan Pengabdian Masyarakat (SIMLITABMAS),” Bridge : Jurnal publikasi
+Sistem Informasi dan Telekomunikasi, vol. 2, no. 3, pp. 244–256, Aug. 2024.
+
+[7]
+
+Titania Pricillia and Zulfachmi, “Survey Paper: Perbandingan Metode Pengembangan
+Perangkat Lunak (Waterfall, Prototype, RAD),” Bangkit Indonesia, vol. 10, no. 1, pp.
+6–12, Mar. 2021.
+
+[8]
+
+Y. A. Rahmi, S. N. Rahayu, and D. Setiabudi, “Implementasi Visualisasi Radar Chart
+pada Dashboard Penilaian Kinerja Pegawai Menggunakan Agile Scrum,” Journal of
+Technology & Applied Sciences (JTAS), vol. 1, no. 1, pp. 42–50, Jan. 2026.
+
+71
+
+
