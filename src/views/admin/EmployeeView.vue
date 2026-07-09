@@ -303,8 +303,13 @@ watch(() => [form.division_id, form.position], ([newDivId, newPos]) => {
 
   const posName = String(newPos).toLowerCase();
   
+  if (posName.includes('ceo') || form.is_executive || posName.includes('direktur')) {
+      form.direct_supervisor_id = null;
+      return;
+  }
+
   if (posName.includes('manager') || posName.includes('head') || posName.includes('lead')) {
-      const ceo = employees.value.find(e => e.role === 'admin');
+      const ceo = employees.value.find(e => e.role === 'admin' && (e.position && e.position.toLowerCase().includes('ceo')));
       form.direct_supervisor_id = ceo ? ceo.id : 1; 
       return;
   } 

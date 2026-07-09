@@ -271,8 +271,9 @@ export const positionService = {
 }
 
 export const reportService = {
-  async getEvaluationReport(periodId: number): Promise<any[]> {
-    const response = await api.get<ApiResponse<any[]>>(`/admin/reports/evaluations?period_id=${periodId}`)
+  async getEvaluationReport(periodId?: number): Promise<any[]> {
+    const url = periodId ? `/admin/reports/evaluations?period_id=${periodId}` : '/admin/reports/evaluations'
+    const response = await api.get<ApiResponse<any[]>>(url)
     return response.data.data
   },
 
@@ -336,8 +337,9 @@ export const adminService = {
   },
 
   // [BARU] Statistik Dashboard Admin
-  async getDashboardStats(): Promise<any> {
-    const response = await api.get<ApiResponse<any>>('/admin/dashboard')
+  async getDashboardStats(periodId?: number): Promise<any> {
+    const url = periodId ? `/admin/dashboard?period_id=${periodId}` : '/admin/dashboard'
+    const response = await api.get<ApiResponse<any>>(url)
     return response.data.data
   },
 

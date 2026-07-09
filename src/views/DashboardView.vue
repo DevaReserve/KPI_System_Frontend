@@ -7,7 +7,7 @@
           Selamat datang kembali, <span class="font-semibold text-blue-600">{{ authStore.user?.employee?.name || authStore.user?.username || 'User' }}</span>.
         </p>
       </div>
-      <div class="text-right">
+      <div class="text-right flex flex-col items-end gap-2">
         <span class="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 shadow-sm inline-flex items-center gap-2">
           <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           <span>{{ currentDate }}</span>
@@ -15,6 +15,18 @@
           <svg class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           <span class="font-bold text-gray-800 tracking-wider tabular-nums">{{ currentTime }}</span>
         </span>
+
+        <div v-if="authStore.userRole === 'admin'" class="bg-white p-1 rounded-lg border border-gray-200 shadow-sm flex items-center">
+          <span class="text-xs font-bold text-gray-400 uppercase px-2"><i class="pi pi-calendar mr-1"></i> Periode:</span>
+          <select
+            v-model="selectedPeriod"
+            @change="loadAdminData"
+            class="bg-gray-50 border-none text-xs sm:text-sm font-bold text-gray-800 rounded-md py-1 pl-2 pr-8 focus:ring-0 cursor-pointer"
+          >
+            <option value="">Semua Periode</option>
+            <option v-for="p in periods" :key="p.id" :value="p.id">{{ p.name }}</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -94,7 +106,7 @@
           <div>
             <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Evaluasi Selesai</p>
             <p class="text-3xl font-bold mt-1">{{ dashboardStats.total_evaluations_done ?? 0 }}</p>
-            <p class="text-xs text-gray-400 mt-0.5">{{ dashboardStats.active_period?.name || adminStats.activePeriod || 'Tidak Ada Periode' }}</p>
+            <p class="text-xs text-gray-400 mt-0.5">{{ selectedPeriodName || adminStats.activePeriod || 'Tidak Ada Periode' }}</p>
           </div>
           <div class="absolute right-4 top-5 p-2.5 bg-green-50 rounded-full text-green-500">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -201,7 +213,7 @@
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-bold text-gray-800">Kinerja per Divisi</h3>
-            <span class="text-xs text-gray-400">{{ dashboardStats.active_period?.name || 'Semua Periode' }}</span>
+            <span class="text-xs text-gray-400">{{ selectedPeriodName }}</span>
           </div>
           <div v-if="adminCharts.divisionPerfSeries.length > 0 && adminCharts.divisionPerfSeries[0].data.some((v: number) => v > 0)">
             <apexchart type="bar" height="300" :options="adminCharts.divisionPerfOptions" :series="adminCharts.divisionPerfSeries"></apexchart>
@@ -389,8 +401,6 @@
 </template>
 
 <script setup lang="ts">
-import Button from 'primevue/button'
-import OverlayPanel from 'primevue/overlaypanel'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
@@ -418,6 +428,17 @@ const currentDate = computed(() => {
 
 const currentTime = ref(new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }))
 let timerInterval: any = null
+
+const periods = ref<any[]>([])
+const selectedPeriod = ref('')
+
+const selectedPeriodName = computed(() => {
+  if (selectedPeriod.value) {
+    const selected = periods.value.find((p: any) => p.id === Number(selectedPeriod.value))
+    return selected?.name || 'Periode Terpilih'
+  }
+  return dashboardStats.active_period?.name || 'Semua Periode'
+})
 
 // --- STATE ADMIN ---
 const dashboardStats = reactive<any>({})
@@ -508,6 +529,7 @@ onMounted(async () => {
 
   isLoading.value = true
   try {
+    await fetchPeriods()
     if (authStore.userRole === 'admin') await loadAdminData()
     else if (authStore.userRole === 'manager') await loadManagerData()
     else if (authStore.userRole === 'employee') await loadEmployeeData()
@@ -535,11 +557,11 @@ function getCompanyScoreColor(score: number) {
 
 // --- LOAD DATA ADMIN ---
 async function loadAdminData() {
-  const [emps, divs, periods, stats] = await Promise.all([
+  const periodId = selectedPeriod.value ? Number(selectedPeriod.value) : undefined
+  const [emps, divs, stats] = await Promise.all([
     employeeService.getAll(),
     divisionService.getAll(),
-    periodService.getAll(),
-    adminService.getDashboardStats().catch(() => ({}))
+    adminService.getDashboardStats(periodId).catch(() => ({}))
   ])
   
   // Simpan stats ke reactive
@@ -548,7 +570,7 @@ async function loadAdminData() {
   adminStats.totalEmployees = emps.length
   adminStats.totalDivisions = divs.length
   
-  const active = periods.find((p: any) => p.is_active)
+  const active = periods.value.find((p: any) => p.id === periodId) || periods.value.find((p: any) => p.is_active)
   adminStats.activePeriod = active ? active.name : 'Tidak Ada'
 
   // Chart 1: Distribusi Pegawai
@@ -569,8 +591,7 @@ async function loadAdminData() {
 
   // [BARU] Chart 3: Kinerja per Divisi dari endpoint baru
   try {
-    const activePeriodId = active?.id
-    const divStats = await adminService.getDivisionStats(activePeriodId)
+    const divStats = await adminService.getDivisionStats(periodId)
     
     const divNames = divStats.map((d: any) => d.division_name)
     const divAvgs = divStats.map((d: any) => parseFloat(d.average_score.toFixed(2)))
@@ -585,9 +606,10 @@ async function loadAdminData() {
   }
 
   // LOGIC TOP 5 & LOW 5
-  if (active) {
+  const reportPeriodId = periodId || active?.id
+  if (reportPeriodId) {
     try {
-      const reports = await reportService.getEvaluationReport(active.id)
+      const reports = await reportService.getEvaluationReport(reportPeriodId)
       
       adminStats.topPerformers = reports
         .filter((r: any) => r.total_score >= 80) 
@@ -605,6 +627,18 @@ async function loadAdminData() {
   } else {
     adminStats.topPerformers = []
     adminStats.lowPerformers = []
+  }
+}
+
+async function fetchPeriods() {
+  try {
+    const res = await periodService.getAll()
+    periods.value = res
+    const active = res.find((p: any) => p.is_active)
+    if (active) selectedPeriod.value = active.id?.toString() || ''
+    else if (res.length > 0 && !selectedPeriod.value) selectedPeriod.value = res[0].id?.toString() || ''
+  } catch (e) {
+    console.error(e)
   }
 }
 

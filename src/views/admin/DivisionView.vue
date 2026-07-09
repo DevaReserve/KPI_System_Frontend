@@ -89,7 +89,10 @@
 
         <Column field="manager_name" header="Kepala Divisi" sortable style="width: 25%">
           <template #body="{ data }">
-              <div v-if="data.manager_id && data.manager_name" class="flex items-center gap-2">
+              <div v-if="data.name === 'Board of Directors'" class="text-sm font-medium text-gray-400 italic">
+                  Tidak Perlu Manajer
+              </div>
+              <div v-else-if="data.manager_id && data.manager_name" class="flex items-center gap-2">
                   <div class="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">
                       {{ data.manager_name.charAt(0) }}
                   </div>
