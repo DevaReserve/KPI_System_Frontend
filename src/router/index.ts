@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
 import LoginView from '../views/LoginView.vue'
+import ForgotPasswordView from '../views/ForgotPasswordView.vue'
 import MainLayout from '../components/layout/MainLayout.vue'
 import DashboardView from '../views/DashboardView.vue'
 
@@ -31,6 +32,12 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: LoginView,
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/forgot-password',
+      name: 'ForgotPassword',
+      component: ForgotPasswordView,
       meta: { requiresAuth: false }
     },
     {

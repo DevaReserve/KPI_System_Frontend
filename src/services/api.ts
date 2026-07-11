@@ -68,6 +68,22 @@ export const authService = {
   }
 }
 
+export const passwordResetService = {
+  async forgotPassword(email: string): Promise<string> {
+    const response = await api.post<ApiResponse<null>>('/auth/forgot-password', { email })
+    return response.data.message
+  },
+  async verifyOTP(email: string, otp: string): Promise<string> {
+    const response = await api.post<ApiResponse<null>>('/auth/verify-otp', { email, otp })
+    return response.data.message
+  },
+  async resetPassword(data: { email: string; otp: string; new_password: string; confirm_password: string }): Promise<string> {
+    const response = await api.post<ApiResponse<null>>('/auth/reset-password', data)
+    return response.data.message
+  }
+}
+
+
 export const executiveService = {
   async getCompanyPerformance(periodId?: number): Promise<any[]> {
     const url = periodId ? `/executive/company-performance?period_id=${periodId}` : '/executive/company-performance'

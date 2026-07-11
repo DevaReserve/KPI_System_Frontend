@@ -178,6 +178,12 @@
             {{ isComparing ? 'Memuat...' : 'Bandingkan' }}
           </button>
         </div>
+        <div v-if="comparisonData.length > 0" class="flex justify-end mt-3">
+          <button @click="exportComparisonPDF"
+            class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition">
+            <i class="pi pi-file-pdf"></i> Export PDF
+          </button>
+        </div>
       </div>
 
       <!-- Comparison Summary Cards -->
@@ -235,21 +241,21 @@
             </template>
           </Column>
 
-          <Column header="Periode A" style="width: 130px">
+          <Column header="Periode Acuan" style="width: 200px">
             <template #body="{ data }">
               <span class="font-bold" :class="getScoreColor(data.score_a)">{{ data.score_a > 0 ? data.score_a.toFixed(2) : '-' }}</span>
               <span class="ml-1 text-xs px-1.5 rounded border" :class="getGradeBadge(data.grade_a)">{{ data.grade_a }}</span>
             </template>
           </Column>
 
-          <Column header="Periode B" style="width: 130px">
+          <Column header="Periode Pembimbing" style="width: 200px">
             <template #body="{ data }">
               <span class="font-bold" :class="getScoreColor(data.score_b)">{{ data.score_b > 0 ? data.score_b.toFixed(2) : '-' }}</span>
               <span class="ml-1 text-xs px-1.5 rounded border" :class="getGradeBadge(data.grade_b)">{{ data.grade_b }}</span>
             </template>
           </Column>
 
-          <Column field="delta" header="Δ Delta" sortable style="width: 100px">
+          <Column field="delta" header="Selisih" sortable style="width: 100px">
             <template #body="{ data }">
               <span class="font-extrabold text-sm"
                 :class="data.delta > 0.5 ? 'text-green-600' : data.delta < -0.5 ? 'text-red-600' : 'text-gray-400'">
@@ -279,14 +285,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { periodService, reportService } from '../../services/api'
-import { useToast } from 'primevue/usetoast'
-import Toast from 'primevue/toast'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+import { computed, onMounted, ref } from 'vue'
+import { periodService, reportService } from '../../services/api'
 
 const toast = useToast()
 
@@ -562,6 +568,80 @@ function exportToPDF() {
     toast.add({ severity: 'success', summary: 'Sukses', detail: 'Laporan PDF berhasil diunduh', life: 3000 })
   } catch (e) {
     toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal membuat PDF', life: 3000 })
+  }
+}
+
+function exportComparisonPDF() {
+  if (filteredComparison.value.length === 0) return
+  try {
+    const doc = new jsPDF('p', 'mm', 'a4')
+    const pageWidth = doc.internal.pageSize.width
+    const pageHeight = doc.internal.pageSize.height
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(18)
+    doc.text('PT. CAKRA MEDIA DATA', pageWidth / 2, 15, { align: 'center' })
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(10)
+    doc.text('Jl. Raya Mambal Ubud - Br. Sigaran Desa Mekar Bhuana, Badung, Bali', pageWidth / 2, 21, { align: 'center' })
+    doc.setLineWidth(0.5)
+    doc.line(10, 30, pageWidth - 10, 30)
+    const periodA = periods.value.find(p => p.id === Number(comparePeriodA.value))?.name || 'Periode A'
+    const periodB = periods.value.find(p => p.id === Number(comparePeriodB.value))?.name || 'Periode B'
+    const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(14)
+    doc.text('LAPORAN KOMPARASI KINERJA ANTAR PERIODE', pageWidth / 2, 42, { align: 'center' })
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'normal')
+    doc.text(`Periode A: ${periodA}`, pageWidth / 2, 49, { align: 'center' })
+    doc.text(`Periode B: ${periodB}`, pageWidth / 2, 55, { align: 'center' })
+    const tableBody = filteredComparison.value.map((row, index) => [
+      index + 1,
+      row.nip || '-',
+      row.employee_name,
+      row.division || '-',
+      row.score_a > 0 ? row.score_a.toFixed(2) : '-',
+      row.grade_a || '-',
+      row.score_b > 0 ? row.score_b.toFixed(2) : '-',
+      row.grade_b || '-',
+      `${row.delta > 0 ? '+' : ''}${row.delta.toFixed(2)}`,
+      row.trend.charAt(0).toUpperCase() + row.trend.slice(1)
+    ])
+    autoTable(doc, {
+      startY: 62,
+      head: [[
+        'No', 'NIP', 'Nama Pegawai', 'Divisi', 'Skor A', 'Grade A', 'Skor B', 'Grade B', 'Selisih', 'Tren'
+      ]],
+      body: tableBody,
+      theme: 'grid',
+      styles: { fontSize: 8, cellPadding: 3, valign: 'middle' },
+      headStyles: { fillColor: [44, 62, 80], textColor: 255, fontStyle: 'bold', halign: 'center' },
+      columnStyles: {
+        0: { halign: 'center', cellWidth: 10 },
+        4: { halign: 'center' },
+        5: { halign: 'center' },
+        6: { halign: 'center' },
+        7: { halign: 'center' },
+        8: { halign: 'center' }
+      },
+      alternateRowStyles: { fillColor: [245, 245, 245] }
+    })
+    let finalY = (doc as any).lastAutoTable.finalY + 20
+    if (finalY > pageHeight - 50) { doc.addPage(); finalY = 30 }
+    const signX = pageWidth - 60
+    doc.setFontSize(10)
+    doc.setFont('helvetica', 'normal')
+    doc.text(`Badung, ${today}`, signX, finalY, { align: 'center' })
+    doc.text('Mengetahui,', signX, finalY + 6, { align: 'center' })
+    doc.text('CEO PT. Cakra Media Data', signX, finalY + 11, { align: 'center' })
+    doc.setFont('helvetica', 'bold')
+    doc.text('Bapak Khalil', signX, finalY + 40, { align: 'center' })
+    doc.setLineWidth(0.2)
+    doc.line(signX - 25, finalY + 41, signX + 25, finalY + 41)
+    doc.save(`Komparasi_KPI_${periodA.replace(/\s+/g, '_')}_vs_${periodB.replace(/\s+/g, '_')}.pdf`)
+    toast.add({ severity: 'success', summary: 'Sukses', detail: 'Laporan komparasi PDF berhasil diunduh', life: 3000 })
+  } catch (e) {
+    toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal membuat PDF komparasi', life: 3000 })
   }
 }
 
