@@ -75,7 +75,13 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <DataTable :value="logs" :paginator="true" :rows="15" :loading="isLoading" stripedRows responsiveLayout="scroll">
         
-        <Column header="Tanggal" field="created_at" sortable style="width: 12%">
+        <Column header="ID" field="id" sortable style="width: 6%">
+          <template #body="{ data }">
+            <span class="text-sm font-bold text-gray-700">{{ data.id }}</span>
+          </template>
+        </Column>
+
+        <Column header="Tanggal" field="created_at" sortable style="width: 11%">
           <template #body="{ data }">
             <span class="text-sm font-bold text-gray-700">{{ getDateOnly(data.created_at) }}</span>
           </template>
@@ -88,7 +94,6 @@
              </span>
           </template>
         </Column>
-
         <Column header="Pelaku" field="user.username" sortable style="width: 20%">
            <template #body="{ data }">
             <div class="flex items-center gap-2">
@@ -103,8 +108,8 @@
                     <span v-else>{{ data.user?.username?.charAt(0) || '?' }}</span>
                 </div>
                 <div>
-                    <div class="text-sm font-bold text-gray-800">{{ data.user?.username }}</div>
-                    <div class="text-xs text-gray-400 uppercase tracking-wide">{{ data.user?.role }}</div>
+                    <div class="text-sm font-bold text-gray-800">{{ data.username || data.user?.username || 'Unknown' }}</div>
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">{{ data.user?.role || (data.username ? 'Attempted Login' : 'N/A') }}</div>
                 </div>
             </div>
           </template>
@@ -136,11 +141,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { adminService } from '../../services/api'
-import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
 import Sidebar from 'primevue/sidebar'
+import { onMounted, reactive, ref } from 'vue'
+import { adminService } from '../../services/api'
 
 const logs = ref<any[]>([])
 const isLoading = ref(true)

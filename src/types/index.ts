@@ -127,7 +127,8 @@ export interface EmployeeDetail {
 
 export interface ActivityLog {
   id: number
-  user_id: number
+  user_id?: number
+  username?: string
   action: string
   description: string
   ip_address: string

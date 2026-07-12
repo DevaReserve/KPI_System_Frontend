@@ -195,8 +195,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { myPerformanceService, kpiTargetService, periodService } from '../../services/api'
+import { computed, onMounted, ref } from 'vue'
+import { kpiTargetService, myPerformanceService, periodService } from '../../services/api'
 
 const history = ref<any[]>([])
 const myTargets = ref<any[]>([])

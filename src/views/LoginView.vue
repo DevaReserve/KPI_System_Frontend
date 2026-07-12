@@ -84,6 +84,9 @@
             <div class="space-y-2.5">
               <div class="flex items-center justify-between">
                 <label for="password" class="block text-sm font-bold text-slate-700">Password</label>
+                <router-link to="/forgot-password" class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">
+                  Lupa Password?
+                </router-link>
               </div>
               
               <div class="relative group">

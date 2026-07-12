@@ -139,8 +139,8 @@
 
         <Column field="name" header="Nama Indikator" sortable style="width: 35%">
             <template #body="{ data }">
-                <div class="font-bold text-gray-900">{{ data.name }}</div>
-                <div class="text-xs text-gray-500 truncate max-w-xs" :title="data.description">
+                <div class="font-bold text-base text-gray-900">{{ data.name }}</div>
+                <div class="text-sm text-gray-700 truncate max-w-xs" :title="data.description">
                     {{ data.description }}
                 </div>
             </template>
