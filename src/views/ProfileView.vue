@@ -94,7 +94,9 @@
                                     class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                 >
                             </div>
-                            <p class="text-xs text-gray-400 mt-1">Maksimal 5MB.</p>
+                            <p class="text-xs text-gray-600 mt-1">Jika lebih dari 1 foto, silakan upload file PDF yang berisi semua foto.</p>
+                            <p class="text-xs text-gray-600 mt-1">Maksimal 5MB.</p>
+
                         </div>
                         <div class="mt-6 flex justify-end gap-3">
                             <button type="button" @click="closeAchModal" class="px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-50 text-sm">Batal</button>
