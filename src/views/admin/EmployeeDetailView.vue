@@ -62,6 +62,18 @@
                 <div class="border-t border-gray-100 pt-4 text-left space-y-3 text-sm">
                     <div><label class="text-xs text-gray-400 uppercase font-bold">NIP</label><p class="text-gray-700 font-medium">{{ employee.nip }}</p></div>
                     <div><label class="text-xs text-gray-400 uppercase font-bold">Email</label><p class="text-gray-700 font-medium break-all">{{ employee.email }}</p></div>
+                    <div>
+                        <label class="text-xs text-gray-400 uppercase font-bold">No. Telepon / WhatsApp</label>
+                        <p class="text-gray-700 font-medium flex items-center justify-between">
+                            <span v-if="employee.phone">{{ employee.phone }}</span>
+                            <span v-else class="text-gray-400 italic">Belum diisi</span>
+                            <a v-if="employee.phone" :href="`https://wa.me/${employee.phone.replace(/[^0-9]/g, '').replace(/^0/, '62')}`" target="_blank" class="text-green-600 hover:text-green-700 font-bold text-xs bg-green-50 px-2 py-0.5 rounded flex items-center gap-1 border border-green-200">
+                                <i class="pi pi-whatsapp"></i> Chat WA
+                            </a>
+                        </p>
+                    </div>
+                    <div v-if="employee.bio"><label class="text-xs text-gray-400 uppercase font-bold">Tentang Saya / Bio</label><p class="text-gray-700 font-medium italic text-xs bg-gray-50 p-2.5 rounded border border-gray-200">"{{ employee.bio }}"</p></div>
+                    <div v-if="employee.social_media"><label class="text-xs text-gray-400 uppercase font-bold">Media Sosial / LinkedIn</label><p class="text-blue-600 font-medium text-xs truncate"><a :href="employee.social_media" target="_blank" class="hover:underline flex items-center gap-1"><i class="pi pi-external-link"></i> {{ employee.social_media }}</a></p></div>
                     <div><label class="text-xs text-gray-400 uppercase font-bold">Bergabung</label><p class="text-gray-700 font-medium">{{ formatDate(employee.join_date) }}</p></div>
                 </div>
             </div>
@@ -70,9 +82,14 @@
         <div class="lg:col-span-8 space-y-6">
             
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <div class="flex items-center gap-3 mb-4 pb-2 border-b">
-                    <div class="p-2 bg-yellow-100 rounded-lg text-yellow-600"><i class="pi pi-trophy text-lg"></i></div>
-                    <h3 class="text-lg font-bold text-gray-800">Prestasi & Sertifikat</h3>
+                <div class="flex items-center justify-between mb-4 pb-2 border-b">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-yellow-100 rounded-lg text-yellow-600"><i class="pi pi-trophy text-lg"></i></div>
+                        <h3 class="text-lg font-bold text-gray-800">Prestasi & Sertifikat</h3>
+                    </div>
+                    <button @click="showCertificateModal = true" class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm text-xs flex items-center gap-1.5 transition">
+                        <i class="pi pi-print"></i> Cetak E-Sertifikat Top Performer
+                    </button>
                 </div>
 
                 <div v-if="achievements.length > 0" class="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -176,18 +193,69 @@
             </div>
         </div>
     </div>
+
+    <!-- [MODAL E-SERTIFIKAT PENGHARGAAN TOP PERFORMER] -->
+    <Dialog v-model:visible="showCertificateModal" modal header="E-Sertifikat Penghargaan Resmi" :style="{ width: '850px' }" class="no-print">
+      <div class="p-6">
+         <!-- PREVIEW SERTIFIKAT DI LAYAR -->
+         <div id="printable-certificate" class="border-[12px] border-double border-amber-500 bg-gradient-to-b from-amber-50/60 via-white to-amber-50/60 p-10 text-center relative overflow-hidden shadow-xl rounded-2xl">
+            <div class="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-amber-400/10 blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-amber-500/10 blur-2xl pointer-events-none"></div>
+
+            <div class="inline-block p-3.5 bg-gradient-to-br from-amber-100 to-orange-100 text-amber-700 rounded-full mb-3 shadow-inner border border-amber-200">
+               <i class="pi pi-trophy text-4xl"></i>
+            </div>
+            <p class="text-[11px] font-extrabold uppercase tracking-[0.35em] text-amber-800 mb-2">PT. CAKRA MEDIA DATA • KPI MANAGEMENT SYSTEM</p>
+            <h1 class="text-3xl sm:text-4xl font-black text-gray-900 tracking-wide uppercase font-serif mb-6">Piagam Penghargaan</h1>
+            <p class="text-sm text-gray-600 mb-6 italic">Diberikan sebagai bentuk apresiasi dan penghargaan setinggi-tingginya kepada:</p>
+            
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-blue-950 underline decoration-amber-500 decoration-4 underline-offset-8 mb-4">{{ employee?.name }}</h2>
+            <p class="text-xs font-bold text-gray-600 uppercase tracking-wide mb-6">NIP: {{ employee?.nip || '-' }} • Divisi: {{ employee?.division_name || '-' }} • Posisi: {{ employee?.position || '-' }}</p>
+
+            <div class="max-w-xl mx-auto bg-white/90 p-6 rounded-2xl border border-amber-200/80 shadow-sm mb-8">
+               <p class="text-sm sm:text-base font-medium text-gray-800 leading-relaxed">
+                  Atas kontribusi luar biasa, dedikasi, serta pencapaian kinerja prima sehingga berhasil meraih predikat sebagai <br>
+                  <span class="font-extrabold text-amber-600 text-lg sm:text-xl uppercase tracking-wider block mt-2.5">🌟 Top 1 Performer & Pegawai Terbaik 🌟</span>
+                  pada evaluasi kinerja periode aktif ini.
+               </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-8 items-end max-w-lg mx-auto pt-4 border-t border-amber-200/80 text-xs text-gray-600">
+               <div class="text-center">
+                  <p class="mb-12 font-medium">Diterbitkan pada tanggal:</p>
+                  <p class="font-bold text-gray-900 border-t border-gray-400 inline-block px-5 pt-1.5">{{ new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) }}</p>
+               </div>
+               <div class="text-center">
+                  <p class="mb-12 font-medium">Disahkan Oleh:</p>
+                  <p class="font-bold text-gray-900 border-t border-gray-400 inline-block px-5 pt-1.5">Manajemen PT. Cakra Media Data</p>
+               </div>
+            </div>
+         </div>
+
+         <div class="mt-6 flex justify-end gap-3 no-print">
+            <button @click="showCertificateModal = false" class="px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 font-semibold text-sm text-gray-700">Tutup</button>
+            <button @click="printCertificate" class="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl font-bold shadow-md hover:from-amber-600 hover:to-orange-700 flex items-center gap-2 text-sm transition">
+               <i class="pi pi-print"></i> Cetak PDF E-Sertifikat
+            </button>
+         </div>
+      </div>
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import Dialog from 'primevue/dialog'
 // Pastikan warningService diimport
 import { employeeService, warningService } from '../../services/api' 
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 import Toast from 'primevue/toast'
 import ConfirmDialog from 'primevue/confirmdialog'
+
+const showCertificateModal = ref(false)
+function printCertificate() { window.print() }
 
 const route = useRoute()
 const toast = useToast()
@@ -288,3 +356,30 @@ function formatDate(d: string) {
     return new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) 
 }
 </script>
+
+<style>
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #printable-certificate,
+    #printable-certificate * {
+        visibility: visible;
+    }
+    #printable-certificate {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 100% !important;
+        max-width: 980px !important;
+        border: 10px double #f59e0b !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        background: #fff !important;
+    }
+    .no-print, [class*="Navbar"], [class*="Sidebar"], [class*="Dialog"] > div > div:first-child {
+        display: none !important;
+    }
+}
+</style>

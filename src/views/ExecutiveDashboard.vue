@@ -143,10 +143,32 @@
 
         <!-- Top Employees Table (matches DashboardView.vue performer layout) -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div class="px-5 py-3 border-b border-gray-100 bg-blue-50 flex items-center">
-            <i class="pi pi-star-fill text-blue-600 mr-2"></i>
-            <h3 class="font-bold text-blue-800 text-sm">Pegawai Bintang (Top 5)</h3>
+          <div class="px-5 py-3 border-b border-gray-100 bg-blue-50 flex items-center justify-between">
+            <div class="flex items-center">
+              <i class="pi pi-star-fill text-blue-600 mr-2"></i>
+              <h3 class="font-bold text-blue-800 text-sm">Pegawai Bintang (Top 5)</h3>
+            </div>
+            <span class="text-[11px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">Periode Aktif</span>
           </div>
+
+          <!-- [TOP 1 TROPHY HIGHLIGHT BANNER] -->
+          <div v-if="topEmployees.length > 0" class="p-4 bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-orange-500/15 border-b border-amber-200/80 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center shadow-md shadow-amber-500/30 font-black text-xl">
+                🏆
+              </div>
+              <div>
+                <span class="text-[10px] font-extrabold text-amber-700 uppercase tracking-widest block">Anugerah Top 1 Terbaik</span>
+                <h4 class="font-bold text-gray-900 text-sm leading-tight">{{ topEmployees[0].name }}</h4>
+                <p class="text-xs text-gray-500">{{ topEmployees[0].division_name }}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-lg font-black text-amber-600 block">{{ topEmployees[0].total_score.toFixed(2) }}</span>
+              <span class="text-[10px] font-bold text-amber-800 bg-amber-200/80 px-2.5 py-0.5 rounded-full">Grade A</span>
+            </div>
+          </div>
+
           <table class="min-w-full">
             <tbody class="divide-y divide-gray-100">
               <tr v-for="(emp, idx) in topEmployees" :key="idx" class="hover:bg-gray-50 transition">

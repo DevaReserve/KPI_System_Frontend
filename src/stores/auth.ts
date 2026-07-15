@@ -125,6 +125,9 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function logout() {
+    if (token.value) {
+      authService.logout()
+    }
     token.value = null
     user.value = null
     error.value = null

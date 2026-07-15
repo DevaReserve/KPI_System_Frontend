@@ -1,12 +1,12 @@
 <template>
   <div class="flex h-screen bg-gray-100 overflow-hidden relative">
     
-    <Sidebar :is-open="isSidebarOpen" @closeSidebar="isSidebarOpen = false" />
+    <Sidebar class="print:hidden no-print" :is-open="isSidebarOpen" @closeSidebar="isSidebarOpen = false" />
 
-    <div class="flex-1 flex flex-col overflow-hidden relative w-full">
-      <Navbar @toggleSidebar="isSidebarOpen = !isSidebarOpen" />
+    <div class="flex-1 flex flex-col overflow-hidden relative w-full print:overflow-visible print:block print:h-auto">
+      <Navbar class="print:hidden no-print" @toggleSidebar="isSidebarOpen = !isSidebarOpen" />
 
-      <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 md:p-6 scroll-smooth">
+      <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 md:p-6 scroll-smooth print:p-0 print:m-0 print:overflow-visible print:bg-white print:block print:h-auto">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />
@@ -39,4 +39,15 @@ main::-webkit-scrollbar { width: 8px; }
 main::-webkit-scrollbar-track { background: #f1f1f1; }
 main::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 main::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+@media print {
+  header, nav, aside, .no-print, [class*="Navbar"], [class*="Sidebar"] {
+    display: none !important;
+  }
+  body, html, #app, main, .flex, .h-screen {
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+}
 </style>

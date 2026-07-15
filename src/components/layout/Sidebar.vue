@@ -1,6 +1,6 @@
 <template>
   <aside 
-    class="fixed inset-y-0 left-0 z-30 w-64 bg-gray-50 border-r border-gray-200 text-gray-800 flex flex-col shadow-xl transition-transform duration-300 ease-in-out 
+    class="fixed inset-y-0 left-0 z-30 w-64 bg-gray-50 border-r border-gray-200 text-gray-800 flex flex-col shadow-xl transition-transform duration-300 ease-in-out print:hidden no-print
     md:translate-x-0 md:static md:m-4 md:rounded-2xl md:border-0 md:h-[calc(100vh-2rem)]"
     :class="isOpen ? 'translate-x-0' : '-translate-x-full'"
   >
@@ -56,6 +56,12 @@
             <router-link to="/employee/targets" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')">
               <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" /></svg>
               Target KPI Saya
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/employee/audit-trail" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')">
+              <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              Audit Trail Saya
             </router-link>
           </li>
         </template>

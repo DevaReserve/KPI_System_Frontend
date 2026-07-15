@@ -2,13 +2,71 @@
   <div>
     <Toast />
 
-    <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">Tim Saya</h1>
-      <p class="text-gray-600 text-sm mt-1">Daftar pegawai di bawah supervisi Anda.</p>
+    <div class="mb-6 flex justify-between items-center no-print">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Tim Saya</h1>
+        <p class="text-gray-600 text-sm mt-1">Daftar pegawai di bawah supervisi Anda.</p>
+      </div>
+      <button 
+        @click="printTeamReport" 
+        class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center transition-colors shadow-sm"
+      >
+        <i class="pi pi-print mr-2"></i> Cetak Rekap Tim (PDF)
+      </button>
+    </div>
+
+    <!-- BLOK CETAK RESMI REKAPITULASI TIM (KOP SURAT PT. CAKRA MEDIA DATA) -->
+    <div class="hidden print-block text-black bg-white">
+      <!-- Kop Surat Tengah -->
+      <div class="text-center pb-4 border-b-2 border-black mb-6">
+        <h1 class="text-2xl font-black uppercase tracking-wide">PT. CAKRA MEDIA DATA</h1>
+        <p class="text-xs text-gray-700 mt-1">Jl. Raya Mambal Ubud - Br. Sigaran Desa Mekar Bhuana, Badung, Bali</p>
+      </div>
+
+      <!-- Judul Laporan -->
+      <div class="text-center mb-6">
+        <h2 class="text-lg font-bold uppercase tracking-wider">LAPORAN REKAPITULASI PENILAIAN KINERJA TIM</h2>
+        <p class="text-sm font-semibold mt-1">Tanggal Cetak: {{ new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}</p>
+      </div>
+    </div>
+
+    <!-- TABEL CETAK KHUSUS -->
+    <div class="hidden print-block mb-8">
+      <table class="w-full border-collapse border border-black text-xs">
+        <thead>
+          <tr class="bg-gray-800 text-white print-table-header">
+            <th class="border border-black p-2 text-center w-12">No</th>
+            <th class="border border-black p-2 text-left">NIP / ID</th>
+            <th class="border border-black p-2 text-left">Nama Pegawai</th>
+            <th class="border border-black p-2 text-left">Status Penilaian</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, idx) in filteredTeam" :key="'print-'+item.employee_id">
+            <td class="border border-black p-2 text-center">{{ idx + 1 }}</td>
+            <td class="border border-black p-2">{{ item.employee_id }}</td>
+            <td class="border border-black p-2 font-bold">{{ item.employee_name }}</td>
+            <td class="border border-black p-2">
+              <span v-if="item.evaluation_status === 'submitted'" class="text-green-800 font-bold">Selesai</span>
+              <span v-else-if="item.evaluation_status === 'draft'" class="text-yellow-800 font-bold">Draft</span>
+              <span v-else-if="item.evaluation_status === 'appealed'" class="text-orange-800 font-bold">Ada Sanggahan</span>
+              <span v-else class="text-gray-600">Belum Dinilai</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="flex justify-end mt-12 pr-8 text-center text-xs">
+        <div class="w-56">
+          <p class="mb-1">Badung, {{ new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}</p>
+          <p class="mb-16">Mengetahui,<br>CEO PT. Cakra Media Data</p>
+          <p class="font-bold underline text-sm">Bapak Khalil</p>
+        </div>
+      </div>
     </div>
 
     <!-- Filter & Search Bar -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4 flex flex-col md:flex-row gap-3 items-center">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4 flex flex-col md:flex-row gap-3 items-center no-print">
       <!-- Search -->
       <div class="relative w-full md:flex-1">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -65,8 +123,8 @@
 
         <Column field="employee_name" header="Nama Pegawai" sortable style="width: 40%">
             <template #body="{ data }">
-                <div class="flex items-center">
-                    <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm mr-3 overflow-hidden border border-gray-200"
+                <div class="flex items-center cursor-pointer group" @click="$router.push(`/manager/employees/${data.employee_id}`)" title="Klik untuk lihat profil & biodata lengkap">
+                    <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm mr-3 overflow-hidden border border-gray-200 group-hover:ring-2 group-hover:ring-blue-500 transition-all"
                         :class="data.profile_picture_url ? 'bg-white' : 'bg-indigo-100 text-indigo-600'">
                         
                         <img 
@@ -77,7 +135,10 @@
                         <span v-else>{{ data.employee_name.charAt(0) }}</span>
                     </div>
                     <div>
-                        <div class="text-sm font-bold text-gray-900">{{ data.employee_name }}</div>
+                        <div class="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors flex items-center gap-1.5">
+                            {{ data.employee_name }}
+                            <i class="pi pi-external-link text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </div>
                         <div class="text-xs text-gray-500">ID: {{ data.employee_id }}</div>
                     </div>
                 </div>
@@ -103,24 +164,35 @@
 
         <Column header="Aksi" style="width: 30%">
             <template #body="{ data }">
-                <!-- Jika statusnya Submitted ATAU Appealed, munculkan tombol Lihat Detail -->
-                <button 
-                    v-if="data.evaluation_status === 'submitted' || data.evaluation_status === 'appealed'"
-                    @click="viewDetail(data)" 
-                    class="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded text-xs font-bold border border-green-200 transition-colors flex items-center shadow-sm"
-                    :class="data.evaluation_status === 'appealed' ? 'bg-orange-50 text-orange-700 border-orange-300 hover:bg-orange-100' : ''"
-                >
-                    <i class="pi pi-eye mr-1"></i> {{ data.evaluation_status === 'appealed' ? 'Tinjau Sanggahan' : 'Lihat Detail' }}
-                </button>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <!-- Tombol Lihat Profil -->
+                    <button 
+                        @click="$router.push(`/manager/employees/${data.employee_id}`)" 
+                        class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-2.5 py-1.5 rounded text-xs font-bold border border-gray-300 transition-colors flex items-center shadow-sm"
+                        title="Lihat Biodata, Kontak & Prestasi"
+                    >
+                        <i class="pi pi-user mr-1"></i> Profil
+                    </button>
 
-                <!-- Selain status di atas (Draft / Belum Dibuat), munculkan tombol Mulai/Lanjut Menilai -->
-                <button 
-                    v-else
-                    @click="handleAssess(data)" 
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors shadow-sm"
-                >
-                    {{ data.evaluation_status === 'draft' ? 'Lanjut Menilai' : 'Mulai Penilaian' }}
-                </button>
+                    <!-- Jika statusnya Submitted ATAU Appealed, munculkan tombol Lihat Detail -->
+                    <button 
+                        v-if="data.evaluation_status === 'submitted' || data.evaluation_status === 'appealed'"
+                        @click="viewDetail(data)" 
+                        class="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded text-xs font-bold border border-green-200 transition-colors flex items-center shadow-sm"
+                        :class="data.evaluation_status === 'appealed' ? 'bg-orange-50 text-orange-700 border-orange-300 hover:bg-orange-100' : ''"
+                    >
+                        <i class="pi pi-eye mr-1"></i> {{ data.evaluation_status === 'appealed' ? 'Tinjau Sanggahan' : 'Lihat Rapor' }}
+                    </button>
+
+                    <!-- Selain status di atas (Draft / Belum Dibuat), munculkan tombol Mulai/Lanjut Menilai -->
+                    <button 
+                        v-else
+                        @click="handleAssess(data)" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors shadow-sm"
+                    >
+                        {{ data.evaluation_status === 'draft' ? 'Lanjut Menilai' : 'Mulai Penilaian' }}
+                    </button>
+                </div>
             </template>
         </Column>
 
@@ -236,4 +308,21 @@ function viewDetail(item: TeamMember) {
     router.push(`/manager/assessment/${item.evaluation_id}`)
   }
 }
+
+function printTeamReport() {
+  window.print()
+}
 </script>
+
+<style scoped>
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+  .no-print { display: none !important; }
+  .print-block { display: block !important; }
+  body, p, h1, h2, h3, h4, div, span { color: #000 !important; }
+  .shadow-sm { box-shadow: none !important; }
+}
+</style>

@@ -67,6 +67,34 @@ export const authService = {
   },
   async changePassword(data: any): Promise<void> {
     await api.put('/auth/change-password', data)
+  },
+  async updateBiodata(data: any): Promise<User> {
+    const response = await api.put<ApiResponse<User>>('/auth/biodata', data)
+    return response.data.data
+  },
+  async sendPhoneOTP(): Promise<string> {
+    const response = await api.post<ApiResponse<null>>('/auth/phone/send-otp')
+    return response.data.message
+  },
+  async verifyPhoneOTP(otp: string): Promise<string> {
+    const response = await api.post<ApiResponse<null>>('/auth/phone/verify-otp', { otp })
+    return response.data.message
+  },
+  async logout(): Promise<void> {
+    try {
+      await api.post('/auth/logout')
+    } catch (e) {
+      // Ignore error if session expired
+    }
+  },
+  async getMyActivityLogs(startDate?: string, endDate?: string, action?: string): Promise<any[]> {
+    const params = new URLSearchParams()
+    if (startDate) params.append('start_date', startDate)
+    if (endDate) params.append('end_date', endDate)
+    if (action) params.append('action', action)
+
+    const response = await api.get<ApiResponse<any[]>>(`/activity-logs/my?${params.toString()}`)
+    return response.data.data
   }
 }
 
@@ -175,16 +203,30 @@ export const employeeService = {
   },
 
   async getEmployeeAchievementsById(employeeId: number): Promise<any[]> {
-    // Sesuaikan URL jika user login adalah admin atau manager
-    // Disini saya contohkan pakai endpoint admin
-    const response = await api.get<ApiResponse<any[]>>(`/admin/employees/${employeeId}/achievements`)
+    const userStr = localStorage.getItem('user')
+    let prefix = '/admin'
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr)
+        if (user.role === 'manager') prefix = '/manager'
+      } catch(e) {}
+    }
+    const response = await api.get<ApiResponse<any[]>>(`${prefix}/employees/${employeeId}/achievements`)
     return response.data.data
   },
   
-  // Ambil detail pegawai by ID (Admin) - Pastikan ini sudah ada
+  // Ambil detail pegawai by ID (Admin / Manager)
   async getEmployeeById(id: number): Promise<any> {
-      const response = await api.get<ApiResponse<any>>(`/admin/employees/${id}`)
-      return response.data.data
+    const userStr = localStorage.getItem('user')
+    let prefix = '/admin'
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr)
+        if (user.role === 'manager') prefix = '/manager'
+      } catch(e) {}
+    }
+    const response = await api.get<ApiResponse<any>>(`${prefix}/employees/${id}`)
+    return response.data.data
   }
 }
 
@@ -396,7 +438,15 @@ export const warningService = {
 
   // Melihat Riwayat SP Pegawai Tertentu
   async getByEmployee(employeeId: number): Promise<any[]> {
-    const response = await api.get<ApiResponse<any[]>>(`/admin/employees/${employeeId}/warnings`)
+    const userStr = localStorage.getItem('user')
+    let prefix = '/admin'
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr)
+        if (user.role === 'manager') prefix = '/manager'
+      } catch(e) {}
+    }
+    const response = await api.get<ApiResponse<any[]>>(`${prefix}/employees/${employeeId}/warnings`)
     return response.data.data
   },
 

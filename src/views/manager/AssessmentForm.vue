@@ -56,17 +56,17 @@
       </div>
     </div>
 
-    <div class="hidden print-block mb-8 border-b-2 border-black pb-4">
-      <div class="flex items-center justify-between">
-        <div class="text-left">
-          <h1 class="text-2xl font-bold uppercase">PT. Cakra Media Data</h1>
-          <p class="text-sm">Jalan Teknologi No. 123, Denpasar, Bali</p>
-          <p class="text-sm">Telp: (0361) 123456 | Email: hr@cakramedia.com</p>
-        </div>
-        <div class="text-right">
-          <h2 class="text-xl font-bold text-gray-600">LAPORAN HASIL PENILAIAN</h2>
-          <p class="text-sm">Periode: {{ periodName }}</p>
-        </div>
+    <div class="hidden print-block text-black bg-white">
+      <!-- Kop Surat Tengah -->
+      <div class="text-center pb-4 border-b-2 border-black mb-6">
+        <h1 class="text-2xl font-black uppercase tracking-wide">PT. CAKRA MEDIA DATA</h1>
+        <p class="text-xs text-gray-700 mt-1">Jl. Raya Mambal Ubud - Br. Sigaran Desa Mekar Bhuana, Badung, Bali</p>
+      </div>
+
+      <!-- Judul Dokumen -->
+      <div class="text-center mb-6">
+        <h2 class="text-lg font-bold uppercase tracking-wider">LAPORAN HASIL PENILAIAN KINERJA PEGAWAI</h2>
+        <p class="text-sm font-semibold mt-1">Periode Evaluasi: {{ periodName }}</p>
       </div>
     </div>
 
@@ -133,7 +133,7 @@
       </div>
 
       <div class="space-y-6">
-        <div v-for="(score, index) in form.scores" :key="score.score_id" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 print:border-black print:shadow-none print:break-inside-avoid">
+        <div v-for="(score, index) in filteredScores" :key="score.score_id" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 print:border-black print:shadow-none print:break-inside-avoid">
           <div class="flex justify-between items-start mb-3">
             <div>
               <h3 class="text-lg font-bold text-gray-800 print:text-black">
@@ -280,6 +280,17 @@ const calculateTotalScore = computed(() => {
     total += (s.score / 5) * s.weight
   })
   return total.toFixed(2)
+})
+
+const filteredScores = computed(() => {
+  if ((evaluationStatus.value === 'appealed' || isRevising.value) && appealedIndicators.value.length > 0) {
+    const list = appealedIndicators.value.map(i => i.toLowerCase().trim())
+    const filtered = form.scores.filter(score => 
+      list.includes(score.indicator_name.toLowerCase().trim())
+    )
+    if (filtered.length > 0) return filtered
+  }
+  return form.scores
 })
 
 onMounted(async () => {

@@ -146,11 +146,21 @@
             </template>
         </Column>
 
-        <Column field="indicator_type" header="Tipe & Target" sortable style="width: 25%">
+        <Column field="indicator_type" header="Tipe & Target Divisi" sortable style="width: 25%">
             <template #body="{ data }">
-                <div v-if="data.indicator_type === 'spesifik' && data.division" class="flex flex-col items-start gap-1">
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-indigo-50 text-indigo-700 border-indigo-100">
-                        {{ data.division.name }}
+                <div v-if="data.indicator_type === 'spesifik'" class="flex flex-wrap gap-1">
+                    <template v-if="data.divisions && data.divisions.length > 0">
+                        <span v-for="div in data.divisions" :key="div.id" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-indigo-50 text-indigo-700 border-indigo-100">
+                            {{ div.name }}
+                        </span>
+                    </template>
+                    <template v-else-if="data.division">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-indigo-50 text-indigo-700 border-indigo-100">
+                            {{ data.division.name }}
+                        </span>
+                    </template>
+                    <span v-else class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-gray-50 text-gray-600 border-gray-200">
+                        Belum Pilih Divisi
                     </span>
                 </div>
                 <div v-else>
@@ -205,8 +215,8 @@
                 <div>
                   <label class="block text-sm font-medium mb-1">Tipe</label>
                   <select v-model="form.indicator_type" class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <option value="umum">Umum</option>
-                    <option value="spesifik">Spesifik Divisi</option>
+                    <option value="umum">Umum (Semua Divisi)</option>
+                    <option value="spesifik">Spesifik Divisi (Bisa > 1)</option>
                   </select>
                 </div>
                 
@@ -223,11 +233,14 @@
               </div>
 
               <div v-if="form.indicator_type === 'spesifik'" class="mb-4 bg-gray-50 p-3 rounded-lg border border-gray-200">
-                <label class="block text-sm font-medium mb-1">Target Divisi</label>
-                <select v-model="form.division_id" required class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                  <option :value="null" disabled>Pilih Divisi</option>
-                  <option v-for="div in divisions" :key="div.id" :value="div.id">{{ div.name }}</option>
-                </select>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Target Divisi (Pilih 1 atau Lebih)</label>
+                <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-1">
+                  <label v-for="div in divisions" :key="div.id" class="flex items-center gap-2 text-sm bg-white p-2.5 rounded border border-gray-200 cursor-pointer hover:border-blue-400 transition">
+                    <input type="checkbox" :value="div.id" v-model="form.division_ids" class="rounded text-blue-600 focus:ring-blue-500">
+                    <span class="font-medium text-gray-700">{{ div.name }}</span>
+                  </label>
+                </div>
+                <p v-if="form.division_ids.length === 0" class="text-xs text-red-500 mt-2 font-bold">* Minimal pilih 1 divisi agar indikator ini bisa dinilai.</p>
               </div>
 
               <div class="mt-6 flex justify-end gap-3 pt-3 border-t">
@@ -269,7 +282,7 @@ const filters = ref({
 });
 
 const form = reactive({
-  id: 0, name: '', description: '', indicator_type: 'umum', weight: 0, division_id: null as number | null
+  id: 0, name: '', description: '', indicator_type: 'umum', weight: 0, division_id: null as number | null, division_ids: [] as number[]
 })
 
 // --- LOGIC CALCULATOR ---
@@ -286,6 +299,12 @@ const weightSummary = computed(() => {
   indicators.value.forEach(ind => {
     if (ind.indicator_type === 'umum') {
       general += ind.weight
+    } else if (ind.divisions && ind.divisions.length > 0) {
+      ind.divisions.forEach((d: any) => {
+        if (divs[d.name] !== undefined) {
+          divs[d.name] += ind.weight
+        }
+      })
     } else if (ind.division && ind.division.name) {
       const dName = ind.division.name
       if (divs[dName] !== undefined) {
@@ -338,13 +357,19 @@ function openModal(item?: any) {
   isEditing.value = !!item
   showModal.value = true
   if (item) {
+    let divIds = [] as number[]
+    if (item.divisions && item.divisions.length > 0) {
+        divIds = item.divisions.map((d: any) => d.id)
+    } else if (item.division_id) {
+        divIds = [item.division_id]
+    }
     Object.assign(form, {
       id: item.id, name: item.name, description: item.description,
       indicator_type: item.indicator_type, weight: item.weight,
-      division_id: item.division_id || null
+      division_id: item.division_id || null, division_ids: divIds
     })
   } else {
-    Object.assign(form, { id: 0, name: '', description: '', indicator_type: 'umum', weight: 0, division_id: null })
+    Object.assign(form, { id: 0, name: '', description: '', indicator_type: 'umum', weight: 0, division_id: null, division_ids: [] })
   }
 }
 
@@ -354,9 +379,18 @@ function closeModal() {
 
 async function saveInd() {
   try {
-    const payload = { ...form }
-    if (payload.indicator_type === 'umum') payload.division_id = null
-    else payload.division_id = Number(payload.division_id)
+    if (form.indicator_type === 'spesifik' && form.division_ids.length === 0) {
+        toast.add({ severity: 'warn', summary: 'Perhatian', detail: 'Silakan pilih minimal 1 divisi tujuan', life: 3000 })
+        return
+    }
+    const payload = { 
+        name: form.name,
+        description: form.description,
+        indicator_type: form.indicator_type,
+        weight: form.weight,
+        division_id: form.indicator_type === 'spesifik' && form.division_ids.length > 0 ? form.division_ids[0] : null,
+        division_ids: form.indicator_type === 'spesifik' ? form.division_ids : []
+    }
 
     if (isEditing.value) {
       await indicatorService.update(form.id, payload)
@@ -367,8 +401,9 @@ async function saveInd() {
     }
     fetchData()
     showModal.value = false
-  } catch (e) { 
-    toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal menyimpan indikator', life: 3000 })
+  } catch (e: any) { 
+    const msg = e.response?.data?.message || 'Gagal menyimpan indikator'
+    toast.add({ severity: 'error', summary: 'Gagal', detail: msg, life: 4000 })
   }
 }
 

@@ -110,6 +110,202 @@
         </div>
     </div>
 
+    <!-- MODAL EDIT BIODATA & NO TELEPON -->
+    <div v-if="showBioModal" class="fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity" @click="showBioModal = false"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-gray-100">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-5 text-white">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold flex items-center gap-2">
+                            <i class="pi pi-user-edit text-xl"></i> Lengkapi Biodata & Kontak
+                        </h3>
+                        <button @click="showBioModal = false" class="text-white/80 hover:text-white transition">
+                            <i class="pi pi-times"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-blue-100 mt-1">Pastikan nomor telepon yang Anda masukkan aktif dan dapat dihubungi.</p>
+                </div>
+                
+                <form @submit.prevent="saveBiodata" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5 flex items-center justify-between">
+                            <span>No. Telepon / WhatsApp <span class="text-red-500">*</span></span>
+                            <span class="text-[11px] font-normal text-gray-400">Contoh: 081234567890</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                <i class="pi pi-phone text-sm"></i>
+                            </span>
+                            <input v-model="bioForm.phone" type="text" required placeholder="08xxxxxxxxxx" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5 flex items-center justify-between">
+                            <span>Media Sosial / Profesional</span>
+                            <span class="text-[11px] font-normal text-gray-400">Pilih platform & isi username/link</span>
+                        </label>
+                        <div class="flex gap-2.5">
+                            <select v-model="bioForm.social_type" class="w-36 px-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold bg-white text-gray-700">
+                                <option value="instagram">Instagram</option>
+                                <option value="linkedin">LinkedIn</option>
+                                <option value="telegram">Telegram</option>
+                                <option value="other">Website/Lainnya</option>
+                            </select>
+                            <div class="relative flex-1">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                    <i :class="bioForm.social_type === 'instagram' ? 'pi pi-instagram text-pink-500' : bioForm.social_type === 'linkedin' ? 'pi pi-linkedin text-blue-600' : bioForm.social_type === 'telegram' ? 'pi pi-telegram text-sky-500' : 'pi pi-globe text-gray-500'" class="text-sm"></i>
+                                </span>
+                                <input 
+                                    v-model="bioForm.social_username" 
+                                    type="text" 
+                                    :placeholder="bioForm.social_type === 'instagram' ? 'Username (tanpa @)' : bioForm.social_type === 'linkedin' ? 'Username atau URL LinkedIn' : bioForm.social_type === 'telegram' ? 'Username Telegram' : 'https://website.com'" 
+                                    class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5 flex items-center justify-between">
+                            <span>Tentang Saya / Bio Singkat</span>
+                            <span class="text-[11px] font-normal text-gray-400">Kutipan / Keahlian</span>
+                        </label>
+                        <textarea v-model="bioForm.bio" rows="2" placeholder="Tuliskan sedikit tentang keahlian, dedikasi, atau prinsip kerja Anda di perusahaan..." class="w-full p-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"></textarea>
+                    </div>
+
+                    <!-- ALAMAT & DEMOGRAFI -->
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5 flex items-center justify-between">
+                            <span>Alamat Domisili</span>
+                            <span class="text-[11px] font-normal text-gray-400">Tempat tinggal saat ini</span>
+                        </label>
+                        <textarea v-model="bioForm.address" rows="2" placeholder="Contoh: Jl. Raya Mambal Ubud No. 12, Badung, Bali" class="w-full p-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Tempat Lahir</label>
+                            <input v-model="bioForm.birth_place" type="text" placeholder="Denpasar" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Tanggal Lahir</label>
+                            <input v-model="bioForm.birth_date" type="date" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Jenis Kelamin</label>
+                            <select v-model="bioForm.gender" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium bg-white">
+                                <option value="Laki-laki">Laki-laki</option>
+                                <option value="Perempuan">Perempuan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Pendidikan Terakhir</label>
+                            <input v-model="bioForm.education" type="text" placeholder="S1 Teknik Informatika" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                        </div>
+                    </div>
+
+                    <!-- KONTAK DARURAT -->
+                    <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl space-y-2.5">
+                        <label class="block text-xs font-bold text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="pi pi-phone text-amber-600"></i> Kontak Darurat (Emergency Contact)
+                        </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div>
+                                <input v-model="bioForm.emergency_contact_name" type="text" placeholder="Nama (e.g. Budi / Orang Tua)" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium bg-white">
+                            </div>
+                            <div>
+                                <input v-model="bioForm.emergency_contact_phone" type="text" placeholder="No. HP Darurat" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium bg-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end gap-3">
+                        <button type="button" @click="showBioModal = false" class="px-5 py-2.5 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 text-sm font-semibold transition">Batal</button>
+                        <button type="submit" :disabled="isProcessing" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 text-sm font-bold shadow-md shadow-blue-500/20 disabled:opacity-50 transition flex items-center">
+                            <i v-if="isProcessing" class="pi pi-spin pi-spinner mr-2"></i>
+                            {{ isProcessing ? 'Menyimpan...' : 'Simpan Biodata' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL VERIFIKASI NO TELEPON (OTP EMAIL) -->
+    <div v-if="showOTPModal" class="fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity" @click="showOTPModal = false"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-gray-100">
+                <div class="bg-gradient-to-r from-amber-500 to-yellow-600 px-6 py-5 text-white">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold flex items-center gap-2">
+                            <i class="pi pi-shield text-xl"></i> Verifikasi Nomor Telepon
+                        </h3>
+                        <button @click="showOTPModal = false" class="text-white/80 hover:text-white transition">
+                            <i class="pi pi-times"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-amber-50 mt-1">Gunakan kode verifikasi OTP yang dikirimkan ke email Anda.</p>
+                </div>
+                
+                <form @submit.prevent="verifyOTP" class="p-6 space-y-4">
+                    <div class="text-center py-2">
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Kami telah mengirimkan 6 digit kode OTP verifikasi ke email Anda 
+                            <b class="text-gray-900">{{ userProfile?.email || 'yang terdaftar' }}</b> untuk memvalidasi nomor telepon 
+                            <b class="text-gray-900">{{ userProfile?.employee?.phone }}</b>.
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center mb-3">
+                            Masukkan 6 Digit Kode OTP
+                        </label>
+                        <div class="flex justify-center">
+                            <input 
+                                v-model="otpInput" 
+                                type="text" 
+                                maxlength="6" 
+                                required 
+                                placeholder="######" 
+                                class="w-48 text-center text-2xl font-black py-2.5 rounded-xl border-2 border-gray-300 focus:outline-none focus:border-amber-500 tracking-[0.4em] uppercase"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="text-center pt-2">
+                        <span v-if="otpCountdown > 0" class="text-xs text-gray-400">
+                            Kirim ulang kode dalam <b class="text-gray-600">{{ otpCountdown }} detik</b>
+                        </span>
+                        <button 
+                            v-else 
+                            type="button" 
+                            @click="resendOTP" 
+                            class="text-xs text-blue-600 hover:text-blue-800 font-bold hover:underline transition"
+                        >
+                            Kirim Ulang Kode OTP
+                        </button>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end gap-3">
+                        <button type="button" @click="showOTPModal = false" class="px-5 py-2.5 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 text-sm font-semibold transition">Batal</button>
+                        <button type="submit" :disabled="isVerifying || otpInput.length !== 6" class="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-600 text-white rounded-xl hover:from-amber-600 hover:to-yellow-700 text-sm font-bold shadow-md shadow-amber-500/20 disabled:opacity-50 transition flex items-center">
+                            <i v-if="isVerifying" class="pi pi-spin pi-spinner mr-2"></i>
+                            {{ isVerifying ? 'Memverifikasi...' : 'Verifikasi Kontak' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="mb-6">
       <h1 class="text-2xl font-bold text-gray-800">Profil Saya</h1>
     </div>
@@ -129,51 +325,249 @@
 
       <div class="p-6">
         
-        <div v-if="activeTab === 'biodata'" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="col-span-1 text-center lg:border-r lg:border-gray-100 lg:pr-8">
-                <div class="relative group mx-auto w-32 h-32 mb-4">
-                    <div class="h-32 w-32 rounded-full overflow-hidden border-4 border-white shadow-md bg-blue-100 flex items-center justify-center relative group">
-                        <img 
-                            v-if="userProfile?.employee?.profile_picture_url || authStore.user?.employee?.profile_picture_url" 
-                            :src="getProfilePictureUrl(userProfile?.employee?.profile_picture_url || authStore.user?.employee?.profile_picture_url)" 
-                            alt="Profile" 
-                            class="w-full h-full object-cover"
-                            @error="handleImageError" 
-                        />
-                        <span v-else class="text-blue-600 font-bold text-4xl">
-                            {{ userProfile?.employee?.name?.charAt(0) || authStore.user?.employee?.name?.charAt(0) || 'U' }}
-                        </span>
-                        
-                        <label class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-10">
-                            <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="onSelectFile">
-                            <div class="text-white text-xs font-bold flex flex-col items-center">
-                                <i class="pi pi-camera text-xl mb-1"></i>
-                                <span>Ubah Foto</span>
-                            </div>
-                        </label>
+        <div v-if="activeTab === 'biodata'" class="space-y-8">
+            <!-- [ACHIEVEMENT / TOP PERFORMER TROPHY BANNER] -->
+            <div class="p-6 bg-gradient-to-r from-amber-500/10 via-yellow-500/10 to-orange-500/10 rounded-2xl border border-amber-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+                    <i class="pi pi-trophy text-[180px] text-amber-600"></i>
+                </div>
+                <div class="flex items-center gap-5 z-10">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center shadow-lg shadow-amber-500/30 shrink-0">
+                        <i class="pi pi-trophy text-3xl animate-bounce"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <span class="px-3 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold text-[11px] rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
+                                <i class="pi pi-star-fill text-[10px]"></i> Top Performer Kinerja
+                            </span>
+                            <span class="text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full">Periode Aktif</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-amber-950">
+                            {{ achievements.length > 0 ? '🏆 Predikat Prestasi: ' + achievements[0].title : '🌟 Predikat Kinerja Unggulan & Dedikasi Tinggi' }}
+                        </h3>
+                        <p class="text-sm text-amber-800/90 mt-1 max-w-xl">
+                            Terima kasih atas dedikasi serta kontribusi terbaik yang diberikan oleh <span class="font-bold text-amber-950">{{ userProfile?.employee?.name || authStore.user?.username }}</span> demi kemajuan PT. Cakra Media Data.
+                        </p>
                     </div>
                 </div>
-
-                <h2 class="text-xl font-bold text-gray-900 mb-1">{{ userProfile?.employee?.name }}</h2>
-                <p class="text-sm text-gray-500 mb-3">{{ userProfile?.email }}</p>
-                <span class="inline-block bg-blue-100 text-blue-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">
-                    {{ userProfile?.role }}
-                </span>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 z-10 shrink-0">
+                    <button @click="showCertificateModal = true" class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold px-4 py-3 rounded-2xl shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 text-xs transition-all transform hover:-translate-y-0.5">
+                        <i class="pi pi-print text-sm"></i> Cetak E-Sertifikat Top 1
+                    </button>
+                    <div class="bg-white/90 backdrop-blur px-5 py-3 rounded-2xl border border-amber-200/80 text-center shadow-sm">
+                        <p class="text-[10px] font-extrabold text-amber-600 uppercase tracking-wider">Koleksi Bukti Prestasi</p>
+                        <p class="text-xl font-black text-amber-900 mt-0.5">{{ achievements.length }} <span class="text-xs font-semibold">Sertifikat</span></p>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-span-1 lg:col-span-2 space-y-6">
-                <div>
-                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">Data Diri</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
-                        <div><label class="text-xs text-gray-500 block mb-1">NIP</label><p class="font-medium text-gray-900">{{ userProfile?.employee?.nip || '-' }}</p></div>
-                        <div><label class="text-xs text-gray-500 block mb-1">Status</label><span class="text-green-600 text-sm font-bold">Aktif</span></div>
+            <!-- [ALERT WARNING JIKA NO TELEPON KOSONG ATAU BELUM DIVERIFIKASI] -->
+            <div v-if="!userProfile?.employee?.phone" class="p-4 bg-gradient-to-r from-red-50 to-orange-50 border-l-4 border-red-500 rounded-r-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-pulse">
+                <div class="flex items-start gap-3.5">
+                    <div class="p-2 bg-red-100 rounded-lg text-red-600 mt-0.5">
+                        <i class="pi pi-exclamation-triangle text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-red-900">Nomor Telepon / WhatsApp Belum Dilengkapi!</h4>
+                        <p class="text-xs text-red-700 mt-0.5 leading-relaxed">
+                            Atasan dan Admin membutuhkan nomor kontak Anda untuk keperluan koordinasi resmi & kedaruratan kerja. Harap lengkapi sekarang juga.
+                        </p>
                     </div>
                 </div>
-                <div>
-                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2 mt-2">Informasi Pekerjaan</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100"><label class="text-xs text-gray-500 block mb-1">Divisi</label><p class="font-bold text-gray-800">{{ userProfile?.employee?.division?.name || '-' }}</p></div>
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100"><label class="text-xs text-gray-500 block mb-1">Jabatan</label><p class="font-bold text-gray-800">{{ userProfile?.employee?.position || '-' }}</p></div>
+                <button @click="openBioModal" class="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-md shadow-red-500/20 transition shrink-0 flex items-center">
+                    <i class="pi pi-user-edit mr-2 text-sm"></i> Lengkapi Sekarang
+                </button>
+            </div>
+
+            <div v-else-if="!userProfile?.employee?.is_phone_verified" class="p-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-amber-500 rounded-r-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div class="flex items-start gap-3.5">
+                    <div class="p-2 bg-amber-100 rounded-lg text-amber-600 mt-0.5">
+                        <i class="pi pi-shield text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-amber-900">Nomor Telepon Belum Diverifikasi!</h4>
+                        <p class="text-xs text-amber-700 mt-0.5 leading-relaxed">
+                            Nomor kontak Anda <b>{{ userProfile?.employee?.phone }}</b> belum diverifikasi secara resmi. Harap lakukan verifikasi OTP melalui email sekarang juga.
+                        </p>
+                    </div>
+                </div>
+                <button @click="startPhoneVerification" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-md shadow-amber-500/20 transition shrink-0 flex items-center">
+                    <i class="pi pi-shield mr-2 text-sm"></i> Verifikasi Sekarang
+                </button>
+            </div>
+
+            <!-- [BIODATA GRID] -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-2">
+                <!-- Left Sidebar: Avatar & Basic Title -->
+                <div class="col-span-1 text-center lg:border-r lg:border-gray-100 lg:pr-8 flex flex-col items-center">
+                    <div class="relative group mx-auto w-36 h-36 mb-4">
+                        <div class="h-36 w-36 rounded-full overflow-hidden border-4 border-white shadow-xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center relative group">
+                            <img 
+                                v-if="userProfile?.employee?.profile_picture_url || authStore.user?.employee?.profile_picture_url" 
+                                :src="getProfilePictureUrl(userProfile?.employee?.profile_picture_url || authStore.user?.employee?.profile_picture_url)" 
+                                alt="Profile" 
+                                class="w-full h-full object-cover transition duration-300 group-hover:scale-105"
+                                @error="handleImageError" 
+                            />
+                            <span v-else class="text-blue-600 font-extrabold text-5xl">
+                                {{ userProfile?.employee?.name?.charAt(0) || authStore.user?.employee?.name?.charAt(0) || 'U' }}
+                            </span>
+                            
+                            <label class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-10 backdrop-blur-[2px]">
+                                <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="onSelectFile">
+                                <div class="text-white text-xs font-bold flex flex-col items-center">
+                                    <i class="pi pi-camera text-2xl mb-1"></i>
+                                    <span>Ubah Foto</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-extrabold text-gray-900 mb-1">{{ userProfile?.employee?.name || authStore.user?.username }}</h2>
+                    <p class="text-sm font-medium text-gray-500 mb-4">{{ userProfile?.email }}</p>
+                    <span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200/60 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm">
+                        <i class="pi pi-check-circle text-blue-500"></i> {{ userProfile?.role }}
+                    </span>
+
+                    <div class="mt-8 w-full pt-6 border-t border-gray-100 text-left space-y-3">
+                        <button @click="openBioModal" class="w-full py-2.5 px-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm">
+                            <i class="pi pi-pencil text-blue-600"></i> Lengkapi / Edit Biodata
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Content: Data Diri & Pekerjaan -->
+                <div class="col-span-1 lg:col-span-2 space-y-8">
+                    <!-- Data Diri & Kontak -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
+                            <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                                <i class="pi pi-id-card text-blue-600 text-base"></i> Data Diri & Kontak
+                            </h3>
+                            <button @click="openBioModal" class="text-xs font-bold text-blue-600 hover:text-blue-800 transition flex items-center gap-1">
+                                <i class="pi pi-user-edit"></i> Edit Kontak
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 bg-gray-50/80 rounded-xl border border-gray-100 transition hover:border-gray-200">
+                                <label class="text-xs text-gray-400 font-semibold block mb-1">Nomor NIP</label>
+                                <p class="font-bold text-gray-900 text-sm">{{ userProfile?.employee?.nip || '-' }}</p>
+                            </div>
+                            <div class="p-4 bg-gray-50/80 rounded-xl border border-gray-100 transition hover:border-gray-200">
+                                <label class="text-xs text-gray-400 font-semibold block mb-1">Status Kepegawaian</label>
+                                <span class="inline-flex items-center gap-1.5 text-green-700 text-xs font-bold bg-green-100 px-2.5 py-0.5 rounded-full mt-0.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Aktif
+                                </span>
+                            </div>
+                            <div class="p-4 bg-gray-50/80 rounded-xl border border-gray-100 transition hover:border-gray-200">
+                                <label class="text-xs text-gray-400 font-semibold block mb-1">No. Telepon / WhatsApp</label>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-bold text-sm" :class="userProfile?.employee?.phone ? 'text-gray-900' : 'text-red-500 italic'">
+                                            {{ userProfile?.employee?.phone || 'Belum Dilengkapi' }}
+                                        </p>
+                                        <span v-if="userProfile?.employee?.phone" class="inline-flex items-center gap-1 text-[10px] font-bold mt-1 px-2 py-0.5 rounded-full select-none" :class="userProfile?.employee?.is_phone_verified ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700 cursor-pointer hover:bg-amber-200'" @click="!userProfile?.employee?.is_phone_verified && startPhoneVerification()">
+                                            <i :class="userProfile?.employee?.is_phone_verified ? 'pi pi-check-circle' : 'pi pi-exclamation-circle'"></i>
+                                            {{ userProfile?.employee?.is_phone_verified ? 'Terverifikasi' : 'Belum Terverifikasi' }}
+                                        </span>
+                                    </div>
+                                    <a v-if="userProfile?.employee?.phone" :href="'https://wa.me/' + userProfile?.employee?.phone.replace(/[^0-9]/g, '').replace(/^0/, '62')" target="_blank" class="text-green-600 hover:text-green-700 p-1 rounded hover:bg-green-50 transition" title="Chat WhatsApp">
+                                        <i class="pi pi-whatsapp text-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-gray-50/80 rounded-xl border border-gray-100 transition hover:border-gray-200">
+                                <label class="text-xs text-gray-400 font-semibold block mb-1">Media Sosial / Profesional</label>
+                                <div v-if="getSocialInfo(userProfile?.employee?.social_media)" class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2.5 truncate pr-2">
+                                        <span class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" :class="getSocialInfo(userProfile?.employee?.social_media)?.badgeBg">
+                                            <i :class="getSocialInfo(userProfile?.employee?.social_media)?.icon" class="text-base"></i>
+                                        </span>
+                                        <div class="truncate">
+                                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{{ getSocialInfo(userProfile?.employee?.social_media)?.type }}</p>
+                                            <a :href="getSocialInfo(userProfile?.employee?.social_media)?.url" target="_blank" class="font-bold text-sm truncate block hover:underline" :class="getSocialInfo(userProfile?.employee?.social_media)?.colorClass">
+                                                {{ getSocialInfo(userProfile?.employee?.social_media)?.label }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <a :href="getSocialInfo(userProfile?.employee?.social_media)?.url" target="_blank" class="p-2 rounded-lg transition shrink-0 hover:scale-105" :class="getSocialInfo(userProfile?.employee?.social_media)?.badgeBg" title="Kunjungi Profil">
+                                        <i class="pi pi-external-link text-sm font-bold"></i>
+                                    </a>
+                                </div>
+                                <p v-else class="font-bold text-gray-400 text-sm italic">Belum Dilengkapi</p>
+                            </div>
+                            <div class="p-4 bg-gray-50/80 rounded-xl border border-gray-100 transition hover:border-gray-200 sm:col-span-2">
+                                <label class="text-xs text-gray-400 font-semibold block mb-1">Alamat Domisili</label>
+                                <p class="font-bold text-sm" :class="userProfile?.employee?.address ? 'text-gray-900' : 'text-gray-400 italic'">
+                                    <i v-if="userProfile?.employee?.address" class="pi pi-map-marker text-red-500 mr-1.5"></i>
+                                    {{ userProfile?.employee?.address || 'Belum Dilengkapi' }}
+                                </p>
+                            </div>
+                            <div class="p-4 bg-gray-50/80 rounded-xl border border-gray-100 transition hover:border-gray-200">
+                                <label class="text-xs text-gray-400 font-semibold block mb-1">Tempat & Tanggal Lahir</label>
+                                <p class="font-bold text-sm" :class="userProfile?.employee?.birth_place ? 'text-gray-900' : 'text-gray-400 italic'">
+                                    {{ userProfile?.employee?.birth_place && userProfile?.employee?.birth_date ? userProfile?.employee?.birth_place + ', ' + formatDate(userProfile?.employee?.birth_date) : (userProfile?.employee?.birth_place || 'Belum Dilengkapi') }}
+                                </p>
+                            </div>
+                            <div class="p-4 bg-gray-50/80 rounded-xl border border-gray-100 transition hover:border-gray-200">
+                                <label class="text-xs text-gray-400 font-semibold block mb-1">Jenis Kelamin</label>
+                                <p class="font-bold text-gray-900 text-sm">{{ userProfile?.employee?.gender || 'Laki-laki' }}</p>
+                            </div>
+                            <div class="p-4 bg-gray-50/80 rounded-xl border border-gray-100 transition hover:border-gray-200">
+                                <label class="text-xs text-gray-400 font-semibold block mb-1">Pendidikan Terakhir</label>
+                                <p class="font-bold text-sm" :class="userProfile?.employee?.education ? 'text-gray-900' : 'text-gray-400 italic'">
+                                    {{ userProfile?.employee?.education || 'Belum Dilengkapi' }}
+                                </p>
+                            </div>
+                            <div class="p-4 bg-amber-50/50 rounded-xl border border-amber-200/60 transition hover:border-amber-300">
+                                <label class="text-xs text-amber-700 font-semibold block mb-1 flex items-center gap-1">
+                                    <i class="pi pi-phone text-amber-600"></i> Kontak Darurat (Emergency Contact)
+                                </label>
+                                <div v-if="userProfile?.employee?.emergency_contact_name" class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-bold text-gray-900 text-sm">{{ userProfile?.employee?.emergency_contact_name }}</p>
+                                        <p class="text-xs font-semibold text-amber-800">{{ userProfile?.employee?.emergency_contact_phone }}</p>
+                                    </div>
+                                    <a :href="'tel:' + userProfile?.employee?.emergency_contact_phone" class="p-2 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg transition" title="Telepon Kontak Darurat">
+                                        <i class="pi pi-phone text-sm font-bold"></i>
+                                    </a>
+                                </div>
+                                <p v-else class="font-bold text-gray-400 text-sm italic">Belum Dilengkapi</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informasi Pekerjaan -->
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 border-b border-gray-100 pb-3 flex items-center gap-2">
+                            <i class="pi pi-briefcase text-blue-600 text-base"></i> Informasi Pekerjaan
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 bg-gray-50/80 rounded-xl border border-gray-100 transition hover:border-gray-200">
+                                <label class="text-xs text-gray-400 font-semibold block mb-1">Divisi / Departemen</label>
+                                <p class="font-bold text-gray-900 text-sm">{{ userProfile?.employee?.division?.name || '-' }}</p>
+                            </div>
+                            <div class="p-4 bg-gray-50/80 rounded-xl border border-gray-100 transition hover:border-gray-200">
+                                <label class="text-xs text-gray-400 font-semibold block mb-1">Jabatan Posisi</label>
+                                <p class="font-bold text-gray-900 text-sm">{{ userProfile?.employee?.position || '-' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tentang Saya / Bio -->
+                    <div>
+                        <div class="flex items-center justify-between mb-3 border-b border-gray-100 pb-3">
+                            <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                                <i class="pi pi-comment text-blue-600 text-base"></i> Tentang Saya & Deskripsi
+                            </h3>
+                        </div>
+                        <div class="p-5 bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-2xl border border-gray-200/70 relative">
+                            <i class="pi pi-quote-left text-blue-200 text-3xl absolute top-3 left-3 pointer-events-none opacity-50"></i>
+                            <p class="text-sm text-gray-700 leading-relaxed relative z-10 pl-4 font-medium italic">
+                                "{{ userProfile?.employee?.bio || 'Berkomitmen memberikan kinerja optimal, menjaga etika profesionalisme, serta terus berinovasi dalam mendukung setiap pencapaian target strategis PT. Cakra Media Data.' }}"
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -352,11 +746,60 @@
 
       </div>
     </div>
+
+    <!-- [MODAL E-SERTIFIKAT PENGHARGAAN TOP PERFORMER] -->
+    <Dialog v-model:visible="showCertificateModal" modal header="E-Sertifikat Penghargaan Resmi" :style="{ width: '850px' }" class="no-print">
+      <div class="p-6">
+         <!-- PREVIEW SERTIFIKAT DI LAYAR -->
+         <div id="printable-certificate" class="border-[12px] border-double border-amber-500 bg-gradient-to-b from-amber-50/60 via-white to-amber-50/60 p-10 text-center relative overflow-hidden shadow-xl rounded-2xl">
+            <!-- Background Watermark / Decoration -->
+            <div class="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-amber-400/10 blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-amber-500/10 blur-2xl pointer-events-none"></div>
+
+            <div class="inline-block p-3.5 bg-gradient-to-br from-amber-100 to-orange-100 text-amber-700 rounded-full mb-3 shadow-inner border border-amber-200">
+               <i class="pi pi-trophy text-4xl"></i>
+            </div>
+            <p class="text-[11px] font-extrabold uppercase tracking-[0.35em] text-amber-800 mb-2">PT. CAKRA MEDIA DATA • KPI MANAGEMENT SYSTEM</p>
+            <h1 class="text-3xl sm:text-4xl font-black text-gray-900 tracking-wide uppercase font-serif mb-6">Piagam Penghargaan</h1>
+            <p class="text-sm text-gray-600 mb-6 italic">Diberikan sebagai bentuk apresiasi dan penghargaan setinggi-tingginya kepada:</p>
+            
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-blue-950 underline decoration-amber-500 decoration-4 underline-offset-8 mb-4">{{ userProfile?.employee?.name || authStore.user?.username }}</h2>
+            <p class="text-xs font-bold text-gray-600 uppercase tracking-wide mb-6">NIP: {{ userProfile?.employee?.nip || '-' }} • Divisi: {{ userProfile?.employee?.division_name || '-' }} • Posisi: {{ userProfile?.employee?.position || '-' }}</p>
+
+            <div class="max-w-xl mx-auto bg-white/90 p-6 rounded-2xl border border-amber-200/80 shadow-sm mb-8">
+               <p class="text-sm sm:text-base font-medium text-gray-800 leading-relaxed">
+                  Atas kontribusi luar biasa, dedikasi, serta pencapaian kinerja prima sehingga berhasil meraih predikat sebagai <br>
+                  <span class="font-extrabold text-amber-600 text-lg sm:text-xl uppercase tracking-wider block mt-2.5">🌟 Top 1 Performer & Pegawai Terbaik 🌟</span>
+                  pada evaluasi kinerja periode aktif ini.
+               </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-8 items-end max-w-lg mx-auto pt-4 border-t border-amber-200/80 text-xs text-gray-600">
+               <div class="text-center">
+                  <p class="mb-12 font-medium">Diterbitkan pada tanggal:</p>
+                  <p class="font-bold text-gray-900 border-t border-gray-400 inline-block px-5 pt-1.5">{{ new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) }}</p>
+               </div>
+               <div class="text-center">
+                  <p class="mb-12 font-medium">Disahkan Oleh:</p>
+                  <p class="font-bold text-gray-900 border-t border-gray-400 inline-block px-5 pt-1.5">Manajemen PT. Cakra Media Data</p>
+               </div>
+            </div>
+         </div>
+
+         <div class="mt-6 flex justify-end gap-3 no-print">
+            <button @click="showCertificateModal = false" class="px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 font-semibold text-sm text-gray-700">Tutup</button>
+            <button @click="printCertificate" class="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl font-bold shadow-md hover:from-amber-600 hover:to-orange-700 flex items-center gap-2 text-sm transition">
+               <i class="pi pi-print"></i> Cetak PDF E-Sertifikat
+            </button>
+         </div>
+      </div>
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import Toast from 'primevue/toast'
+import Dialog from 'primevue/dialog'
 import { useToast } from 'primevue/usetoast'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { authService, employeeService, myPerformanceService, warningService } from '../services/api'
@@ -420,6 +863,230 @@ const achForm = reactive({ title: '', date: '', description: '', file: null as F
 const activeMenu = ref<number | null>(null)
 const currentFileUrl = ref('') 
 const achFile = ref<HTMLInputElement | null>(null)
+
+// State Biodata & Kontak (Baru)
+const showBioModal = ref(false)
+const showCertificateModal = ref(false)
+const showOTPModal = ref(false)
+const otpInput = ref('')
+const isVerifying = ref(false)
+const otpCountdown = ref(0)
+let countdownTimer: any = null
+
+const bioForm = reactive({ 
+    phone: '', 
+    bio: '', 
+    social_type: 'instagram', 
+    social_username: '',
+    address: '',
+    birth_place: '',
+    birth_date: '',
+    gender: 'Laki-laki',
+    education: '',
+    emergency_contact_name: '',
+    emergency_contact_phone: ''
+})
+
+function getSocialInfo(sm: string | null | undefined) {
+    if (!sm) return null
+    let type = 'other'
+    let username = sm
+    if (sm.startsWith('instagram:')) {
+        type = 'instagram'
+        username = sm.replace('instagram:', '')
+    } else if (sm.startsWith('linkedin:')) {
+        type = 'linkedin'
+        username = sm.replace('linkedin:', '')
+    } else if (sm.startsWith('telegram:')) {
+        type = 'telegram'
+        username = sm.replace('telegram:', '')
+    } else if (sm.startsWith('other:')) {
+        type = 'other'
+        username = sm.replace('other:', '')
+    } else {
+        if (sm.includes('instagram') || sm.startsWith('@')) {
+            type = 'instagram'
+            username = sm.replace(/^@/, '').replace(/.*instagram\.com\//, '').replace(/\/.*/, '')
+        } else if (sm.includes('linkedin')) {
+            type = 'linkedin'
+            username = sm.replace(/.*linkedin\.com\/in\//, '').replace(/\/.*/, '')
+        } else if (sm.includes('t.me') || sm.includes('telegram')) {
+            type = 'telegram'
+            username = sm.replace(/.*t\.me\//, '').replace(/\/.*/, '')
+        }
+    }
+
+    if (!username.trim()) return null
+
+    let url = username
+    let label = username
+    let icon = 'pi pi-globe'
+    let colorClass = 'text-gray-700 hover:text-gray-900'
+    let badgeBg = 'bg-gray-100 text-gray-700'
+
+    if (type === 'instagram') {
+        url = `https://instagram.com/${username}`
+        label = `@${username}`
+        icon = 'pi pi-instagram'
+        colorClass = 'text-pink-600 hover:text-pink-800'
+        badgeBg = 'bg-pink-50 text-pink-700'
+    } else if (type === 'linkedin') {
+        url = username.startsWith('http') ? username : `https://linkedin.com/in/${username}`
+        label = username.startsWith('http') ? 'Profil LinkedIn' : username
+        icon = 'pi pi-linkedin'
+        colorClass = 'text-blue-700 hover:text-blue-900'
+        badgeBg = 'bg-blue-50 text-blue-800'
+    } else if (type === 'telegram') {
+        url = `https://t.me/${username}`
+        label = `@${username}`
+        icon = 'pi pi-telegram'
+        colorClass = 'text-sky-600 hover:text-sky-800'
+        badgeBg = 'bg-sky-50 text-sky-700'
+    } else {
+        if (!url.startsWith('http')) url = 'https://' + url
+    }
+
+    return { type, username, url, label, icon, colorClass, badgeBg }
+}
+
+function printCertificate() {
+    window.print()
+}
+
+async function startPhoneVerification() {
+    isProcessing.value = true
+    try {
+        await authService.sendPhoneOTP()
+        toast.add({ severity: 'success', summary: 'OTP Terkirim', detail: 'Kode OTP verifikasi telah dikirim ke email Anda!', life: 3000 })
+        otpInput.value = ''
+        showOTPModal.value = true
+        startCountdown()
+    } catch (err: any) {
+        toast.add({ severity: 'error', summary: 'Gagal', detail: err.response?.data?.message || 'Gagal mengirim kode OTP', life: 3000 })
+    } finally {
+        isProcessing.value = false
+    }
+}
+
+async function resendOTP() {
+    try {
+        await authService.sendPhoneOTP()
+        toast.add({ severity: 'success', summary: 'OTP Dikirim Ulang', detail: 'Kode verifikasi baru telah dikirim!', life: 3000 })
+        startCountdown()
+    } catch (err: any) {
+        toast.add({ severity: 'error', summary: 'Gagal', detail: err.response?.data?.message || 'Gagal mengirim ulang OTP', life: 3000 })
+    }
+}
+
+function startCountdown() {
+    otpCountdown.value = 60
+    if (countdownTimer) clearInterval(countdownTimer)
+    countdownTimer = setInterval(() => {
+        if (otpCountdown.value > 0) {
+            otpCountdown.value--
+        } else {
+            clearInterval(countdownTimer)
+        }
+    }, 1000)
+}
+
+async function verifyOTP() {
+    if (otpInput.value.length !== 6) return
+    isVerifying.value = true
+    try {
+        await authService.verifyPhoneOTP(otpInput.value)
+        toast.add({ severity: 'success', summary: 'Berhasil', detail: 'Nomor telepon/WhatsApp Anda berhasil diverifikasi!', life: 3000 })
+        showOTPModal.value = false
+        await loadData()
+    } catch (err: any) {
+        toast.add({ severity: 'error', summary: 'Verifikasi Gagal', detail: err.response?.data?.message || 'Kode OTP salah atau kedaluwarsa', life: 3000 })
+    } finally {
+        isVerifying.value = false
+    }
+}
+
+function openBioModal() {
+    bioForm.phone = userProfile.value?.employee?.phone || ''
+    bioForm.bio = userProfile.value?.employee?.bio || ''
+    bioForm.address = userProfile.value?.employee?.address || ''
+    bioForm.birth_place = userProfile.value?.employee?.birth_place || ''
+    bioForm.birth_date = userProfile.value?.employee?.birth_date || ''
+    bioForm.gender = userProfile.value?.employee?.gender || 'Laki-laki'
+    bioForm.education = userProfile.value?.employee?.education || ''
+    bioForm.emergency_contact_name = userProfile.value?.employee?.emergency_contact_name || ''
+    bioForm.emergency_contact_phone = userProfile.value?.employee?.emergency_contact_phone || ''
+
+    const sm = userProfile.value?.employee?.social_media || ''
+    if (sm.startsWith('instagram:')) {
+        bioForm.social_type = 'instagram'
+        bioForm.social_username = sm.replace('instagram:', '')
+    } else if (sm.startsWith('linkedin:')) {
+        bioForm.social_type = 'linkedin'
+        bioForm.social_username = sm.replace('linkedin:', '')
+    } else if (sm.startsWith('telegram:')) {
+        bioForm.social_type = 'telegram'
+        bioForm.social_username = sm.replace('telegram:', '')
+    } else if (sm.startsWith('other:')) {
+        bioForm.social_type = 'other'
+        bioForm.social_username = sm.replace('other:', '')
+    } else if (sm) {
+        if (sm.includes('instagram') || sm.startsWith('@')) {
+            bioForm.social_type = 'instagram'
+            bioForm.social_username = sm.replace(/^@/, '').replace(/.*instagram\.com\//, '').replace(/\/.*/, '')
+        } else if (sm.includes('linkedin')) {
+            bioForm.social_type = 'linkedin'
+            bioForm.social_username = sm.replace(/.*linkedin\.com\/in\//, '').replace(/\/.*/, '')
+        } else if (sm.includes('t.me') || sm.includes('telegram')) {
+            bioForm.social_type = 'telegram'
+            bioForm.social_username = sm.replace(/.*t\.me\//, '').replace(/\/.*/, '')
+        } else {
+            bioForm.social_type = 'other'
+            bioForm.social_username = sm
+        }
+    } else {
+        bioForm.social_type = 'instagram'
+        bioForm.social_username = ''
+    }
+    showBioModal.value = true
+}
+
+async function saveBiodata() {
+    isProcessing.value = true
+    try {
+        const formattedSocial = bioForm.social_username ? `${bioForm.social_type}:${bioForm.social_username.trim().replace(/^@/, '')}` : ''
+        await authService.updateBiodata({
+            phone: bioForm.phone,
+            bio: bioForm.bio,
+            social_media: formattedSocial,
+            address: bioForm.address,
+            birth_place: bioForm.birth_place,
+            birth_date: bioForm.birth_date,
+            gender: bioForm.gender,
+            education: bioForm.education,
+            emergency_contact_name: bioForm.emergency_contact_name,
+            emergency_contact_phone: bioForm.emergency_contact_phone
+        })
+        toast.add({ severity: 'success', summary: 'Berhasil', detail: 'Biodata & Kontak berhasil disimpan!', life: 3000 })
+        showBioModal.value = false
+        await loadData()
+        if (authStore.user && authStore.user.employee) {
+            authStore.user.employee.phone = bioForm.phone
+            authStore.user.employee.bio = bioForm.bio
+            authStore.user.employee.social_media = formattedSocial
+            authStore.user.employee.address = bioForm.address
+            authStore.user.employee.birth_place = bioForm.birth_place
+            authStore.user.employee.birth_date = bioForm.birth_date
+            authStore.user.employee.gender = bioForm.gender
+            authStore.user.employee.education = bioForm.education
+            authStore.user.employee.emergency_contact_name = bioForm.emergency_contact_name
+            authStore.user.employee.emergency_contact_phone = bioForm.emergency_contact_phone
+        }
+    } catch (err: any) {
+        toast.add({ severity: 'error', summary: 'Gagal', detail: err.response?.data?.message || 'Gagal menyimpan biodata', life: 3000 })
+    } finally {
+        isProcessing.value = false
+    }
+}
 
 // --- LIFECYCLE ---
 onMounted(async () => {
@@ -632,5 +1299,30 @@ async function updatePassword() {
 }
 .animate-fade-in {
     animation: fadeIn 0.1s ease-out forwards;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #printable-certificate,
+    #printable-certificate * {
+        visibility: visible;
+    }
+    #printable-certificate {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 100% !important;
+        max-width: 980px !important;
+        border: 10px double #f59e0b !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        background: #fff !important;
+    }
+    .no-print, [class*="Navbar"], [class*="Sidebar"], [class*="Dialog"] > div > div:first-child {
+        display: none !important;
+    }
 }
 </style>

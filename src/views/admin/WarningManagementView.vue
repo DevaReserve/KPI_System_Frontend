@@ -118,15 +118,24 @@
         </Column>
 
         <!-- Aksi -->
-        <Column header="Aksi" style="width: 80px">
+        <Column header="Aksi" style="width: 120px">
           <template #body="{ data }">
-            <button
-              @click="confirmDelete(data)"
-              class="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all"
-              title="Hapus SP ini"
-            >
-              <i class="pi pi-trash text-sm"></i>
-            </button>
+            <div class="flex items-center gap-1">
+              <button
+                @click="downloadSuratSP(data)"
+                class="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-2 rounded-lg transition-all"
+                title="Unduh PDF Surat Peringatan"
+              >
+                <i class="pi pi-file-pdf text-base"></i>
+              </button>
+              <button
+                @click="confirmDelete(data)"
+                class="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all"
+                title="Hapus SP ini"
+              >
+                <i class="pi pi-trash text-sm"></i>
+              </button>
+            </div>
           </template>
         </Column>
       </DataTable>
@@ -221,6 +230,8 @@ import Toast from 'primevue/toast'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Swal from 'sweetalert2'
+import { downloadSuratSP as generateSPPDF } from '../../utils/spGenerator'
+import { parseSafeDate } from '../../utils/dateHelper'
 
 const authStore = useAuthStore()
 const toast = useToast()
@@ -363,9 +374,13 @@ async function confirmDelete(warning: any) {
   }
 }
 
+function downloadSuratSP(warn: any) {
+  generateSPPDF(warn, warn.employee_name || 'Karyawan')
+}
+
 function formatDate(dateStr: string) {
   if (!dateStr) return '-'
-  return new Date(dateStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+  return parseSafeDate(dateStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 function getLevelBadge(level: string) {

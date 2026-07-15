@@ -101,7 +101,13 @@ const router = createRouter({
           path: '/admin/employees/:id', // URL dinamis dengan ID
           name: 'AdminEmployeeDetail',
           component: () => import('../views/admin/EmployeeDetailView.vue'),
-          meta: { requiresAuth: true, role: 'admin', title: 'Detail Pegawai' }
+          meta: { requiresAuth: true, role: 'manager_access', title: 'Detail Pegawai' }
+        },
+        {
+          path: '/manager/employees/:id', // URL untuk Manager melihat profil bawahan
+          name: 'ManagerEmployeeDetail',
+          component: () => import('../views/admin/EmployeeDetailView.vue'),
+          meta: { requiresAuth: true, role: 'manager_access', title: 'Detail Profil Bawahan' }
         },
         {
             path: '/manager/team',
@@ -170,6 +176,12 @@ const router = createRouter({
           component: () => import('../views/employee/MyTargetsView.vue'),
           meta: { requiresAuth: true, role: 'employee', title: 'Target KPI Saya' }
         },
+        {
+          path: '/employee/audit-trail',
+          name: 'MyAuditTrail',
+          component: () => import('../views/employee/MyAuditTrailView.vue'),
+          meta: { requiresAuth: true, title: 'Audit Trail Saya' }
+        },
 
         // --- COMMON ROUTES ---
         {
@@ -216,7 +228,7 @@ router.beforeEach((to, _from, next) => {
 
   if (to.meta.role) {
     // 1. MANAGER ROUTE: Admin & Manager Boleh
-    if (to.meta.role === 'manager') {
+    if (to.meta.role === 'manager' || to.meta.role === 'manager_access') {
       if (userRole !== 'manager' && userRole !== 'admin') {
         next('/403')
         return

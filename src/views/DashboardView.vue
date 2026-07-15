@@ -239,10 +239,32 @@
         <!-- Top & Low Performers -->
         <div class="space-y-4">
           <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="px-5 py-3 border-b border-gray-100 bg-green-50 flex items-center">
-              <i class="pi pi-star-fill text-green-600 mr-2"></i>
-              <h3 class="font-bold text-green-800 text-sm">Top Performers (≥80)</h3>
+            <div class="px-5 py-3 border-b border-gray-100 bg-green-50 flex items-center justify-between">
+              <div class="flex items-center">
+                <i class="pi pi-star-fill text-green-600 mr-2"></i>
+                <h3 class="font-bold text-green-800 text-sm">Top Performers (≥80)</h3>
+              </div>
+              <span class="text-[11px] font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">Prestasi A</span>
             </div>
+
+            <!-- [TOP 1 TROPHY HIGHLIGHT BANNER] -->
+            <div v-if="adminStats.topPerformers.length > 0" class="p-4 bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-orange-500/15 border-b border-amber-200/80 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center shadow-md shadow-amber-500/30 font-black text-xl">
+                  🏆
+                </div>
+                <div>
+                  <span class="text-[10px] font-extrabold text-amber-700 uppercase tracking-widest block">Top 1 Pegawai Terbaik</span>
+                  <h4 class="font-bold text-gray-900 text-sm leading-tight">{{ adminStats.topPerformers[0].employee_name }}</h4>
+                  <p class="text-xs text-gray-500">Nilai Tertinggi Periode Ini</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-lg font-black text-amber-600 block">{{ adminStats.topPerformers[0].total_score.toFixed(2) }}</span>
+                <span class="text-[10px] font-bold text-amber-800 bg-amber-200/80 px-2.5 py-0.5 rounded-full">Grade A</span>
+              </div>
+            </div>
+
             <table class="min-w-full">
               <tbody class="divide-y divide-gray-100">
                 <tr v-for="(p, idx) in adminStats.topPerformers" :key="idx" class="hover:bg-gray-50 transition">
@@ -357,6 +379,9 @@
         <div class="absolute left-10 bottom-10 h-32 w-32 bg-white/10 rounded-full blur-2xl"></div>
         <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div>
+            <div v-if="employeeStats.score >= 80" class="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black text-xs rounded-full uppercase tracking-wider mb-3 shadow-lg shadow-amber-500/20">
+              <i class="pi pi-star-fill text-amber-950 text-xs animate-spin"></i> Anugerah Top Performer (Grade A)
+            </div>
             <h2 class="text-lg font-medium opacity-90 mb-1 flex items-center">
               <svg class="w-5 h-5 mr-2 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
               Nilai Kinerja Terakhir

@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 md:px-6 shadow-sm z-10 sticky top-0">
+  <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 md:px-6 shadow-sm z-10 sticky top-0 print:hidden no-print">
     
     <Toast group="navbar-toast" />
     <ConfirmDialog group="dialog-logout">
@@ -135,6 +135,9 @@
                           <div v-else-if="n.type === 'appeal'" class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
                               <i class="pi pi-exclamation-circle"></i>
                           </div>
+                          <div v-else-if="n.type === 'profile' || (n.title && (n.title.toLowerCase().includes('telepon') || n.title.toLowerCase().includes('biodata') || n.title.toLowerCase().includes('lengkapi')))" class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center">
+                              <i class="pi pi-user-edit"></i>
+                          </div>
                           <div v-else class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center">
                               <i class="pi pi-bell"></i>
                           </div>
@@ -164,7 +167,7 @@ import Toast from 'primevue/toast'
 import { useConfirm } from "primevue/useconfirm"
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { notificationService, warningService } from '../../services/api'
+import { myPerformanceService, notificationService, warningService } from '../../services/api'
 import { useAuthStore } from '../../stores/auth'
 
 const confirm = useConfirm()
@@ -293,6 +296,67 @@ async function markAsRead(notif: any) {
             await notificationService.markAsRead(notif.id)
             notif.is_read = true
         } catch(e) {}
+    }
+
+    // Tutup dropdown notifikasi setelah diklik
+    opNotif.value?.hide()
+
+    // Navigasi otomatis sesuai tipe dan judul notifikasi
+    const type = (notif.type || '').toLowerCase()
+    const title = (notif.title || '').toLowerCase()
+    const message = (notif.message || '').toLowerCase()
+    const role = authStore.userRole
+
+    if (type === 'profile' || title.includes('telepon') || title.includes('lengkapi') || title.includes('biodata') || title.includes('profil') || message.includes('telepon') || message.includes('biodata')) {
+        router.push('/profile')
+        return
+    }
+
+    if (type === 'evaluation' || title.includes('evaluasi') || title.includes('penilaian')) {
+        if (role === 'employee' || role === 'manager') {
+            try {
+                // Ambil riwayat evaluasi untuk langsung membuka halaman detail rapor terbaru
+                const history = await myPerformanceService.getMyHistory()
+                if (history && history.length > 0 && history[0].id) {
+                    router.push(`/employee/evaluation/${history[0].id}`)
+                    return
+                }
+            } catch(e) {}
+            router.push('/employee/history')
+        } else {
+            router.push('/admin/reports')
+        }
+    } else if (type === 'appeal' || title.includes('sanggahan')) {
+        if (title.includes('sanggahan baru') || role === 'manager' || role === 'admin') {
+            router.push('/manager/team')
+        } else {
+            // Untuk pegawai yang menerima notifikasi hasil sanggahan, langsung buka detail rapor terbaru
+            try {
+                const history = await myPerformanceService.getMyHistory()
+                if (history && history.length > 0 && history[0].id) {
+                    router.push(`/employee/evaluation/${history[0].id}`)
+                    return
+                }
+            } catch(e) {}
+            router.push('/employee/history')
+        }
+    } else if (type === 'warning' || title.includes('sp') || title.includes('peringatan') || title.includes('pelanggaran')) {
+        goToWarnings()
+    } else if (type === 'target' || title.includes('target')) {
+        if (role === 'manager') {
+            router.push('/manager/kpi-targets')
+        } else {
+            router.push('/employee/targets')
+        }
+    } else {
+        // Fallback default sesuai role
+        if (role === 'employee') {
+            router.push('/employee/history')
+        } else if (role === 'manager') {
+            router.push('/manager/team')
+        } else {
+            router.push('/admin/reports')
+        }
     }
 }
 

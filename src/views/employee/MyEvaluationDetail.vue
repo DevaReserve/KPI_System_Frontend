@@ -1,21 +1,127 @@
 <template>
   <div class="max-w-4xl mx-auto pb-10">
     <Toast />
-    <div class="mb-6 flex justify-between items-center">
+    <div class="mb-6 flex justify-between items-center no-print">
       <button @click="$router.back()" class="text-gray-500 hover:text-gray-700 flex items-center text-sm font-medium transition-colors">
         <i class="pi pi-arrow-left mr-2"></i> Kembali
       </button>
 
-      <span v-if="data?.evaluation_header?.status === 'appealed'" class="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full border border-yellow-200 flex items-center gap-2">
-        <i class="pi pi-clock"></i> Sanggahan Sedang Ditinjau Manajer
-      </span>
+      <div class="flex items-center gap-3">
+        <button 
+          v-if="data"
+          @click="printReport" 
+          class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center transition-colors shadow-sm"
+        >
+          <i class="pi pi-print mr-2"></i> Cetak Rapor (PDF)
+        </button>
+
+        <span v-if="data?.evaluation_header?.status === 'appealed'" class="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full border border-yellow-200 flex items-center gap-2">
+          <i class="pi pi-clock"></i> Sanggahan Sedang Ditinjau Manajer
+        </span>
+      </div>
     </div>
- 
-    <div v-if="isLoading" class="flex justify-center py-20">
+
+    <!-- ================================================================= -->
+    <!-- BLOK CETAK PDF RESMI (KHUSUS MUNCUL SAAT DI-PRINT / SAVE AS PDF) -->
+    <!-- ================================================================= -->
+    <div v-if="data" class="hidden print-block text-black bg-white">
+      <!-- Kop Surat PT. Cakra Media Data -->
+      <div class="text-center pb-4 border-b-2 border-black mb-6">
+        <h1 class="text-2xl font-black uppercase tracking-wide">PT. CAKRA MEDIA DATA</h1>
+        <p class="text-xs text-gray-700 mt-1">Jl. Raya Mambal Ubud - Br. Sigaran Desa Mekar Bhuana, Badung, Bali</p>
+      </div>
+
+      <!-- Judul Dokumen -->
+      <div class="text-center mb-6">
+        <h2 class="text-lg font-bold uppercase tracking-wider">RAPOR HASIL EVALUASI KINERJA PEGAWAI</h2>
+        <p class="text-sm font-semibold mt-1">Periode Evaluasi: {{ data.period_detail?.name || '-' }}</p>
+      </div>
+
+      <!-- Biodata & Predikat Grade Besar -->
+      <div class="flex justify-between items-stretch border border-black mb-6">
+        <!-- Kiri: Data Pegawai -->
+        <div class="p-4 flex-1 space-y-1.5 text-xs border-r border-black">
+          <div class="flex"><span class="font-bold w-32 inline-block">Nama Pegawai</span><span>: {{ data.employee_detail?.name || '-' }}</span></div>
+          <div class="flex"><span class="font-bold w-32 inline-block">NIP / ID</span><span>: {{ data.employee_detail?.nip || '-' }}</span></div>
+          <div class="flex"><span class="font-bold w-32 inline-block">Divisi</span><span>: {{ data.employee_detail?.division_name || '-' }}</span></div>
+          <div class="flex"><span class="font-bold w-32 inline-block">Jabatan</span><span>: {{ data.employee_detail?.position || '-' }}</span></div>
+          <div class="flex"><span class="font-bold w-32 inline-block">Evaluator Penilai</span><span>: {{ data.evaluator_name || '-' }}</span></div>
+        </div>
+        <!-- Kanan: Predikat Besar -->
+        <div class="p-4 w-52 flex flex-col items-center justify-center text-center bg-gray-50">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-gray-600">PREDIKAT KINERJA</p>
+          <p class="text-5xl font-black text-black my-1.5">{{ getGrade(data.evaluation_header.total_score) }}</p>
+          <p class="text-xs font-bold text-black">Skor Akhir: {{ data.evaluation_header.total_score.toFixed(2) }}</p>
+        </div>
+      </div>
+
+      <!-- Tabel Indikator KPI Lengkap -->
+      <div class="mb-6">
+        <h3 class="text-xs font-bold uppercase mb-2">A. Rincian Penilaian Target & Capaian Indikator</h3>
+        <table class="w-full border-collapse border border-black text-xs">
+          <thead>
+            <tr class="bg-gray-800 text-white print-table-header">
+              <th class="border border-black p-2 text-center w-10">No</th>
+              <th class="border border-black p-2 text-left">Indikator Kinerja</th>
+              <th class="border border-black p-2 text-center w-16">Bobot</th>
+              <th class="border border-black p-2 text-center w-20">Skor (1-5)</th>
+              <th class="border border-black p-2 text-center w-24">Konversi</th>
+              <th class="border border-black p-2 text-center w-28">Status Target</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(score, idx) in data.scores" :key="'pdf-'+score.id">
+              <td class="border border-black p-2 text-center font-semibold">{{ idx + 1 }}</td>
+              <td class="border border-black p-2">
+                <div class="font-bold text-black">{{ score.indicator.name }}</div>
+                <div class="text-[10px] text-gray-600">{{ score.indicator.description || '-' }}</div>
+              </td>
+              <td class="border border-black p-2 text-center font-bold">{{ score.indicator.weight }}%</td>
+              <td class="border border-black p-2 text-center font-bold">{{ score.score }} / 5</td>
+              <td class="border border-black p-2 text-center font-bold">{{ ((score.score / 5) * 100).toFixed(1) }}</td>
+              <td class="border border-black p-2 text-center font-bold">
+                <span v-if="score.score >= 4">Terpenuhi (Sangat Baik)</span>
+                <span v-else-if="score.score >= 3">Terpenuhi (Sesuai)</span>
+                <span v-else>Perlu Peningkatan</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Catatan & Umpan Balik Manajer -->
+      <div class="mb-8">
+        <h3 class="text-xs font-bold uppercase mb-2">B. Umpan Balik Evaluator</h3>
+        <div class="border border-black p-3 text-xs italic min-h-[45px] bg-gray-50">
+          "{{ data.evaluation_header.feedback || 'Tidak ada catatan tambahan.' }}"
+        </div>
+      </div>
+
+      <!-- Tanda Tangan Formal -->
+      <div class="flex justify-between mt-12 text-xs px-4">
+        <div class="text-center w-52">
+          <p class="mb-1">Penerima Rapor,</p>
+          <p class="mb-16">Pegawai yang Dinilai</p>
+          <p class="font-bold underline">{{ data.employee_detail?.name || 'Pegawai' }}</p>
+          <p class="text-gray-600">NIP: {{ data.employee_detail?.nip || '-' }}</p>
+        </div>
+        <div class="text-center w-56">
+          <p class="mb-1">Badung, {{ new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}</p>
+          <p class="mb-16">Mengetahui,<br>Evaluator / Manajer</p>
+          <p class="font-bold underline">{{ data.evaluator_name || 'Manajer Penilai' }}</p>
+          <p class="text-gray-600">PT. Cakra Media Data</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TAMPILAN INTERAKTIF BROWSER (DISEMBUNYIKAN SAAT DI-PRINT / PDF) -->
+    <!-- ================================================================= -->
+    <div v-if="isLoading" class="flex justify-center py-20 no-print">
       <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
     </div>
- 
-    <div v-else-if="data">
+  
+    <div v-else-if="data" class="no-print">
       <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl shadow-lg text-white p-8 mb-8 flex justify-between items-center">
         <div>
             <h1 class="text-3xl font-bold mb-1">{{ getGrade(data.evaluation_header.total_score) }}</h1>
@@ -30,14 +136,14 @@
             Ajukan Sanggahan
         </button>
       </div>
- 
+  
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
         <h3 class="text-lg font-bold text-gray-800 mb-3">Umpan Balik Manajer</h3>
         <div class="bg-gray-50 p-4 rounded-lg text-gray-700 italic border-l-4 border-orange-400">
           "{{ data.evaluation_header.feedback || 'Tidak ada catatan.' }}"
         </div>
       </div>
- 
+  
       <h3 class="text-lg font-bold text-gray-800 mb-4">Rincian Penilaian</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div v-for="score in data.scores" :key="score.id" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
@@ -197,4 +303,24 @@ function getGrade(score: number) {
   if (score >= 41) return 'D'
   return 'E'
 }
+
+function printReport() {
+  window.print()
+}
 </script>
+
+<style scoped>
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+  .no-print { display: none !important; }
+  .print-block { display: block !important; }
+  .print-flex { display: flex !important; }
+  body, p, h1, h2, h3, h4, div, span { color: #000 !important; }
+  .bg-gradient-to-r { background: none !important; border: 2px solid #000 !important; color: #000 !important; }
+  .text-white, .text-blue-100 { color: #000 !important; }
+  .shadow-sm, .shadow-lg { box-shadow: none !important; }
+}
+</style>

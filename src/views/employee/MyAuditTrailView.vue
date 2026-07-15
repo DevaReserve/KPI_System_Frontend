@@ -1,28 +1,24 @@
 <template>
   <div class="space-y-6">
     <!-- Header Page -->
-    <div class="bg-gradient-to-r from-slate-800 via-blue-900 to-indigo-950 rounded-2xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+    <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-800 rounded-2xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
       <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
         <i class="pi pi-history text-[200px]"></i>
       </div>
       <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div class="flex flex-wrap items-center gap-2 mb-2">
+          <div class="flex items-center gap-2 mb-2">
             <span class="px-3 py-1 bg-white/10 backdrop-blur rounded-full text-xs font-extrabold uppercase tracking-wider text-blue-200 border border-white/15 flex items-center gap-1.5">
-              <i class="pi pi-shield text-xs"></i> Keamanan Sistem & Audit Trail
-            </span>
-            <span class="px-3 py-1 bg-blue-600/60 backdrop-blur rounded-full text-xs font-extrabold uppercase tracking-wider text-white border border-blue-400/25">
-              Role: Admin
+              <i class="pi pi-shield text-xs"></i> Audit Trail & Keamanan
             </span>
           </div>
-          <h1 class="text-2xl md:text-3xl font-black tracking-tight">Audit Trail Sistem</h1>
+          <h1 class="text-2xl md:text-3xl font-black tracking-tight">Audit Trail Saya</h1>
           <p class="text-blue-100 text-sm mt-1 max-w-2xl leading-relaxed">
-            Pantau seluruh aktivitas pengguna dan perubahan sistem untuk menjaga keamanan data. Anda dapat beralih antara melihat seluruh riwayat sistem atau aktivitas pribadi Anda sendiri.
+            Rekam jejak transparan seluruh aktivitas dan riwayat yang Anda lakukan di dalam aplikasi. Gunakan halaman ini untuk mengecek aktivitas login, perubahan profil, hingga pengajuan kinerja Anda.
           </p>
         </div>
         
-        <div class="flex flex-wrap items-center gap-2 self-start md:self-center shrink-0">
-          <!-- View Mode Toggle -->
+        <div class="flex items-center gap-2 self-start md:self-center shrink-0">
           <button 
             @click="viewMode = viewMode === 'timeline' ? 'table' : 'timeline'" 
             class="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs font-bold transition flex items-center gap-2 backdrop-blur shadow-sm"
@@ -41,42 +37,24 @@
         </div>
       </div>
 
-      <!-- Scope Selector (Semua Sistem vs Aktivitas Saya) -->
-      <div class="flex items-center gap-2 mt-6 pt-5 border-t border-white/15 relative z-10">
-        <button 
-          @click="changeScope('all')"
-          class="px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2"
-          :class="scope === 'all' ? 'bg-white text-slate-900 shadow-md font-extrabold' : 'bg-white/10 hover:bg-white/15 text-white'"
-        >
-          <i class="pi pi-globe"></i> Semua Aktivitas Sistem
-        </button>
-        <button 
-          @click="changeScope('my')"
-          class="px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2"
-          :class="scope === 'my' ? 'bg-white text-slate-900 shadow-md font-extrabold' : 'bg-white/10 hover:bg-white/15 text-white'"
-        >
-          <i class="pi pi-user"></i> Aktivitas Saya (Personal)
-        </button>
-      </div>
-    </div>
-
-    <!-- Statistik Ringkas -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-      <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total Terfilter</p>
-        <p class="text-2xl font-black text-gray-900 mt-0.5">{{ filteredLogs.length }} <span class="text-xs font-normal text-gray-500">log</span></p>
-      </div>
-      <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Aktivitas Keamanan</p>
-        <p class="text-2xl font-black text-emerald-600 mt-0.5">{{ countByCategory('security') }} <span class="text-xs font-normal text-gray-500">kali</span></p>
-      </div>
-      <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Manajemen Pegawai & Profil</p>
-        <p class="text-2xl font-black text-blue-600 mt-0.5">{{ countByCategory('profile') }} <span class="text-xs font-normal text-gray-500">kali</span></p>
-      </div>
-      <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Target & Penilaian KPI</p>
-        <p class="text-2xl font-black text-purple-600 mt-0.5">{{ countByCategory('performance') }} <span class="text-xs font-normal text-gray-500">kali</span></p>
+      <!-- Statistik Ringkas -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mt-6 pt-6 border-t border-white/15 relative z-10">
+        <div class="bg-white/10 backdrop-blur rounded-xl p-3.5 border border-white/10">
+          <p class="text-[11px] font-bold text-blue-200 uppercase tracking-wider">Total Aktivitas</p>
+          <p class="text-2xl font-black mt-0.5">{{ logs.length }} <span class="text-xs font-normal text-blue-200">catatan</span></p>
+        </div>
+        <div class="bg-white/10 backdrop-blur rounded-xl p-3.5 border border-white/10">
+          <p class="text-[11px] font-bold text-emerald-200 uppercase tracking-wider">Sesi & Keamanan</p>
+          <p class="text-2xl font-black mt-0.5">{{ countByCategory('security') }} <span class="text-xs font-normal text-blue-200">kali</span></p>
+        </div>
+        <div class="bg-white/10 backdrop-blur rounded-xl p-3.5 border border-white/10">
+          <p class="text-[11px] font-bold text-amber-200 uppercase tracking-wider">Profil & Biodata</p>
+          <p class="text-2xl font-black mt-0.5">{{ countByCategory('profile') }} <span class="text-xs font-normal text-blue-200">perubahan</span></p>
+        </div>
+        <div class="bg-white/10 backdrop-blur rounded-xl p-3.5 border border-white/10">
+          <p class="text-[11px] font-bold text-purple-200 uppercase tracking-wider">Target & Sanggahan</p>
+          <p class="text-2xl font-black mt-0.5">{{ countByCategory('performance') }} <span class="text-xs font-normal text-blue-200">aksi</span></p>
+        </div>
       </div>
     </div>
 
@@ -103,7 +81,7 @@
           <input 
             v-model="searchQuery" 
             type="text" 
-            placeholder="Cari pelaku atau deskripsi..." 
+            placeholder="Cari deskripsi aktivitas..." 
             class="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
           />
           <button v-if="searchQuery" @click="searchQuery = ''" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -126,8 +104,8 @@
     <!-- Loading State -->
     <div v-if="isLoading" class="bg-white rounded-2xl p-12 border border-gray-100 flex flex-col items-center justify-center text-center">
       <div class="w-12 h-12 rounded-full border-4 border-blue-600 border-t-transparent animate-spin mb-4"></div>
-      <p class="text-sm font-bold text-gray-700">Memuat Rekam Jejak Audit Trail...</p>
-      <p class="text-xs text-gray-400 mt-1">Mengambil data log audit sistem dari server.</p>
+      <p class="text-sm font-bold text-gray-700">Memuat Rekam Jejak...</p>
+      <p class="text-xs text-gray-400 mt-1">Mengambil data aktivitas terbaru Anda dari server.</p>
     </div>
 
     <!-- Empty State -->
@@ -168,7 +146,7 @@
               <div class="w-2 h-2 rounded-full" :class="getActionTheme(log.action).dotColor"></div>
             </div>
 
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div class="flex items-start gap-3.5 flex-1 min-w-0">
                 <!-- Icon Badge -->
                 <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-sm mt-0.5" :class="getActionTheme(log.action).bgClass">
@@ -182,27 +160,12 @@
                       {{ log.action }}
                     </span>
                   </div>
-                  <p class="text-xs sm:text-sm text-gray-600 leading-relaxed font-medium break-words mb-2">{{ log.description }}</p>
-
-                  <!-- Pelaku Info -->
-                  <div class="flex items-center gap-2 text-xs bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-xl w-fit">
-                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-blue-600 bg-blue-100 uppercase overflow-hidden border border-gray-200">
-                      <img 
-                         v-if="log.user?.employee?.profile_picture_url" 
-                         :src="getProfilePictureUrl(log.user.employee.profile_picture_url)" 
-                         class="w-full h-full object-cover"
-                      >
-                      <span v-else>{{ (log.username || log.user?.username || '?').charAt(0) }}</span>
-                    </div>
-                    <span class="text-gray-500 font-semibold">Pelaku:</span>
-                    <span class="text-gray-800 font-extrabold">{{ log.username || log.user?.username || 'System' }}</span>
-                    <span v-if="log.user?.role" class="px-1.5 py-0.2 bg-gray-200 text-gray-700 rounded text-[9px] font-bold uppercase">{{ log.user.role }}</span>
-                  </div>
+                  <p class="text-xs sm:text-sm text-gray-600 leading-relaxed font-medium break-words">{{ log.description }}</p>
                 </div>
               </div>
 
               <!-- Meta Waktu & IP -->
-              <div class="flex md:flex-col items-center md:items-end justify-between md:justify-center gap-1.5 pt-2 md:pt-0 border-t md:border-t-0 border-gray-100 shrink-0 text-right">
+              <div class="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 shrink-0 text-right">
                 <div class="flex items-center gap-1 text-xs font-bold text-gray-700 bg-gray-100 px-2.5 py-1 rounded-lg">
                   <i class="pi pi-clock text-blue-600 text-xs"></i>
                   <span>{{ formatTime(log.created_at) }} WIB</span>
@@ -221,60 +184,40 @@
     <!-- MODE TABEL (TABLE) -->
     <div v-else class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       <DataTable :value="filteredLogs" :paginator="true" :rows="15" stripedRows responsiveLayout="scroll" class="text-sm">
-        <Column header="Waktu" field="created_at" sortable style="width: 15%">
+        <Column header="Waktu" field="created_at" sortable style="width: 18%">
           <template #body="{ data }">
             <div>
-              <div class="font-bold text-gray-800 text-xs">{{ formatDateOnly(data.created_at) }}</div>
-              <div class="text-[10px] text-gray-400 font-mono flex items-center gap-1 mt-0.5">
-                <i class="pi pi-clock text-[9px]"></i> {{ formatTime(data.created_at) }} WIB
+              <div class="font-bold text-gray-800">{{ formatDateOnly(data.created_at) }}</div>
+              <div class="text-xs text-gray-400 font-mono flex items-center gap-1 mt-0.5">
+                <i class="pi pi-clock text-[10px]"></i> {{ formatTime(data.created_at) }} WIB
               </div>
             </div>
           </template>
         </Column>
 
-        <Column header="Pelaku" field="user.username" sortable style="width: 20%">
-          <template #body="{ data }">
-            <div class="flex items-center gap-2">
-              <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-blue-600 uppercase overflow-hidden border border-gray-200"
-                   :class="data.user?.employee?.profile_picture_url ? 'bg-white' : 'bg-blue-50'">
-                  <img 
-                     v-if="data.user?.employee?.profile_picture_url" 
-                     :src="getProfilePictureUrl(data.user.employee.profile_picture_url)" 
-                     class="w-full h-full object-cover"
-                  >
-                  <span v-else>{{ (data.username || data.user?.username || '?').charAt(0) }}</span>
-              </div>
-              <div>
-                  <div class="text-xs font-bold text-gray-800">{{ data.username || data.user?.username || 'Unknown' }}</div>
-                  <div class="text-[9px] text-gray-400 uppercase tracking-wide">{{ data.user?.role || (data.username ? 'Attempted Login' : 'N/A') }}</div>
-              </div>
-            </div>
-          </template>
-        </Column>
-
-        <Column header="Kategori & Aksi" field="action" sortable style="width: 20%">
+        <Column header="Kategori & Aksi" field="action" sortable style="width: 25%">
           <template #body="{ data }">
             <div class="flex items-center gap-2.5">
               <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" :class="getActionTheme(data.action).bgClass">
-                <i :class="getActionTheme(data.action).icon" class="text-xs"></i>
+                <i :class="getActionTheme(data.action).icon" class="text-sm"></i>
               </div>
               <div>
-                <div class="font-bold text-gray-800 text-[11px]">{{ getActionFriendlyName(data.action) }}</div>
-                <span class="text-[9px] font-extrabold uppercase tracking-wider text-gray-400 font-mono">{{ data.action }}</span>
+                <div class="font-bold text-gray-800 text-xs">{{ getActionFriendlyName(data.action) }}</div>
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 font-mono">{{ data.action }}</span>
               </div>
             </div>
           </template>
         </Column>
 
-        <Column header="Deskripsi Aktivitas" field="description" style="width: 33%">
+        <Column header="Deskripsi Aktivitas" field="description" style="width: 42%">
           <template #body="{ data }">
-            <p class="text-gray-700 font-medium text-xs leading-relaxed">{{ data.description }}</p>
+            <p class="text-gray-700 font-medium leading-relaxed">{{ data.description }}</p>
           </template>
         </Column>
 
-        <Column header="Alamat IP" field="ip_address" style="width: 12%">
+        <Column header="Alamat IP" field="ip_address" style="width: 15%">
           <template #body="{ data }">
-            <span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-mono text-[10px] font-semibold">
+            <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded-lg font-mono text-xs font-semibold">
               {{ data.ip_address || 'N/A' }}
             </span>
           </template>
@@ -337,15 +280,14 @@
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import { computed, onMounted, ref } from 'vue'
-import { adminService, authService } from '../../services/api'
+import { authService } from '../../services/api'
 
 const logs = ref<any[]>([])
 const isLoading = ref(true)
-const viewMode = ref<'timeline' | 'table'>('table') // Defaults to table for admin as they want dense data
+const viewMode = ref<'timeline' | 'table'>('timeline')
 const searchQuery = ref('')
 const selectedCategory = ref('all')
 const showFilterModal = ref(false)
-const scope = ref<'all' | 'my'>('all') // Admin options: 'all' (all users) or 'my' (only their own actions)
 
 const filterStartDate = ref('')
 const filterEndDate = ref('')
@@ -355,8 +297,8 @@ const tempEndDate = ref('')
 const categories = [
   { id: 'all', label: 'Semua Aktivitas', icon: 'pi pi-list' },
   { id: 'security', label: 'Sesi & Keamanan', icon: 'pi pi-lock' },
-  { id: 'profile', label: 'Manajemen Pegawai', icon: 'pi pi-user' },
-  { id: 'performance', label: 'Target & KPI', icon: 'pi pi-chart-line' },
+  { id: 'profile', label: 'Profil & Biodata', icon: 'pi pi-user' },
+  { id: 'performance', label: 'Target & Kinerja', icon: 'pi pi-chart-line' },
   { id: 'achievement', label: 'Prestasi & Sanggahan', icon: 'pi pi-trophy' }
 ]
 
@@ -367,22 +309,13 @@ onMounted(async () => {
 async function loadLogs() {
   isLoading.value = true
   try {
-    if (scope.value === 'my') {
-      logs.value = await authService.getMyActivityLogs(filterStartDate.value, filterEndDate.value)
-    } else {
-      logs.value = await adminService.getActivityLogs(filterStartDate.value, filterEndDate.value)
-    }
+    logs.value = await authService.getMyActivityLogs(filterStartDate.value, filterEndDate.value)
   } catch (err) {
-    console.error('Failed to load audit logs', err)
+    console.error('Failed to load activity logs', err)
     logs.value = []
   } finally {
     isLoading.value = false
   }
-}
-
-function changeScope(newScope: 'all' | 'my') {
-  scope.value = newScope
-  loadLogs()
 }
 
 function applyDateFilters() {
@@ -412,13 +345,13 @@ function getActionCategory(action: string): string {
   if (['LOGIN', 'LOGOUT', 'CHANGE_PASSWORD', 'LOGIN_BLOCKED', 'SEND_PHONE_OTP', 'VERIFY_PHONE_OTP', 'FORGOT_PASSWORD', 'RESET_PASSWORD'].includes(action)) {
     return 'security'
   }
-  if (['UPDATE_BIODATA', 'UPDATE_PROFILE_PICTURE', 'UPDATE_EMPLOYEE', 'CREATE_EMPLOYEE', 'DELETE_EMPLOYEE', 'CREATE_POSITION', 'UPDATE_POSITION', 'DELETE_POSITION', 'CREATE_DIVISION', 'UPDATE_DIVISION', 'DELETE_DIVISION'].includes(action)) {
+  if (['UPDATE_BIODATA', 'UPDATE_PROFILE_PICTURE', 'UPDATE_EMPLOYEE'].includes(action)) {
     return 'profile'
   }
   if (['CREATE_ACHIEVEMENT', 'UPDATE_ACHIEVEMENT', 'DELETE_ACHIEVEMENT', 'SUBMIT_APPEAL', 'RESOLVE_APPEAL'].includes(action)) {
     return 'achievement'
   }
-  if (['SET_KPI_TARGET', 'SET_KPI_TARGET_BULK', 'SUBMIT_EVALUATION', 'ISSUE_WARNING', 'DELETE_WARNING', 'CREATE_PERIOD', 'UPDATE_PERIOD', 'DELETE_PERIOD', 'ACTIVATE_PERIOD'].includes(action)) {
+  if (['SET_KPI_TARGET', 'SUBMIT_EVALUATION', 'ISSUE_WARNING'].includes(action)) {
     return 'performance'
   }
   return 'other'
@@ -440,8 +373,7 @@ const filteredLogs = computed(() => {
       const descMatch = log.description && log.description.toLowerCase().includes(q)
       const actionMatch = log.action && log.action.toLowerCase().includes(q)
       const friendlyMatch = getActionFriendlyName(log.action).toLowerCase().includes(q)
-      const actorMatch = (log.username || log.user?.username || '').toLowerCase().includes(q)
-      if (!descMatch && !actionMatch && !friendlyMatch && !actorMatch) return false
+      if (!descMatch && !actionMatch && !friendlyMatch) return false
     }
     return true
   })
@@ -485,7 +417,6 @@ function getActionFriendlyName(action: string): string {
     case 'SEND_PHONE_OTP': return 'Mengirim Kode OTP WhatsApp'
     case 'VERIFY_PHONE_OTP': return 'Memverifikasi Nomor Telepon'
     case 'SET_KPI_TARGET': return 'Target KPI Ditetapkan'
-    case 'SET_KPI_TARGET_BULK': return 'Target KPI Massal Divisi'
     case 'SUBMIT_EVALUATION': return 'Penilaian Kinerja Disubmit'
     case 'SUBMIT_APPEAL': return 'Mengajukan Sanggahan Nilai'
     case 'RESOLVE_APPEAL': return 'Sanggahan Ditinjau Atasan'
@@ -493,20 +424,6 @@ function getActionFriendlyName(action: string): string {
     case 'UPDATE_ACHIEVEMENT': return 'Memperbarui Data Prestasi'
     case 'DELETE_ACHIEVEMENT': return 'Menghapus Data Prestasi'
     case 'ISSUE_WARNING': return 'Penerbitan Surat Peringatan (SP)'
-    case 'DELETE_WARNING': return 'Penghapusan Surat Peringatan'
-    case 'CREATE_EMPLOYEE': return 'Menambahkan Pegawai Baru'
-    case 'UPDATE_EMPLOYEE': return 'Mengubah Data Pegawai'
-    case 'DELETE_EMPLOYEE': return 'Menghapus Data Pegawai'
-    case 'CREATE_POSITION': return 'Menambahkan Jabatan Baru'
-    case 'UPDATE_POSITION': return 'Mengubah Jabatan'
-    case 'DELETE_POSITION': return 'Menghapus Jabatan'
-    case 'CREATE_DIVISION': return 'Menambahkan Divisi Baru'
-    case 'UPDATE_DIVISION': return 'Mengubah Divisi'
-    case 'DELETE_DIVISION': return 'Menghapus Divisi'
-    case 'CREATE_PERIOD': return 'Membuat Periode Evaluasi'
-    case 'UPDATE_PERIOD': return 'Mengubah Periode Evaluasi'
-    case 'DELETE_PERIOD': return 'Menghapus Periode Evaluasi'
-    case 'ACTIVATE_PERIOD': return 'Mengaktifkan Periode Evaluasi'
     default: return action || 'Aktivitas Sistem'
   }
 }
@@ -565,7 +482,6 @@ function getActionTheme(action: string) {
         icon: 'pi pi-trophy'
       }
     case 'SUBMIT_APPEAL':
-    case 'RESOLVE_APPEAL':
       return {
         bgClass: 'bg-orange-100 text-orange-700',
         badgeClass: 'bg-orange-100 text-orange-800',
@@ -576,17 +492,12 @@ function getActionTheme(action: string) {
     case 'LOGIN_BLOCKED':
     case 'DELETE_ACHIEVEMENT':
     case 'ISSUE_WARNING':
-    case 'DELETE_WARNING':
-    case 'DELETE_EMPLOYEE':
-    case 'DELETE_POSITION':
-    case 'DELETE_DIVISION':
-    case 'DELETE_PERIOD':
       return {
         bgClass: 'bg-red-100 text-red-700',
         badgeClass: 'bg-red-100 text-red-800',
         borderColor: 'border-red-500',
         dotColor: 'bg-red-600',
-        icon: action.includes('WARNING') ? 'pi pi-exclamation-triangle' : 'pi pi-lock'
+        icon: action === 'ISSUE_WARNING' ? 'pi pi-exclamation-triangle' : 'pi pi-lock'
       }
     default:
       return {
@@ -615,12 +526,5 @@ function formatTime(dateStr: string) {
     minute: '2-digit',
     second: '2-digit'
   })
-}
-
-function getProfilePictureUrl(url: string) {
-  if (!url) return ''
-  if (url.startsWith('http')) return url
-  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080' 
-  return `${baseUrl.replace('/api', '')}${url}`
 }
 </script>
