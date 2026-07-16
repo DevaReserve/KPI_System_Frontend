@@ -103,8 +103,8 @@
             </div>
 
             <!-- Notes -->
-            <div class="w-full md:w-48">
-              <input
+            <div class="w-full md:max-w-xs lg:max-w-md"> 
+              <textarea
                 v-model="notesMap[ind.id]"
                 type="text"
                 placeholder="Catatan (opsional)..."
