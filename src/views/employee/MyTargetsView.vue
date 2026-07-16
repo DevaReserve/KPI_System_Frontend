@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
       <div>
         <h1 class="text-2xl font-bold text-gray-800">Target KPI Saya</h1>
         <p class="text-gray-500 text-sm">Daftar target yang harus dicapai pada periode evaluasi.</p>
@@ -28,7 +28,25 @@
       </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <!-- BLOCKED STATE: PROFIL BELUM LENGKAP -->
+    <div v-if="!isProfileComplete" class="bg-white rounded-2xl shadow-sm border border-red-100 p-10 text-center max-w-2xl mx-auto mt-10">
+        <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-5">
+            <i class="pi pi-lock text-4xl text-red-500"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-3">Akses Dibatasi</h2>
+        <p class="text-gray-600 mb-6 leading-relaxed">
+            Anda belum bisa melihat Target KPI karena <b>Biodata Anda belum lengkap</b> atau <b>Nomor WhatsApp belum diverifikasi</b>. 
+            Silakan lengkapi profil Anda terlebih dahulu agar dapat menggunakan semua fitur KPI System.
+        </p>
+        <button 
+            @click="$router.push('/profile')" 
+            class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold shadow-md shadow-blue-500/30 hover:shadow-lg transition-all flex items-center justify-center gap-2 mx-auto"
+        >
+            <i class="pi pi-user-edit"></i> Lengkapi Profil Sekarang
+        </button>
+    </div>
+
+    <div v-else class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <DataTable 
         :value="targets" 
         :loading="isLoading"
@@ -109,6 +127,21 @@ import { periodService, kpiTargetService } from '../../services/api'
 // PrimeVue Imports (Pastikan sudah terinstall)
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+
+import { useAuthStore } from '../../stores/auth'
+import { computed } from 'vue'
+
+const authStore = useAuthStore()
+
+const isProfileComplete = computed(() => {
+    const emp = authStore.user?.employee
+    if (!emp) return false
+    return emp.is_phone_verified && 
+           emp.phone && 
+           emp.address && 
+           emp.birth_place && 
+           emp.birth_date
+})
 
 const periods = ref<any[]>([])
 const selectedPeriodId = ref<number | ''>('')

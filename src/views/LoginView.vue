@@ -16,7 +16,7 @@
         </div>
 
         <div class="relative z-10 max-w-xl mb-12">
-          <h1 class="text-5xl sm:text-6xl font-extrabold text-white tracking-tight mb-8 leading-tight animate-slide-fade-right">
+          <h1 class="text-5xl sm:text-6xl font-extrabold text-white tracking-tighcopt mb-8 leading-tight animate-slide-fade-right">
             Sistem <br/>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-200">
               Key Performance Indicator

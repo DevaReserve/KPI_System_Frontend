@@ -179,20 +179,20 @@
                     <!-- ALAMAT & DEMOGRAFI -->
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1.5 flex items-center justify-between">
-                            <span>Alamat Domisili</span>
+                            <span>Alamat Domisili <span class="text-red-500">*</span></span>
                             <span class="text-[11px] font-normal text-gray-400">Tempat tinggal saat ini</span>
                         </label>
-                        <textarea v-model="bioForm.address" rows="2" placeholder="Contoh: Jl. Raya Mambal Ubud No. 12, Badung, Bali" class="w-full p-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"></textarea>
+                        <textarea v-model="bioForm.address" required rows="2" placeholder="Contoh: Jl. Raya Mambal Ubud No. 12, Badung, Bali" class="w-full p-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"></textarea>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Tempat Lahir</label>
-                            <input v-model="bioForm.birth_place" type="text" placeholder="Denpasar" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Tempat Lahir <span class="text-red-500">*</span></label>
+                            <input v-model="bioForm.birth_place" type="text" required placeholder="Denpasar" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Tanggal Lahir</label>
-                            <input v-model="bioForm.birth_date" type="date" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Tanggal Lahir <span class="text-red-500">*</span></label>
+                            <input v-model="bioForm.birth_date" type="date" required class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
                         </div>
                     </div>
 
@@ -237,7 +237,7 @@
         </div>
     </div>
 
-    <!-- MODAL VERIFIKASI NO TELEPON (OTP EMAIL) -->
+    <!-- MODAL VERIFIKASI NO TELEPON (OTP WHATSAPP) -->
     <div v-if="showOTPModal" class="fixed inset-0 z-50 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity" @click="showOTPModal = false"></div>
@@ -252,15 +252,15 @@
                             <i class="pi pi-times"></i>
                         </button>
                     </div>
-                    <p class="text-xs text-amber-50 mt-1">Gunakan kode verifikasi OTP yang dikirimkan ke email Anda.</p>
+                    <p class="text-xs text-amber-50 mt-1">Gunakan kode verifikasi OTP yang dikirimkan ke WhatsApp Anda.</p>
                 </div>
                 
                 <form @submit.prevent="verifyOTP" class="p-6 space-y-4">
                     <div class="text-center py-2">
                         <p class="text-sm text-gray-600 leading-relaxed">
-                            Kami telah mengirimkan 6 digit kode OTP verifikasi ke email Anda 
-                            <b class="text-gray-900">{{ userProfile?.email || 'yang terdaftar' }}</b> untuk memvalidasi nomor telepon 
-                            <b class="text-gray-900">{{ userProfile?.employee?.phone }}</b>.
+                            Kami telah mengirimkan 6 digit kode OTP ke nomor WhatsApp 
+                            <b class="text-gray-900">{{ userProfile?.employee?.phone }}</b>
+                            untuk memvalidasi kepemilikan nomor tersebut.
                         </p>
                     </div>
 
@@ -387,7 +387,7 @@
                     <div>
                         <h4 class="text-sm font-bold text-amber-900">Nomor Telepon Belum Diverifikasi!</h4>
                         <p class="text-xs text-amber-700 mt-0.5 leading-relaxed">
-                            Nomor kontak Anda <b>{{ userProfile?.employee?.phone }}</b> belum diverifikasi secara resmi. Harap lakukan verifikasi OTP melalui email sekarang juga.
+                            Nomor kontak Anda <b>{{ userProfile?.employee?.phone }}</b> belum diverifikasi secara resmi. Harap lakukan verifikasi OTP sekarang juga.
                         </p>
                     </div>
                 </div>
@@ -444,9 +444,6 @@
                             <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
                                 <i class="pi pi-id-card text-blue-600 text-base"></i> Data Diri & Kontak
                             </h3>
-                            <button @click="openBioModal" class="text-xs font-bold text-blue-600 hover:text-blue-800 transition flex items-center gap-1">
-                                <i class="pi pi-user-edit"></i> Edit Kontak
-                            </button>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -957,7 +954,7 @@ async function startPhoneVerification() {
     isProcessing.value = true
     try {
         await authService.sendPhoneOTP()
-        toast.add({ severity: 'success', summary: 'OTP Terkirim', detail: 'Kode OTP verifikasi telah dikirim ke email Anda!', life: 3000 })
+        toast.add({ severity: 'success', summary: 'OTP Terkirim', detail: 'Kode OTP verifikasi telah dikirim ke WhatsApp Anda!', life: 3000 })
         otpInput.value = ''
         showOTPModal.value = true
         startCountdown()
@@ -998,6 +995,7 @@ async function verifyOTP() {
         toast.add({ severity: 'success', summary: 'Berhasil', detail: 'Nomor telepon/WhatsApp Anda berhasil diverifikasi!', life: 3000 })
         showOTPModal.value = false
         await loadData()
+        await authStore.fetchProfile() // Update global auth store
     } catch (err: any) {
         toast.add({ severity: 'error', summary: 'Verifikasi Gagal', detail: err.response?.data?.message || 'Kode OTP salah atau kedaluwarsa', life: 3000 })
     } finally {
@@ -1069,18 +1067,7 @@ async function saveBiodata() {
         toast.add({ severity: 'success', summary: 'Berhasil', detail: 'Biodata & Kontak berhasil disimpan!', life: 3000 })
         showBioModal.value = false
         await loadData()
-        if (authStore.user && authStore.user.employee) {
-            authStore.user.employee.phone = bioForm.phone
-            authStore.user.employee.bio = bioForm.bio
-            authStore.user.employee.social_media = formattedSocial
-            authStore.user.employee.address = bioForm.address
-            authStore.user.employee.birth_place = bioForm.birth_place
-            authStore.user.employee.birth_date = bioForm.birth_date
-            authStore.user.employee.gender = bioForm.gender
-            authStore.user.employee.education = bioForm.education
-            authStore.user.employee.emergency_contact_name = bioForm.emergency_contact_name
-            authStore.user.employee.emergency_contact_phone = bioForm.emergency_contact_phone
-        }
+        await authStore.fetchProfile() // Update global auth store
     } catch (err: any) {
         toast.add({ severity: 'error', summary: 'Gagal', detail: err.response?.data?.message || 'Gagal menyimpan biodata', life: 3000 })
     } finally {

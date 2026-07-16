@@ -137,6 +137,17 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem(SESSION_LAST_ACTIVITY_KEY)
   }
 
+  async function fetchProfile() {
+    try {
+      const userProfile = await authService.getProfile()
+      user.value = userProfile
+      localStorage.setItem('user', JSON.stringify(userProfile))
+      return userProfile
+    } catch (e) {
+      console.error('Failed to fetch profile', e)
+    }
+  }
+
   initializeSession()
 
   return {
@@ -149,6 +160,7 @@ export const useAuthStore = defineStore('auth', () => {
     isExecutive: computed(() => user.value?.is_executive === true),
     login,
     logout,
+    fetchProfile,
     initializeSession
   }
 })
