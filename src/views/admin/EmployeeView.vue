@@ -103,7 +103,7 @@
         <Column field="position" header="Posisi" sortable style="width: 25%">
             <template #body="{ data }">
                 <div class="text-sm font-medium text-gray-900">{{ data.position }}</div>
-                <div class="text-xs text-gray-500">{{ data.division_name }}</div>
+                <div class="text-xs text-gray-400">{{ data.division_name }}</div>
             </template>
         </Column>
 
@@ -134,24 +134,36 @@
                     <button @click="openModal(data)" class="p-1 text-indigo-600 hover:bg-indigo-50 rounded" title="Edit">
                         <i class="pi pi-pencil"></i>
                     </button>
-                    
-                    <button 
-                        v-if="data.is_active" @click="confirmStatusChange(data)" 
-                        class="p-1 text-red-600 hover:bg-red-50 rounded" title="Non-Aktifkan">
-                        <i class="pi pi-ban"></i>
-                    </button>
-                    <button 
-                        v-else @click="confirmStatusChange(data)" 
-                        class="p-1 text-green-600 hover:bg-green-50 rounded" title="Aktifkan">
-                        <i class="pi pi-check-circle"></i>
-                    </button>
-                    
-                    <button 
-                        @click="confirmResetPassword(data)" 
-                        class="p-1 text-yellow-600 hover:bg-yellow-50 rounded"
-                        title="Reset Password Default">
-                        <i class="pi pi-key"></i>
-                    </button>
+
+                    <!-- Tombol ban & reset password disembunyikan untuk superadmin -->
+                    <template v-if="!isSuperadmin(data)">
+                        <button 
+                            v-if="data.is_active" @click="confirmStatusChange(data)" 
+                            class="p-1 text-red-600 hover:bg-red-50 rounded" title="Non-Aktifkan">
+                            <i class="pi pi-ban"></i>
+                        </button>
+                        <button 
+                            v-else @click="confirmStatusChange(data)" 
+                            class="p-1 text-green-600 hover:bg-green-50 rounded" title="Aktifkan">
+                            <i class="pi pi-check-circle"></i>
+                        </button>
+
+                        <button 
+                            @click="confirmResetPassword(data)" 
+                            class="p-1 text-yellow-600 hover:bg-yellow-50 rounded"
+                            title="Reset Password Default">
+                            <i class="pi pi-key"></i>
+                        </button>
+                    </template>
+
+                    <!-- Badge terkunci untuk superadmin -->
+                    <template v-else>
+                        <span 
+                            class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 text-amber-800 border border-amber-300"
+                            title="Akun superadmin dilindungi sistem">
+                            <i class="pi pi-lock text-[9px]"></i> Protected
+                        </span>
+                    </template>
                 </div>
             </template>
         </Column>
@@ -197,24 +209,71 @@
                         </div>
                                                 
                         <div class="sm:col-span-2 pb-1 border-b border-gray-100 mt-2"><span class="text-xs font-bold text-gray-500 uppercase">Akun Pengguna</span></div>
-                        <div><label class="block text-sm font-medium mb-1">Username</label><input v-model="form.username" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-blue-500 outline-none" required></div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Role Sistem</label>
-                            <select v-model="form.role" class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white focus:ring-blue-500 outline-none" required>
-                                <option value="employee">Employee</option>
-                                <option value="manager" :disabled="isInternPosition">Manager</option>
-                                <option value="admin" :disabled="isInternPosition">Admin</option>
-                            </select>
-                        </div>
-                        <div class="sm:col-span-2 mt-2" v-if="form.role === 'manager' || form.role === 'admin'">
-                            <label class="flex items-center gap-3 cursor-pointer p-4 border border-blue-200 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
-                                <input type="checkbox" v-model="form.is_executive" class="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
-                                <div>
-                                    <span class="block text-sm font-bold text-blue-900">Berikan Hak Akses Eksekutif (CEO)</span>
-                                    <span class="block text-xs text-blue-700">Centang kotak ini agar akun tersebut dapat melihat halaman khusus Performa Keseluruhan Perusahaan.</span>
+
+                        <!-- Jika edit superadmin: tampilkan field kritis sebagai READ-ONLY (bukan input disabled) -->
+                        <!-- Alasan: input disabled bisa dihapus atributnya via inspect element, lalu di-submit -->
+                        <!-- Dengan me-render elemen non-input, tidak ada field yang bisa dimanipulasi -->
+                        <template v-if="isEditing && isSuperadmin(form)">
+                            <!-- Username: read-only display -->
+                            <div class="sm:col-span-2">
+                                <label class="block text-sm font-medium mb-1 text-gray-700">Username</label>
+                                <div class="flex items-center gap-2 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+                                    <i class="pi pi-lock text-gray-400 text-xs"></i>
+                                    <span class="font-mono text-sm text-gray-700">{{ form.username }}</span>
+                                    <span class="ml-auto text-[10px] font-bold uppercase bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full border border-amber-200">Terkunci</span>
                                 </div>
-                            </label>
-                        </div>
+                                <p class="text-xs text-amber-600 mt-1"><i class="pi pi-info-circle mr-1"></i>Username superadmin tidak dapat diubah.</p>
+                            </div>
+
+                            <!-- Role: read-only display -->
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700">Role Sistem</label>
+                                <div class="flex items-center gap-2 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+                                    <i class="pi pi-lock text-gray-400 text-xs"></i>
+                                    <span class="px-2 py-0.5 text-xs font-bold rounded-full bg-purple-100 text-purple-800 uppercase">{{ form.role }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Status: read-only display -->
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700">Status Akun</label>
+                                <div class="flex items-center gap-2 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+                                    <i class="pi pi-lock text-gray-400 text-xs"></i>
+                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800">Selalu Aktif</span>
+                                </div>
+                            </div>
+
+                            <!-- Pesan info superadmin -->
+                            <div class="sm:col-span-2 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
+                                <i class="pi pi-shield text-amber-600 mt-0.5 shrink-0"></i>
+                                <p class="text-xs text-amber-700">
+                                    <strong>Akun Superadmin Dilindungi Sistem.</strong> Username, role, status, dan hak akses eksekutif tidak dapat diubah melalui panel ini untuk menjaga keamanan sistem.
+                                </p>
+                            </div>
+                        </template>
+
+                        <!-- Jika bukan superadmin: tampilkan field input normal -->
+                        <template v-else>
+                            <div><label class="block text-sm font-medium mb-1">Username</label><input v-model="form.username" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-blue-500 outline-none" required></div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Role Sistem</label>
+                                <select v-model="form.role" class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white focus:ring-blue-500 outline-none" required>
+                                    <option value="employee">Employee</option>
+                                    <option value="manager" :disabled="isInternPosition">Manager</option>
+                                    <option value="admin" :disabled="isInternPosition">Admin</option>
+                                </select>
+                            </div>
+                            <div class="sm:col-span-2 mt-2" v-if="form.role === 'manager' || form.role === 'admin'">
+                                <label class="flex items-center gap-3 cursor-pointer p-4 border border-blue-200 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
+                                    <input type="checkbox" v-model="form.is_executive" class="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                    <div>
+                                        <span class="block text-sm font-bold text-blue-900">Berikan Hak Akses Eksekutif (CEO)</span>
+                                        <span class="block text-xs text-blue-700">Centang kotak ini agar akun tersebut dapat melihat halaman khusus Performa Keseluruhan Perusahaan.</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </template>
+
                         <div v-if="!isEditing" class="sm:col-span-2">
                             <label class="block text-sm font-medium mb-1">Password</label>
                             <input v-model="form.password" type="password" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-blue-500 outline-none" required>
@@ -271,6 +330,13 @@ const form = reactive({
 })
 
 // --- COMPUTED PROPERTIES ---
+
+// Helper: cek apakah data/form adalah akun superadmin
+const isSuperadmin = (emp: any): boolean => {
+  if (!emp) return false
+  const username = emp.username || (emp.user ? emp.user.username : '')
+  return username === 'superadmin'
+}
 
 const potentialSupervisors = computed(() => {
   return employees.value.filter(e => 
@@ -342,7 +408,7 @@ async function fetchData() {
     // Flattening Data: Agar search bar bisa membaca 'division_name'
     employees.value = emps.map((e: any) => ({
         ...e,
-        division_name: e.division ? e.division.name : '-', // Tarik nama divisi ke root object
+        division_name: e.division_name || (e.division ? e.division.name : '-'), // Tarik nama divisi ke root object
         role: e.user ? e.user.role : e.role 
     }))
 

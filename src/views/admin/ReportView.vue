@@ -248,7 +248,7 @@
             </template>
           </Column>
 
-          <Column header="Periode Pembimbing" style="width: 200px">
+          <Column header="Periode Pembanding" style="width: 200px">
             <template #body="{ data }">
               <span class="font-bold" :class="getScoreColor(data.score_b)">{{ data.score_b > 0 ? data.score_b.toFixed(2) : '-' }}</span>
               <span class="ml-1 text-xs px-1.5 rounded border" :class="getGradeBadge(data.grade_b)">{{ data.grade_b }}</span>
@@ -610,7 +610,7 @@ function exportComparisonPDF() {
     autoTable(doc, {
       startY: 62,
       head: [[
-        'No', 'NIP', 'Nama Pegawai', 'Divisi', 'Skor A', 'Grade A', 'Skor B', 'Grade B', 'Selisih', 'Tren'
+        'No', 'NIP', 'Nama Pegawai', 'Divisi', 'Skor Acuan', 'Mutu', 'Skor Pembanding', 'Mutu', 'Selisih', 'Tren'
       ]],
       body: tableBody,
       theme: 'grid',
