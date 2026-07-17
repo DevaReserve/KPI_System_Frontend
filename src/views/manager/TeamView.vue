@@ -9,14 +9,16 @@
       </div>
       <button 
         @click="printTeamReport" 
-        class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center transition-colors shadow-sm"
+        :disabled="!isAllEvaluated"
+        class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        :title="!isAllEvaluated ? 'Semua bawahan harus dinilai terlebih dahulu untuk mengaktifkan cetak rekap' : 'Cetak Rekap Tim (PDF)'"
       >
         <i class="pi pi-print mr-2"></i> Cetak Rekap Tim (PDF)
       </button>
     </div>
 
-    <!-- BLOK CETAK RESMI REKAPITULASI TIM (KOP SURAT PT. CAKRA MEDIA DATA) -->
-    <div class="hidden print-block text-black bg-white">
+    <!-- CONTAINER CETAK RESMI REKAPITULASI TIM (PT. CAKRA MEDIA DATA) -->
+    <div class="hidden print-block text-black bg-white w-full">
       <!-- Kop Surat Tengah -->
       <div class="text-center pb-4 border-b-2 border-black mb-6">
         <h1 class="text-2xl font-black uppercase tracking-wide">PT. CAKRA MEDIA DATA</h1>
@@ -28,39 +30,40 @@
         <h2 class="text-lg font-bold uppercase tracking-wider">LAPORAN REKAPITULASI PENILAIAN KINERJA TIM</h2>
         <p class="text-sm font-semibold mt-1">Tanggal Cetak: {{ new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}</p>
       </div>
-    </div>
 
-    <!-- TABEL CETAK KHUSUS -->
-    <div class="hidden print-block mb-8">
-      <table class="w-full border-collapse border border-black text-xs">
-        <thead>
-          <tr class="bg-gray-800 text-white print-table-header">
-            <th class="border border-black p-2 text-center w-12">No</th>
-            <th class="border border-black p-2 text-left">NIP / ID</th>
-            <th class="border border-black p-2 text-left">Nama Pegawai</th>
-            <th class="border border-black p-2 text-left">Status Penilaian</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, idx) in filteredTeam" :key="'print-'+item.employee_id">
-            <td class="border border-black p-2 text-center">{{ idx + 1 }}</td>
-            <td class="border border-black p-2">{{ item.employee_id }}</td>
-            <td class="border border-black p-2 font-bold">{{ item.employee_name }}</td>
-            <td class="border border-black p-2">
-              <span v-if="item.evaluation_status === 'submitted'" class="text-green-800 font-bold">Selesai</span>
-              <span v-else-if="item.evaluation_status === 'draft'" class="text-yellow-800 font-bold">Draft</span>
-              <span v-else-if="item.evaluation_status === 'appealed'" class="text-orange-800 font-bold">Ada Sanggahan</span>
-              <span v-else class="text-gray-600">Belum Dinilai</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- TABEL CETAK KHUSUS -->
+      <div class="mb-8">
+        <table class="w-full border-collapse border border-black text-xs">
+          <thead>
+            <tr class="bg-gray-100 text-black print-table-header">
+              <th class="border border-black p-2 text-center w-12">No</th>
+              <th class="border border-black p-2 text-left">Nama Pegawai</th>
+              <th class="border border-black p-2 text-center w-24">Skor Akhir</th>
+              <th class="border border-black p-2 text-center w-16">Grade</th>
+              <th class="border border-black p-2 text-left">Status Penilaian</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, idx) in evaluatedTeamMembers" :key="'print-'+item.employee_id">
+              <td class="border border-black p-2 text-center">{{ idx + 1 }}</td>
+              <td class="border border-black p-2 font-bold">{{ item.employee_name }}</td>
+              <td class="border border-black p-2 text-center">{{ item.total_score !== undefined ? item.total_score.toFixed(2) : '0.00' }}</td>
+              <td class="border border-black p-2 text-center font-bold">{{ item.total_score !== undefined ? getGrade(item.total_score) : '-' }}</td>
+              <td class="border border-black p-2">
+                <span v-if="item.evaluation_status === 'submitted'" class="text-green-800 font-bold">Selesai</span>
+                <span v-else-if="item.evaluation_status === 'appealed'" class="text-orange-800 font-bold">Ada Sanggahan</span>
+                <span v-else class="text-gray-600">-</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-      <div class="flex justify-end mt-12 pr-8 text-center text-xs">
-        <div class="w-56">
-          <p class="mb-1">Badung, {{ new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}</p>
-          <p class="mb-16">Mengetahui,<br>CEO PT. Cakra Media Data</p>
-          <p class="font-bold underline text-sm">Bapak Khalil</p>
+        <div class="flex justify-end mt-12 pr-8 text-center text-xs">
+          <div class="w-56">
+            <p class="mb-1">Badung, {{ new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}</p>
+            <p class="mb-16">Mengetahui,<br>CEO PT. Cakra Media Data</p>
+            <p class="font-bold underline text-sm">Bapak Khalil</p>
+          </div>
         </div>
       </div>
     </div>
@@ -103,7 +106,7 @@
       </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden no-print">
       <DataTable 
         :value="filteredTeam" 
         :paginator="true" 
@@ -222,12 +225,30 @@ interface TeamMember {
   profile_picture_url?: string 
   evaluation_id?: number | null
   evaluation_status: string 
+  total_score?: number
 }
 
 const teamMembers = ref<TeamMember[]>([]) 
 const isLoading = ref(true)
 const searchQuery = ref('')
 const selectedStatus = ref('semua')
+
+const isAllEvaluated = computed(() => {
+  if (teamMembers.value.length === 0) return false
+  return teamMembers.value.every(m => m.evaluation_status === 'submitted' || m.evaluation_status === 'appealed')
+})
+
+const evaluatedTeamMembers = computed(() => {
+  return teamMembers.value.filter(m => m.evaluation_status === 'submitted' || m.evaluation_status === 'appealed')
+})
+
+function getGrade(score: number) {
+  if (score >= 86) return 'A'
+  if (score >= 71) return 'B'
+  if (score >= 56) return 'C'
+  if (score >= 41) return 'D'
+  return 'E'
+}
 
 // Opsi filter status
 const filterOptions = [
@@ -320,9 +341,26 @@ function printTeamReport() {
     size: A4 portrait;
     margin: 15mm;
   }
-  .no-print { display: none !important; }
-  .print-block { display: block !important; }
-  body, p, h1, h2, h3, h4, div, span { color: #000 !important; }
-  .shadow-sm { box-shadow: none !important; }
+  body * {
+    visibility: hidden;
+  }
+  .print-block, .print-block * {
+    visibility: visible;
+  }
+  .print-block {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: block !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .shadow-sm {
+    box-shadow: none !important;
+  }
 }
 </style>

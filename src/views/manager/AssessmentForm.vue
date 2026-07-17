@@ -45,11 +45,6 @@
       </div>
       
       <div class="flex gap-3">
-        <button v-if="isReadOnly" @click="printReport" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm">
-          <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-          Cetak Laporan
-        </button>
-
         <div v-if="evaluationStatus" :class="`px-3 py-2 rounded-full text-xs font-bold uppercase flex items-center ${statusColor}`">
           {{ evaluationStatus }}
         </div>
@@ -464,27 +459,3 @@ function printReport() {
   window.print()
 }
 </script>
-
-<style scoped>
-/* CSS KHUSUS UNTUK CETAK/PRINT */
-@media print {
-  @page {
-    size: portrait;
-    margin: 5mm;
-  }
-  .no-print, nav, aside, .sidebar { display: none !important; }
-  .print-block { display: block !important; }
-  .print-flex { display: flex !important; }
-  .max-w-5xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-  body, p, h1, h2, h3, div, span { color: #000 !important; }
-  .border { border-color: #000 !important; }
-  .bg-blue-50, .bg-yellow-50, .bg-green-100 { background-color: transparent !important; }
-  .shadow-sm, .shadow-lg { box-shadow: none !important; }
-  select, textarea { border: none !important; background: transparent !important; resize: none; padding: 0; }
-  select { appearance: none; -webkit-appearance: none; }
-  .break-inside-avoid { page-break-inside: avoid; }
-}
-.hidden { display: none; }
-</style>
-
-

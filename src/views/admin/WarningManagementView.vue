@@ -374,8 +374,8 @@ async function confirmDelete(warning: any) {
   }
 }
 
-function downloadSuratSP(warn: any) {
-  generateSPPDF(warn, warn.employee_name || 'Karyawan')
+async function downloadSuratSP(warn: any) {
+  await generateSPPDF(warn, warn.employee_name || 'Karyawan')
 }
 
 function formatDate(dateStr: string) {
