@@ -113,124 +113,134 @@
     <!-- MODAL EDIT BIODATA & NO TELEPON -->
     <div v-if="showBioModal" class="fixed inset-0 z-50 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity" @click="showBioModal = false"></div>
+            <!-- Glassmorphism backdrop -->
+            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity" @click="showBioModal = false"></div>
+            
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-gray-100">
-                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-5 text-white">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-lg font-bold flex items-center gap-2">
-                            <i class="pi pi-user-edit text-xl"></i> Lengkapi Biodata & Kontak
-                        </h3>
-                        <button @click="showBioModal = false" class="text-white/80 hover:text-white transition">
-                            <i class="pi pi-times"></i>
-                        </button>
+            
+            <!-- Modern rounded-3xl container -->
+            <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-100">
+                <!-- Clean white header with badge icon -->
+                <div class="px-6 py-5 flex items-center justify-between border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
+                            <i class="pi pi-user-edit text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800">Biodata & Kontak</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Perbarui profil dan detail kontak Anda</p>
+                        </div>
                     </div>
-                    <p class="text-xs text-blue-100 mt-1">Pastikan nomor telepon yang Anda masukkan aktif dan dapat dihubungi.</p>
+                    <button @click="showBioModal = false" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
+                        <i class="pi pi-times text-sm"></i>
+                    </button>
                 </div>
                 
-                <form @submit.prevent="saveBiodata" class="p-6 space-y-4">
+                <form @submit.prevent="saveBiodata" class="p-6 space-y-5">
+                    <!-- WhatsApp/Phone -->
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5 flex items-center justify-between">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 flex justify-between">
                             <span>No. Telepon / WhatsApp <span class="text-red-500">*</span></span>
-                            <span class="text-[11px] font-normal text-gray-400">Contoh: 081234567890</span>
+                            <span class="text-[10px] text-slate-400 normal-case font-normal">Contoh: 081234567890</span>
                         </label>
                         <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                 <i class="pi pi-phone text-sm"></i>
                             </span>
-                            <input v-model="bioForm.phone" type="text" required placeholder="08xxxxxxxxxx" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                            <input v-model="bioForm.phone" type="text" required placeholder="08xxxxxxxxxx" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 font-medium transition-all duration-200">
                         </div>
                     </div>
 
+                    <!-- Social Media -->
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5 flex items-center justify-between">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 flex justify-between">
                             <span>Media Sosial / Profesional</span>
-                            <span class="text-[11px] font-normal text-gray-400">Pilih platform & isi username/link</span>
+                            <span class="text-[10px] text-slate-400 normal-case font-normal">Platform & username</span>
                         </label>
-                        <div class="flex gap-2.5">
-                            <select v-model="bioForm.social_type" class="w-36 px-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold bg-white text-gray-700">
+                        <div class="flex gap-2">
+                            <select v-model="bioForm.social_type" class="w-32 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 font-semibold text-slate-700 transition-all duration-200">
                                 <option value="instagram">Instagram</option>
                                 <option value="linkedin">LinkedIn</option>
                                 <option value="telegram">Telegram</option>
-                                <option value="other">Website/Lainnya</option>
+                                <option value="other">Website</option>
                             </select>
                             <div class="relative flex-1">
-                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                                    <i :class="bioForm.social_type === 'instagram' ? 'pi pi-instagram text-pink-500' : bioForm.social_type === 'linkedin' ? 'pi pi-linkedin text-blue-600' : bioForm.social_type === 'telegram' ? 'pi pi-telegram text-sky-500' : 'pi pi-globe text-gray-500'" class="text-sm"></i>
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i :class="bioForm.social_type === 'instagram' ? 'pi pi-instagram text-pink-500' : bioForm.social_type === 'linkedin' ? 'pi pi-linkedin text-blue-600' : bioForm.social_type === 'telegram' ? 'pi pi-telegram text-sky-500' : 'pi pi-globe text-slate-400'" class="text-sm"></i>
                                 </span>
                                 <input 
                                     v-model="bioForm.social_username" 
                                     type="text" 
-                                    :placeholder="bioForm.social_type === 'instagram' ? 'Username (tanpa @)' : bioForm.social_type === 'linkedin' ? 'Username atau URL LinkedIn' : bioForm.social_type === 'telegram' ? 'Username Telegram' : 'https://website.com'" 
-                                    class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                                    :placeholder="bioForm.social_type === 'instagram' ? 'Username' : bioForm.social_type === 'linkedin' ? 'Username atau URL' : bioForm.social_type === 'telegram' ? 'Username' : 'https://website.com'" 
+                                    class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 font-medium transition-all duration-200"
                                 >
                             </div>
                         </div>
                     </div>
 
+                    <!-- Bio -->
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5 flex items-center justify-between">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 flex justify-between">
                             <span>Tentang Saya / Bio Singkat</span>
-                            <span class="text-[11px] font-normal text-gray-400">Kutipan / Keahlian</span>
+                            <span class="text-[10px] text-slate-400 normal-case font-normal">Kutipan / Keahlian</span>
                         </label>
-                        <textarea v-model="bioForm.bio" rows="2" placeholder="Tuliskan sedikit tentang keahlian, dedikasi, atau prinsip kerja Anda di perusahaan..." class="w-full p-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"></textarea>
+                        <textarea v-model="bioForm.bio" rows="2" placeholder="Tuliskan keahlian, dedikasi, atau prinsip kerja Anda..." class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 font-medium transition-all duration-200"></textarea>
                     </div>
 
-                    <!-- ALAMAT & DEMOGRAFI -->
+                    <!-- Address -->
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5 flex items-center justify-between">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 flex justify-between">
                             <span>Alamat Domisili <span class="text-red-500">*</span></span>
-                            <span class="text-[11px] font-normal text-gray-400">Tempat tinggal saat ini</span>
+                            <span class="text-[10px] text-slate-400 normal-case font-normal">Tempat tinggal saat ini</span>
                         </label>
-                        <textarea v-model="bioForm.address" required rows="2" placeholder="Contoh: Jl. Raya Mambal Ubud No. 12, Badung, Bali" class="w-full p-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"></textarea>
+                        <textarea v-model="bioForm.address" required rows="2" placeholder="Contoh: Jl. Raya Mambal Ubud No. 12, Badung, Bali" class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 font-medium transition-all duration-200"></textarea>
                     </div>
 
+                    <!-- Birthplace & Birthday -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Tempat Lahir <span class="text-red-500">*</span></label>
-                            <input v-model="bioForm.birth_place" type="text" required placeholder="Denpasar" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Tempat Lahir <span class="text-red-500">*</span></label>
+                            <input v-model="bioForm.birth_place" type="text" required placeholder="Denpasar" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 font-medium transition-all duration-200">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Tanggal Lahir <span class="text-red-500">*</span></label>
-                            <input v-model="bioForm.birth_date" type="date" required class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Tanggal Lahir <span class="text-red-500">*</span></label>
+                            <input v-model="bioForm.birth_date" type="date" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 font-medium transition-all duration-200">
                         </div>
                     </div>
 
+                    <!-- Gender & Last Education -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Jenis Kelamin</label>
-                            <select v-model="bioForm.gender" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium bg-white">
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Jenis Kelamin</label>
+                            <select v-model="bioForm.gender" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 font-medium text-slate-700 transition-all duration-200">
                                 <option value="Laki-laki">Laki-laki</option>
                                 <option value="Perempuan">Perempuan</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Pendidikan Terakhir</label>
-                            <input v-model="bioForm.education" type="text" placeholder="S1 Teknik Informatika" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Pendidikan Terakhir</label>
+                            <input v-model="bioForm.education" type="text" placeholder="S1 Teknik Informatika" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 font-medium transition-all duration-200">
                         </div>
                     </div>
 
-                    <!-- KONTAK DARURAT -->
-                    <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl space-y-2.5">
-                        <label class="block text-xs font-bold text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="pi pi-phone text-amber-600"></i> Kontak Darurat (Emergency Contact)
+                    <!-- Emergency Contact -->
+                    <div class="p-4 bg-slate-50 border border-slate-100 rounded-2xl space-y-3">
+                        <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-widest flex items-center gap-2">
+                            <i class="pi pi-phone text-slate-500"></i> Kontak Darurat (Emergency Contact)
                         </label>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <div>
-                                <input v-model="bioForm.emergency_contact_name" type="text" placeholder="Nama (e.g. Budi / Orang Tua)" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium bg-white">
-                            </div>
-                            <div>
-                                <input v-model="bioForm.emergency_contact_phone" type="text" placeholder="No. HP Darurat" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium bg-white">
-                            </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <input v-model="bioForm.emergency_contact_name" type="text" placeholder="Nama Kerabat" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 text-xs font-medium bg-white transition-all duration-200">
+                            <input v-model="bioForm.emergency_contact_phone" type="text" placeholder="No. Telepon" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 text-xs font-medium bg-white transition-all duration-200">
                         </div>
                     </div>
 
-                    <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end gap-3">
-                        <button type="button" @click="showBioModal = false" class="px-5 py-2.5 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 text-sm font-semibold transition">Batal</button>
-                        <button type="submit" :disabled="isProcessing" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 text-sm font-bold shadow-md shadow-blue-500/20 disabled:opacity-50 transition flex items-center">
+                    <!-- Footer Action Buttons -->
+                    <div class="pt-4 border-t border-slate-100 flex justify-end gap-2.5">
+                        <button type="button" @click="showBioModal = false" class="px-5 py-2.5 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-50 text-sm font-semibold transition">Batal</button>
+                        <button type="submit" :disabled="isProcessing" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 text-sm font-bold shadow-md shadow-blue-500/10 disabled:opacity-50 transition-all flex items-center">
                             <i v-if="isProcessing" class="pi pi-spin pi-spinner mr-2"></i>
-                            {{ isProcessing ? 'Menyimpan...' : 'Simpan Biodata' }}
-                        </button>
+                            {{ isProcessing ? 'Menyimpan...' : 'Simpan Perubahan' }}
+                         </button>
                     </div>
                 </form>
             </div>
@@ -326,41 +336,49 @@
       <div class="p-6">
         
         <div v-if="activeTab === 'biodata'" class="space-y-8">
-            <!-- [ACHIEVEMENT / TOP PERFORMER TROPHY BANNER] -->
-            <div class="p-6 bg-gradient-to-r from-amber-500/10 via-yellow-500/10 to-orange-500/10 rounded-2xl border border-amber-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-                <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
-                    <i class="pi pi-trophy text-[180px] text-amber-600"></i>
-                </div>
-                <div class="flex items-center gap-5 z-10">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center shadow-lg shadow-amber-500/30 shrink-0">
-                        <i class="pi pi-trophy text-3xl animate-bounce"></i>
+            <!-- Premium Achievements & Top 1 Banner -->
+            <div v-if="isTopOne" class="relative p-6 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 overflow-hidden">
+                
+                <div class="flex items-center gap-5 z-10 w-full">
+                    <!-- Ikon piala simpel tanpa warna mencolok -->
+                    <div class="w-14 h-14 rounded-2xl bg-slate-50 text-slate-800 flex items-center justify-center shrink-0 border border-slate-200">
+                        <i class="pi pi-trophy text-2xl"></i>
                     </div>
+                    
                     <div>
-                        <div class="flex items-center gap-2 mb-1.5">
-                            <span class="px-3 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold text-[11px] rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
-                                <i class="pi pi-star-fill text-[10px]"></i> Top Performer Kinerja
+                        <!-- Badge minimalis -->
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span class="inline-flex items-center gap-1 px-3 py-0.5 bg-slate-100 border border-slate-200 text-slate-700 font-bold text-[10px] rounded-full uppercase tracking-wider">
+                                <i class="pi pi-star-fill text-[9px]"></i> Top Performer Kinerja
                             </span>
-                            <span class="text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full">Periode Aktif</span>
+                            <span class="inline-flex items-center px-2.5 py-0.5 bg-slate-100 border border-slate-200 text-slate-700 font-semibold text-[10px] rounded-full uppercase tracking-wider">
+                                Periode Aktif
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-amber-950">
-                            {{ achievements.length > 0 ? '🏆 Predikat Prestasi: ' + achievements[0].title : '🌟 Predikat Kinerja Unggulan & Dedikasi Tinggi' }}
+                        
+                        <!-- Judul dan teks berwarna hitam (slate-900) -->
+                        <h3 class="text-lg font-bold text-slate-900 tracking-tight">
+                            Anugerah Karyawan Terbaik #1
                         </h3>
-                        <p class="text-sm text-amber-800/90 mt-1 max-w-xl">
-                            Terima kasih atas dedikasi serta kontribusi terbaik yang diberikan oleh <span class="font-bold text-amber-950">{{ userProfile?.employee?.name || authStore.user?.username }}</span> demi kemajuan PT. Cakra Media Data.
+                        <p class="text-xs text-slate-600 mt-1 max-w-xl leading-relaxed">
+                            Apresiasi setinggi-tingginya untuk <span class="font-bold text-slate-900">{{ userProfile?.employee?.name || authStore.user?.username }}</span> atas dedikasi luar biasa dan performa kerja gemilang yang menjadi inspirasi bagi seluruh tim di PT. Cakra Media Data.
                         </p>
                     </div>
                 </div>
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 z-10 shrink-0">
-                    <button @click="showCertificateModal = true" class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold px-4 py-3 rounded-2xl shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 text-xs transition-all transform hover:-translate-y-0.5">
-                        <i class="pi pi-print text-sm"></i> Cetak E-Sertifikat Top 1
+                
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 z-10 shrink-0 w-full lg:w-auto">
+                    <!-- Tombol dicat hitam untuk kontras yang elegan -->
+                    <button @click="showCertificateModal = true" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-5 py-3 rounded-xl shadow-sm flex items-center justify-center gap-2 text-xs transition-colors duration-200">
+                        <i class="pi pi-print text-sm"></i> Cetak E-Sertifikat
                     </button>
-                    <div class="bg-white/90 backdrop-blur px-5 py-3 rounded-2xl border border-amber-200/80 text-center shadow-sm">
-                        <p class="text-[10px] font-extrabold text-amber-600 uppercase tracking-wider">Koleksi Bukti Prestasi</p>
-                        <p class="text-xl font-black text-amber-900 mt-0.5">{{ achievements.length }} <span class="text-xs font-semibold">Sertifikat</span></p>
+                    
+                    <!-- Kotak statistik dengan gaya terang -->
+                    <div class="bg-slate-50 border border-slate-200 px-5 py-3 rounded-xl text-center flex flex-col justify-center min-w-[100px]">
+                        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Prestasi</p>
+                        <p class="text-base font-black text-slate-900 mt-0.5">{{ achievements.length }} <span class="text-[10px] font-medium text-slate-500">Berkas</span></p>
                     </div>
                 </div>
             </div>
-
             <!-- [ALERT WARNING JIKA NO TELEPON KOSONG ATAU BELUM DIVERIFIKASI] -->
             <div v-if="!userProfile?.employee?.phone" class="p-4 bg-gradient-to-r from-red-50 to-orange-50 border-l-4 border-red-500 rounded-r-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-pulse">
                 <div class="flex items-start gap-3.5">
@@ -840,6 +858,7 @@ const activeTab = ref('biodata')
 const userProfile = ref<any>(null)
 const achievements = ref<any[]>([])
 const myWarnings = ref<any[]>([])
+const isTopOne = ref(false)
 const isLoading = ref(false)
 const isProcessing = ref(false)
 
@@ -1085,6 +1104,12 @@ async function loadData() {
         userProfile.value = await authService.getProfile() 
         try { achievements.value = await employeeService.getAchievements() } catch(e){}
         try { myWarnings.value = await warningService.getMyWarnings() } catch(e){}
+        try {
+            const topOneRes = await myPerformanceService.checkTopOne()
+            isTopOne.value = topOneRes.is_top_one
+        } catch(e) {
+            isTopOne.value = false
+        }
     } catch (e) { console.error(e) }
 }
 

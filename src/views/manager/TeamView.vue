@@ -123,6 +123,12 @@
                 <p>{{ searchQuery || selectedStatus !== 'semua' ? 'Tidak ada data yang cocok dengan filter.' : 'Belum ada anggota tim.' }}</p>
             </div>
         </template>
+        
+        <Column header="No" style="width: 60px">
+          <template #body="{ index }">
+            <span class="text-gray-500 text-sm">{{ index + 1 }}.</span>
+          </template>
+        </Column>
 
         <Column field="employee_name" header="Nama Pegawai" sortable style="width: 40%">
             <template #body="{ data }">

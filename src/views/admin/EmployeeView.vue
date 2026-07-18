@@ -80,6 +80,12 @@
             </div>
         </template>
 
+        <Column header="No" style="width: 60px">
+          <template #body="{ index }">
+            <span class="text-gray-500 text-sm">{{ index + 1 }}.</span>
+          </template>
+        </Column>
+
         <Column field="name" header="Pegawai" sortable style="width: 30%">
             <template #body="{ data }">
                 <div class="flex items-center cursor-pointer group" @click="$router.push(`/admin/employees/${data.id}`)" title="Klik untuk lihat Detail">

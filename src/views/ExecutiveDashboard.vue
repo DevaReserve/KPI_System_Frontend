@@ -262,6 +262,7 @@ import { useAuthStore } from '../stores/auth'
 import Toast from 'primevue/toast'
 import VueApexCharts from 'vue3-apexcharts'
 import type { ApexOptions } from 'apexcharts'
+import { generateDashboardPDF } from '../utils/dashboardReportGenerator'
 
 const authStore = useAuthStore()
 const toast = useToast()
@@ -391,7 +392,50 @@ async function fetchDashboardData() {
 }
 
 function printDashboard() {
-    window.print()
+    try {
+        const selectedPeriodObj = periods.value.find((p: any) => p.id.toString() === selectedPeriod.value.toString())
+        const periodName = selectedPeriodObj ? selectedPeriodObj.name : 'Semua Periode'
+        
+        // Map trend from state
+        const trends = (trendOptions.value.xaxis?.categories as string[] || []).map((cat, idx) => ({
+            period_name: cat,
+            average_score: trendSeries.value[0].data[idx] || 0
+        }))
+
+        // Map division performance from state
+        const divisionPerformance = (barOptions.value.xaxis?.categories as string[] || []).map((cat, idx) => ({
+            division_name: cat,
+            average_score: barSeries.value[0].data[idx] || 0
+        }))
+
+        // Map status distribution from state
+        const statusDistribution = (donutOptions.value.labels || []).map((label, idx) => ({
+            status: label,
+            count: donutSeries.value[idx] || 0
+        }))
+
+        generateDashboardPDF({
+            periodName,
+            metrics: {
+                company_average_score: metrics.company_average_score,
+                top_division: metrics.top_division,
+                total_completed_evals: metrics.total_completed_evals
+            },
+            trends,
+            divisionPerformance,
+            statusDistribution,
+            topEmployees: topEmployees.value.map(emp => ({
+                name: emp.name,
+                division_name: emp.division_name,
+                total_score: emp.total_score
+            })),
+            printedBy: authStore.user?.employee?.name || authStore.user?.username || 'Eksekutif'
+        })
+        toast.add({ severity: 'success', summary: 'Sukses', detail: 'Laporan PDF berhasil diunduh', life: 3000 })
+    } catch (error) {
+        console.error(error)
+        toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal mencetak laporan dashboard', life: 3000 })
+    }
 }
 
 

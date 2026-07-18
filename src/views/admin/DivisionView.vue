@@ -81,6 +81,12 @@
             </div>
         </template>
 
+        <Column header="No" style="width: 60px">
+          <template #body="{ index }">
+            <span class="text-gray-500 text-sm">{{ index + 1 }}.</span>
+          </template>
+        </Column>
+
         <Column field="name" header="Nama Divisi" sortable style="width: 30%">
             <template #body="{ data }">
                 <span class="font-bold text-gray-900">{{ data.name }}</span>

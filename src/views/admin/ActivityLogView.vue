@@ -221,6 +221,13 @@
     <!-- MODE TABEL (TABLE) -->
     <div v-else class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       <DataTable :value="filteredLogs" :paginator="true" :rows="15" stripedRows responsiveLayout="scroll" class="text-sm">
+        
+        <Column header="No" style="width: 60px">
+          <template #body="{ index }">
+            <span class="text-gray-500 text-sm">{{ index + 1 }}.</span>
+          </template>
+        </Column>
+
         <Column header="Waktu" field="created_at" sortable style="width: 15%">
           <template #body="{ data }">
             <div>

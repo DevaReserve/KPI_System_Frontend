@@ -300,6 +300,10 @@ export const myPerformanceService = {
     const response = await api.get<ApiResponse<any>>('/employee/latest') 
     return response.data.data
   },
+  async checkTopOne(): Promise<{ is_top_one: boolean }> {
+    const response = await api.get<ApiResponse<{ is_top_one: boolean }>>('/employee/top-one')
+    return response.data.data
+  },
   async submitAppeal(id: number, data: FormData): Promise<any> {
     const response = await api.post<ApiResponse<any>>(`/employee/evaluations/${id}/appeal`, data, {
       headers: {

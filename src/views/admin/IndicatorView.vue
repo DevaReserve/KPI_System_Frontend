@@ -137,6 +137,12 @@
             </div>
         </template>
 
+        <Column header="No" style="width: 50px">
+          <template #body="{ index }">
+            <span class="text-gray-500 text-sm">{{ index + 1 }}.</span>
+          </template>
+        </Column>
+
         <Column field="name" header="Nama Indikator" sortable style="width: 35%">
             <template #body="{ data }">
                 <div class="font-bold text-base text-gray-900">{{ data.name }}</div>

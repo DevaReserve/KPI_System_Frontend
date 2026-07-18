@@ -114,6 +114,12 @@
               <p>Tidak ada data yang cocok dengan filter.</p>
             </div>
           </template>
+          
+          <Column header="No" style="width: 60px">
+            <template #body="{ index }">
+              <span class="text-gray-500 text-sm">{{ index + 1 }}.</span>
+            </template>
+          </Column>
 
           <Column field="nip" header="NIP" sortable style="width: 120px">
             <template #body="{ data }"><span class="font-mono text-sm text-gray-600">{{ data.nip }}</span></template>

@@ -80,6 +80,12 @@
                 <p>Belum ada data jabatan.</p>
             </div>
         </template>
+        
+        <Column header="No" style="width: 60px">
+          <template #body="{ index }">
+            <span class="text-gray-500 text-sm">{{ index + 1 }}.</span>
+          </template>
+        </Column>
 
         <Column field="division_name" header="Divisi" sortable style="width: 25%">
             <template #body="{ data }">
