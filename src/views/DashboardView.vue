@@ -380,7 +380,7 @@
         <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div>
             <div v-if="employeeStats.score >= 80" class="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black text-xs rounded-full uppercase tracking-wider mb-3 shadow-lg shadow-amber-500/20">
-              <i class="pi pi-star-fill text-amber-950 text-xs animate-spin"></i> Anugerah Top Performer (Grade A)
+              <i class="pi pi-star-fill text-amber-950 text-xs"></i> Anugerah Top Performer (Grade A)
             </div>
             <h2 class="text-lg font-medium opacity-90 mb-1 flex items-center">
               <svg class="w-5 h-5 mr-2 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>

@@ -307,10 +307,10 @@
                       v-model="newPassword"
                       :type="showNewPassword ? 'text' : 'password'" 
                       required
-                      minlength="6"
+                      minlength="8"
                       :disabled="isLoading"
                       class="block w-full rounded-xl border border-slate-300 bg-white px-5 py-4 pr-14 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 focus:outline-none transition-all duration-200 sm:text-base shadow-sm disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed"
-                      placeholder="Minimal 6 karakter"
+                      placeholder="Minimal 8 karakter"
                     >
                     <button 
                       type="button" 
@@ -329,7 +329,7 @@
                       </div>
                     </button>
                   </div>
-                  <!-- Password Strength Indicator -->
+                    <!-- Password Strength Bar -->
                   <div v-if="newPassword" class="flex gap-1.5 mt-2">
                     <div 
                       v-for="i in 4" :key="i"
@@ -342,6 +342,23 @@
                   <p v-if="newPassword" class="text-xs mt-1" :class="passwordStrengthTextColor">
                     {{ passwordStrengthLabel }}
                   </p>
+
+                  <!-- Checklist 4 Kriteria -->
+                  <div v-if="newPassword" class="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
+                    <div 
+                      v-for="crit in passwordCriteria" :key="crit.label"
+                      class="flex items-center gap-1.5 text-xs transition-colors duration-200"
+                      :class="crit.met ? 'text-emerald-600' : 'text-slate-400'"
+                    >
+                      <svg v-if="crit.met" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                      </svg>
+                      <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                      </svg>
+                      <span>{{ crit.label }}</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="space-y-2.5">
@@ -393,7 +410,7 @@
                 <div class="pt-3">
                   <button 
                     type="submit"
-                    :disabled="isLoading || !newPassword || !confirmPassword || newPassword !== confirmPassword || newPassword.length < 6"
+                    :disabled="isLoading || !newPassword || !confirmPassword || newPassword !== confirmPassword || !isPasswordStrong"
                     class="relative w-full flex justify-center items-center py-4 px-4 rounded-xl text-lg font-bold text-white bg-slate-900 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
                   >
                     <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-slate-900">
@@ -489,12 +506,25 @@ const passwordStrength = computed(() => {
   const pw = newPassword.value
   if (!pw) return 0
   let score = 0
-  if (pw.length >= 6) score++
   if (pw.length >= 8) score++
-  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++
-  if (/[0-9]/.test(pw) || /[^A-Za-z0-9]/.test(pw)) score++
+  if (/[A-Z]/.test(pw)) score++
+  if (/[0-9]/.test(pw)) score++
+  if (/[^A-Za-z0-9]/.test(pw)) score++
   return score
 })
+
+// Daftar kriteria yang terpenuhi (untuk checklist UI)
+const passwordCriteria = computed(() => {
+  const pw = newPassword.value
+  return [
+    { label: 'Minimal 8 karakter',       met: pw.length >= 8 },
+    { label: 'Mengandung huruf kapital',  met: /[A-Z]/.test(pw) },
+    { label: 'Mengandung angka',          met: /[0-9]/.test(pw) },
+    { label: 'Mengandung simbol (!@#$…)', met: /[^A-Za-z0-9]/.test(pw) },
+  ]
+})
+
+const isPasswordStrong = computed(() => passwordStrength.value === 4)
 
 const passwordStrengthColor = computed(() => {
   const s = passwordStrength.value
@@ -514,10 +544,11 @@ const passwordStrengthTextColor = computed(() => {
 
 const passwordStrengthLabel = computed(() => {
   const s = passwordStrength.value
-  if (s <= 1) return 'Lemah — tambahkan huruf besar, angka, atau simbol'
-  if (s === 2) return 'Cukup — bisa lebih kuat lagi'
-  if (s === 3) return 'Bagus — password cukup kuat'
-  return 'Kuat — password sangat aman'
+  if (s === 0) return 'Lemah — password tidak memenuhi kriteria'
+  if (s === 1) return 'Lemah — masih banyak kriteria yang belum terpenuhi'
+  if (s === 2) return 'Sedang — tambahkan kriteria yang kurang'
+  if (s === 3) return 'Hampir kuat — satu kriteria lagi'
+  return 'Kuat — semua kriteria terpenuhi!'
 })
 
 // ===================================================================
@@ -660,8 +691,8 @@ async function handleResetPassword() {
     errorMessage.value = 'Password baru dan konfirmasi password tidak cocok'
     return
   }
-  if (newPassword.value.length < 6) {
-    errorMessage.value = 'Password minimal 6 karakter'
+  if (!isPasswordStrong.value) {
+    errorMessage.value = 'Password harus memenuhi semua 4 kriteria keamanan (min. 8 karakter, huruf kapital, angka, dan simbol)'
     return
   }
 

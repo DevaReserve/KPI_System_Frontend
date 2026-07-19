@@ -166,9 +166,9 @@
                             <select v-model="warnForm.level" required class="w-full border rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500">
                                 <option value="" disabled>Pilih Level</option>
                                 <option value="TEGURAN">Teguran Lisan/Tulisan</option>
-                                <option value="SP1">SP 1 (Peringatan Pertama)</option>
-                                <option value="SP2">SP 2 (Peringatan Kedua)</option>
-                                <option value="SP3">SP 3 (Peringatan Terakhir/PHK)</option>
+                                <option value="SP1" :disabled="authStore.user?.role !== 'manager'">SP 1 (Peringatan Pertama)</option>
+                                <option value="SP2" :disabled="authStore.user?.role !== 'manager'">SP 2 (Peringatan Kedua)</option>
+                                <option value="SP3" :disabled="authStore.user?.role !== 'admin'">SP 3 (Peringatan Terakhir/PHK)</option>
                             </select>
                         </div>
 
@@ -253,7 +253,9 @@ import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 import Toast from 'primevue/toast'
 import ConfirmDialog from 'primevue/confirmdialog'
+import { useAuthStore } from '../../stores/auth'
 
+const authStore = useAuthStore()
 const showCertificateModal = ref(false)
 function printCertificate() { window.print() }
 
@@ -299,7 +301,11 @@ async function loadData() {
 
 // Fungsi Buka Modal
 function openWarningModal() {
-    warnForm.level = ''
+    let defaultLevel = 'TEGURAN'
+    if (authStore.user?.role === 'admin') defaultLevel = 'SP3'
+    else if (authStore.user?.role === 'manager') defaultLevel = 'SP1'
+    
+    warnForm.level = defaultLevel
     warnForm.reason = ''
     warnForm.description = ''
     showWarningModal.value = true

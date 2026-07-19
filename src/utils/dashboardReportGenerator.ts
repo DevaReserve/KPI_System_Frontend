@@ -46,6 +46,14 @@ function getGradeFromScore(score: number): string {
   return 'E'
 }
 
+// Warna netral yang konsisten untuk seluruh dokumen (hitam & abu-abu)
+const COLOR_BLACK     = [20, 20, 20] as [number, number, number]
+const COLOR_DARK      = [40, 40, 40] as [number, number, number]
+const COLOR_HEADER    = [55, 55, 55] as [number, number, number]    // Abu-abu gelap untuk header tabel
+const COLOR_SUBHEADER = [90, 90, 90] as [number, number, number]    // Abu-abu medium
+const COLOR_ALT_ROW   = [245, 245, 245] as [number, number, number] // Abu sangat muda untuk alternate row
+const COLOR_WHITE     = [255, 255, 255] as [number, number, number]
+
 export function generateDashboardPDF({
   periodName,
   metrics,
@@ -64,17 +72,17 @@ export function generateDashboardPDF({
   // 1. Kop Surat (Company Header)
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(18)
-  doc.setTextColor(30, 41, 59) // Slate-800
+  doc.setTextColor(...COLOR_BLACK)
   doc.text('PT. CAKRA MEDIA DATA', pageWidth / 2, 18, { align: 'center' })
-  
+
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(9)
-  doc.setTextColor(100, 116, 139) // Slate-500
+  doc.setTextColor(...COLOR_SUBHEADER)
   doc.text('Jl. Raya Mambal Ubud - Br. Sigaran Desa Mekar Bhuana, Badung, Bali', pageWidth / 2, 23, { align: 'center' })
-  
+
   // Double line header separator
   doc.setLineWidth(0.6)
-  doc.setDrawColor(71, 85, 105) // Slate-600
+  doc.setDrawColor(...COLOR_DARK)
   doc.line(15, 27, pageWidth - 15, 27)
   doc.setLineWidth(0.2)
   doc.line(15, 28.5, pageWidth - 15, 28.5)
@@ -82,7 +90,7 @@ export function generateDashboardPDF({
   // 2. Judul Laporan
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(14)
-  doc.setTextColor(15, 23, 42) // Slate-900
+  doc.setTextColor(...COLOR_BLACK)
   doc.text('LAPORAN EKSEKUTIF KINERJA PERUSAHAAN', pageWidth / 2, 38, { align: 'center' })
 
   // 3. Metadata Laporan (Tabel Informasi)
@@ -90,35 +98,35 @@ export function generateDashboardPDF({
     startY: 44,
     margin: { left: 15, right: 15 },
     theme: 'plain',
-    styles: { fontSize: 9, cellPadding: 1 },
+    styles: { fontSize: 9, cellPadding: 1, textColor: COLOR_DARK },
     columnStyles: {
-      0: { cellWidth: 35, fontStyle: 'bold', textColor: [71, 85, 105] },
-      1: { cellWidth: 5, textColor: [71, 85, 105] },
-      2: { cellWidth: 60 },
-      3: { cellWidth: 30, fontStyle: 'bold', textColor: [71, 85, 105] },
-      4: { cellWidth: 5, textColor: [71, 85, 105] },
-      5: { cellWidth: 45 }
+      0: { cellWidth: 35, fontStyle: 'bold', textColor: COLOR_SUBHEADER },
+      1: { cellWidth: 5,  textColor: COLOR_SUBHEADER },
+      2: { cellWidth: 60, textColor: COLOR_DARK },
+      3: { cellWidth: 30, fontStyle: 'bold', textColor: COLOR_SUBHEADER },
+      4: { cellWidth: 5,  textColor: COLOR_SUBHEADER },
+      5: { cellWidth: 45, textColor: COLOR_DARK }
     },
     body: [
       ['Periode Evaluasi', ':', periodName || 'Semua Periode', 'Tanggal Cetak', ':', today],
-      ['Dicetak Oleh', ':', printedBy || 'Eksekutif', 'Waktu Cetak', ':', currentTime + ' WITA']
+      ['Dicetak Oleh',     ':', printedBy || 'Eksekutif',     'Waktu Cetak',   ':', currentTime + ' WITA']
     ]
   })
 
   let currentY = (doc as any).lastAutoTable.finalY + 8
 
-  // 4. Ringkasan Eksekutif (Executive Summary Cards styled in a grid table)
+  // 4. Ringkasan Eksekutif
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(11)
-  doc.setTextColor(29, 78, 216) // Blue-700
+  doc.setTextColor(...COLOR_BLACK)
   doc.text('I. RINGKASAN EKSEKUTIF', 15, currentY)
-  
+
   autoTable(doc, {
     startY: currentY + 3,
     margin: { left: 15, right: 15 },
     theme: 'grid',
-    styles: { fontSize: 10, cellPadding: 4, halign: 'center', valign: 'middle' },
-    headStyles: { fillColor: [59, 130, 246], textColor: [255, 255, 255], fontStyle: 'bold' }, // Blue-500
+    styles: { fontSize: 10, cellPadding: 4, halign: 'center', valign: 'middle', textColor: COLOR_DARK },
+    headStyles: { fillColor: COLOR_HEADER, textColor: COLOR_WHITE, fontStyle: 'bold' },
     head: [['Rata-Rata Kinerja Perusahaan', 'Divisi Performa Terbaik', 'Total Evaluasi Final']],
     body: [[
       `${metrics.company_average_score.toFixed(2)} / 100`,
@@ -126,9 +134,9 @@ export function generateDashboardPDF({
       `${metrics.total_completed_evals} Evaluasi`
     ]],
     columnStyles: {
-      0: { fontStyle: 'bold' },
-      1: { fontStyle: 'bold' },
-      2: { fontStyle: 'bold' }
+      0: { fontStyle: 'bold', textColor: COLOR_BLACK },
+      1: { fontStyle: 'bold', textColor: COLOR_BLACK },
+      2: { fontStyle: 'bold', textColor: COLOR_BLACK }
     }
   })
 
@@ -137,7 +145,7 @@ export function generateDashboardPDF({
   // 5. Peringkat Kinerja Divisi
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(11)
-  doc.setTextColor(29, 78, 216)
+  doc.setTextColor(...COLOR_BLACK)
   doc.text('II. PERINGKAT KINERJA DIVISI', 15, currentY)
 
   const divisionRows = divisionPerformance.map((div, index) => [
@@ -153,14 +161,14 @@ export function generateDashboardPDF({
     theme: 'grid',
     head: [['No', 'Nama Divisi', 'Rata-Rata Nilai', 'Grade']],
     body: divisionRows.length > 0 ? divisionRows : [['-', 'Belum ada data performa divisi', '-', '-']],
-    styles: { fontSize: 9, cellPadding: 3, valign: 'middle' },
-    headStyles: { fillColor: [71, 85, 105], textColor: [255, 255, 255], fontStyle: 'bold', halign: 'center' },
+    styles: { fontSize: 9, cellPadding: 3, valign: 'middle', textColor: COLOR_DARK },
+    headStyles: { fillColor: COLOR_HEADER, textColor: COLOR_WHITE, fontStyle: 'bold', halign: 'center' },
     columnStyles: {
       0: { halign: 'center', cellWidth: 15 },
-      2: { halign: 'center', fontStyle: 'bold' },
-      3: { halign: 'center', fontStyle: 'bold' }
+      2: { halign: 'center', fontStyle: 'bold', textColor: COLOR_BLACK },
+      3: { halign: 'center', fontStyle: 'bold', textColor: COLOR_BLACK }
     },
-    alternateRowStyles: { fillColor: [248, 250, 252] }
+    alternateRowStyles: { fillColor: COLOR_ALT_ROW }
   })
 
   currentY = (doc as any).lastAutoTable.finalY + 8
@@ -173,7 +181,7 @@ export function generateDashboardPDF({
 
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(11)
-  doc.setTextColor(29, 78, 216)
+  doc.setTextColor(...COLOR_BLACK)
   doc.text('III. PEGAWAI BINTANG (TOP 5 PEGAWAI TERBAIK)', 15, currentY)
 
   const topEmpRows = topEmployees.map((emp, index) => [
@@ -190,14 +198,14 @@ export function generateDashboardPDF({
     theme: 'grid',
     head: [['Peringkat', 'Nama Pegawai', 'Divisi', 'Skor Akhir', 'Grade']],
     body: topEmpRows.length > 0 ? topEmpRows : [['-', 'Belum ada data pegawai berprestasi', '-', '-', '-']],
-    styles: { fontSize: 9, cellPadding: 3, valign: 'middle' },
-    headStyles: { fillColor: [245, 158, 11], textColor: [255, 255, 255], fontStyle: 'bold', halign: 'center' }, // Amber-500
+    styles: { fontSize: 9, cellPadding: 3, valign: 'middle', textColor: COLOR_DARK },
+    headStyles: { fillColor: COLOR_HEADER, textColor: COLOR_WHITE, fontStyle: 'bold', halign: 'center' },
     columnStyles: {
-      0: { halign: 'center', cellWidth: 25, fontStyle: 'bold' },
-      3: { halign: 'center', fontStyle: 'bold', textColor: [29, 78, 216] },
-      4: { halign: 'center', fontStyle: 'bold' }
+      0: { halign: 'center', cellWidth: 25, fontStyle: 'bold', textColor: COLOR_BLACK },
+      3: { halign: 'center', fontStyle: 'bold', textColor: COLOR_BLACK },
+      4: { halign: 'center', fontStyle: 'bold', textColor: COLOR_BLACK }
     },
-    alternateRowStyles: { fillColor: [254, 252, 232] } // Light yellow tint for top stars
+    alternateRowStyles: { fillColor: COLOR_ALT_ROW }
   })
 
   currentY = (doc as any).lastAutoTable.finalY + 8
@@ -210,7 +218,7 @@ export function generateDashboardPDF({
 
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(11)
-  doc.setTextColor(29, 78, 216)
+  doc.setTextColor(...COLOR_BLACK)
   doc.text('IV. DISTRIBUSI STATUS EVALUASI & TREN KINERJA', 15, currentY)
 
   // Buat dua tabel terpisah atau berdampingan. Lebih aman berurutan agar rapi di PDF.
@@ -225,11 +233,10 @@ export function generateDashboardPDF({
     theme: 'grid',
     head: [['Status Penilaian', 'Jumlah']],
     body: statusRows.length > 0 ? statusRows : [['-', '-']],
-    styles: { fontSize: 8.5, cellPadding: 2.5 },
-    headStyles: { fillColor: [100, 116, 139], textColor: [255, 255, 255], fontStyle: 'bold' },
-    columnStyles: {
-      1: { halign: 'center', fontStyle: 'bold' }
-    }
+    styles: { fontSize: 8.5, cellPadding: 2.5, textColor: COLOR_DARK },
+    headStyles: { fillColor: COLOR_HEADER, textColor: COLOR_WHITE, fontStyle: 'bold' },
+    columnStyles: { 1: { halign: 'center', fontStyle: 'bold', textColor: COLOR_BLACK } },
+    alternateRowStyles: { fillColor: COLOR_ALT_ROW }
   })
 
   // Tren Perusahaan di sebelah kanan
@@ -244,11 +251,10 @@ export function generateDashboardPDF({
     theme: 'grid',
     head: [['Periode Tren', 'Rata-Rata Kinerja']],
     body: trendRows.length > 0 ? trendRows : [['-', '-']],
-    styles: { fontSize: 8.5, cellPadding: 2.5 },
-    headStyles: { fillColor: [79, 70, 229], textColor: [255, 255, 255], fontStyle: 'bold' }, // Indigo-600
-    columnStyles: {
-      1: { halign: 'center', fontStyle: 'bold' }
-    }
+    styles: { fontSize: 8.5, cellPadding: 2.5, textColor: COLOR_DARK },
+    headStyles: { fillColor: COLOR_HEADER, textColor: COLOR_WHITE, fontStyle: 'bold' },
+    columnStyles: { 1: { halign: 'center', fontStyle: 'bold', textColor: COLOR_BLACK } },
+    alternateRowStyles: { fillColor: COLOR_ALT_ROW }
   })
 
   // Penentu baris paling bawah dari dua tabel berdampingan
@@ -263,7 +269,7 @@ export function generateDashboardPDF({
 
   const signX = pageWidth - 60
   doc.setFontSize(9)
-  doc.setTextColor(30, 41, 59)
+  doc.setTextColor(...COLOR_DARK)
   doc.setFont('helvetica', 'normal')
   doc.text(`Badung, ${today}`, signX, finalY, { align: 'center' })
   doc.text('Mengetahui & Menyetujui,', signX, finalY + 5, { align: 'center' })

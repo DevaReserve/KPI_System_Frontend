@@ -202,10 +202,10 @@
           <div class="flex gap-3">
             <button @click="saveDraft" :disabled="isProcessing" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition disabled:opacity-50">
               {{ isProcessing ? 'Menyimpan...' : 'Simpan Draft' }}
-            </button>
+            </button> 
             <button @click="submitFinal" :disabled="isProcessing || !isFormComplete" class="px-6 py-2 bg-blue-600 rounded-lg text-white font-bold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg">
               {{ isProcessing ? 'Memproses...' : 'Kirim Finalisasi' }}
-            </button>
+            </button>       
           </div>
         </div>
       </div>
@@ -214,8 +214,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, onMounted, onBeforeUnmount, reactive, ref } from 'vue'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { managerService } from '../../services/api'
 
 // PrimeVue Logic
@@ -332,11 +332,21 @@ onMounted(async () => {
   } finally {
     isLoading.value = false
   }
+  // Daftarkan event beforeunload untuk auto-save saat refresh/tutup tab
+  window.addEventListener('beforeunload', handleBeforeUnload)
 })
+
+// Flag untuk menandai bahwa navigasi keluar dilakukan secara sengaja (misal setelah saveDraft/submitFinal)
+// agar onBeforeRouteLeave tidak memicu auto-save yang tidak perlu
+const intentionalLeave = ref(false)
 
 async function saveDraft() {
   if (isReadOnly.value) return
   await sendData(false)
+  // Tandai navigasi ini sengaja agar auto-save tidak dipanggil ulang
+  intentionalLeave.value = true
+  // Redirect ke halaman tim setelah draft berhasil disimpan
+  router.push('/manager/team')
 }
 
 function submitFinal() {
@@ -361,6 +371,7 @@ async function sendData(isFinal: boolean) {
   try {
     isProcessing.value = true
     const payload = {
+      is_draft: !isFinal,
       feedback: form.feedback,
       scores: form.scores.map(s => ({
         score_id: s.score_id,
@@ -372,6 +383,7 @@ async function sendData(isFinal: boolean) {
     
     if(isFinal) {
         toast.add({ severity: 'success', summary: 'Terkirim', detail: 'Penilaian berhasil dikirim!', life: 3000 })
+        intentionalLeave.value = true
         // Beri sedikit waktu agar toast terbaca sebelum redirect
         setTimeout(() => {
             router.push('/manager/team')
@@ -385,6 +397,73 @@ async function sendData(isFinal: boolean) {
     isProcessing.value = false
   }
 }
+
+// =====================================================================
+// AUTO-SAVE DRAFT saat pengguna refresh/navigasi keluar halaman
+// =====================================================================
+const isSavingOnLeave = ref(false)
+
+async function autoSaveDraft() {
+  // Hanya auto-save jika form sudah dimuat, bukan readonly, dan belum diproses
+  if (isLoading.value || isReadOnly.value || isProcessing.value || form.evaluation_id === 0) return
+  if (isSavingOnLeave.value) return
+  isSavingOnLeave.value = true
+  try {
+    const payload = {
+      is_draft: true,
+      feedback: form.feedback,
+      scores: form.scores.map(s => ({
+        score_id: s.score_id,
+        score: Number(s.score),
+        notes: s.notes
+      }))
+    }
+    await managerService.submitEvaluation(form.evaluation_id, payload)
+  } catch {
+    // Abaikan error saat auto-save
+  } finally {
+    isSavingOnLeave.value = false
+  }
+}
+
+// Saat refresh / tutup tab: tampilkan dialog konfirmasi browser dan simpan draft
+function handleBeforeUnload(e: BeforeUnloadEvent) {
+  if (isLoading.value || isReadOnly.value || form.evaluation_id === 0) return
+  // Tampilkan dialog konfirmasi bawaan browser
+  e.preventDefault()
+  // Auto-save menggunakan sendBeacon agar tidak di-cancel browser
+  const payload = JSON.stringify({
+    is_draft: true,
+    feedback: form.feedback,
+    scores: form.scores.map(s => ({
+      score_id: s.score_id,
+      score: Number(s.score),
+      notes: s.notes
+    }))
+  })
+  const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api')
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token') || ''
+  // sendBeacon tidak mendukung custom header, gunakan fetch dengan keepalive sebagai fallback
+  fetch(`${apiBase}/manager/evaluations/${form.evaluation_id}/submit`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: payload,
+    keepalive: true
+  }).catch(() => {})
+}
+
+// Navigasi keluar via Vue Router (klik link / tombol kembali): auto-save tanpa konfirmasi
+onBeforeRouteLeave(async (_to, _from, next) => {
+  if (!intentionalLeave.value && !isLoading.value && !isReadOnly.value && form.evaluation_id !== 0 && !isProcessing.value) {
+    await autoSaveDraft()
+  }
+  next()
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+})
+// =====================================================================
 
 function acceptAppeal() {
     confirm.require({

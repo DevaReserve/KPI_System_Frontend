@@ -142,7 +142,13 @@
 
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Nama Jabatan</label>
-                            <input v-model="form.name" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Senior Developer">
+                            <input v-model="form.name" required class="w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 transition-colors"
+                                :class="isDuplicate ? 'border-red-400 focus:ring-red-400 bg-red-50' : 'border-gray-300 focus:ring-blue-500'"
+                                placeholder="Contoh: Senior Developer">
+                            <p v-if="isDuplicate" class="mt-1 text-xs text-red-600 flex items-center gap-1">
+                                <i class="pi pi-exclamation-circle"></i>
+                                Jabatan dengan nama ini sudah ada di divisi yang dipilih.
+                            </p>
                         </div>
 
                         <div class="mb-4">
@@ -154,7 +160,7 @@
                             <button type="button" @click="closeModal" class="w-full sm:w-auto inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:text-sm">
                                 Batal
                             </button>
-                            <button type="submit" :disabled="isProcessing" class="mt-3 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:text-sm disabled:opacity-50">
+                            <button type="submit" :disabled="isProcessing || isDuplicate" class="mt-3 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed">
                                 {{ isProcessing ? 'Menyimpan...' : 'Simpan' }}
                             </button>
                         </div>
@@ -167,7 +173,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { positionService, divisionService } from '../../services/api'
 
 // PrimeVue Imports
@@ -194,6 +200,16 @@ const filters = ref({
 });
 
 const form = reactive({ id: 0, name: '', description: '', division_id: '' as string | number })
+
+// Cek duplikasi: nama yang sama (case-insensitive) di divisi yang sama
+const isDuplicate = computed(() => {
+  if (!form.name.trim() || !form.division_id) return false
+  return positions.value.some(p =>
+    p.name.toLowerCase() === form.name.trim().toLowerCase() &&
+    Number(p.division_id) === Number(form.division_id) &&
+    p.id !== form.id
+  )
+})
 
 onMounted(async () => {
   await fetchData()

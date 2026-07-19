@@ -172,7 +172,8 @@
                 v-for="lvl in ['SP1', 'SP2', 'SP3']"
                 :key="lvl"
                 @click="createForm.level = lvl"
-                class="flex-1 py-2 rounded-lg text-sm font-bold border-2 transition-all"
+                :disabled="!isLevelAllowed(lvl)"
+                class="flex-1 py-2 rounded-lg text-sm font-bold border-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-gray-100"
                 :class="createForm.level === lvl ? getLevelActive(lvl) : 'border-gray-200 text-gray-500 hover:border-gray-300'"
               >
                 {{ lvl }}
@@ -246,10 +247,18 @@ const showCreateModal = ref(false)
 
 const createForm = ref({
   employee_id: '' as any,
-  level: 'SP1',
+  level: '', // dikosongkan secara default, nanti akan diset saat open modal
   reason: '',
   description: ''
 })
+
+function isLevelAllowed(lvl: string) {
+  const role = authStore.user?.role
+  if (role === 'manager') return lvl === 'SP1' || lvl === 'SP2'
+  if (role === 'admin') return lvl === 'SP3'
+  return false
+}
+
 
 // ---- Computed: Summary Cards ----
 const summaryCards = computed(() => {
@@ -322,7 +331,12 @@ function resetFilter() {
 }
 
 function openCreateModal() {
-  createForm.value = { employee_id: '', level: 'SP1', reason: '', description: '' }
+  // Set level default yang diperbolehkan berdasarkan role
+  let defaultLevel = 'SP1'
+  if (authStore.user?.role === 'admin') defaultLevel = 'SP3'
+  else if (authStore.user?.role === 'manager') defaultLevel = 'SP1'
+  
+  createForm.value = { employee_id: '', level: defaultLevel, reason: '', description: '' }
   showCreateModal.value = true
 }
 
