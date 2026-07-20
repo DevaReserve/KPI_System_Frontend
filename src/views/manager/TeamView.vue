@@ -216,6 +216,8 @@ import { useRouter } from 'vue-router'
 import { managerService } from '../../services/api'
 import { useToast } from 'primevue/usetoast'
 import Toast from 'primevue/toast'
+import { useAuthStore } from '../../stores/auth'
+import { generateTeamReportPDF } from '../../utils/teamReportGenerator'
 
 // PrimeVue Imports
 import DataTable from 'primevue/datatable';
@@ -223,6 +225,7 @@ import Column from 'primevue/column';
 
 const toast = useToast()
 const router = useRouter()
+const authStore = useAuthStore()
 
 // Interface TypeScript
 interface TeamMember {
@@ -337,7 +340,12 @@ function viewDetail(item: TeamMember) {
 }
 
 function printTeamReport() {
-  window.print()
+  generateTeamReportPDF({
+    teamMembers: evaluatedTeamMembers.value,
+    managerName: authStore.user?.employee?.name || authStore.user?.username || 'Manajer Tim',
+    divisionName: authStore.user?.employee?.position || 'Divisi Tim',
+    periodName: 'Periode Penilaian Aktif'
+  })
 }
 </script>
 
