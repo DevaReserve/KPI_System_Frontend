@@ -304,6 +304,10 @@ export const myPerformanceService = {
     const response = await api.get<ApiResponse<{ is_top_one: boolean }>>('/employee/top-one')
     return response.data.data
   },
+  async getTopInDivision(): Promise<any[]> {
+    const response = await api.get<ApiResponse<any[]>>('/employee/top-in-division')
+    return response.data.data
+  },
   async submitAppeal(id: number, data: FormData): Promise<any> {
     const response = await api.post<ApiResponse<any>>(`/employee/evaluations/${id}/appeal`, data, {
       headers: {

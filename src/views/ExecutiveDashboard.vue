@@ -152,7 +152,7 @@
           </div>
 
           <!-- [TOP 1 TROPHY HIGHLIGHT BANNER] -->
-          <div v-if="topEmployees.length > 0" class="p-4 bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-orange-500/15 border-b border-amber-200/80 flex items-center justify-between">
+          <div v-if="topEmployees.length > 0" class="p-4 bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-orange-500/15 border-b border-amber-200/80 flex items-center justify-between cursor-pointer hover:bg-amber-500/20 transition" @click="showEvaluationDetail(topEmployees[0].evaluation_id)">
             <div class="flex items-center gap-3">
               <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center shadow-md shadow-amber-500/30 font-black text-xl">
                 🏆
@@ -163,23 +163,35 @@
                 <p class="text-xs text-gray-500">{{ topEmployees[0].division_name }}</p>
               </div>
             </div>
-            <div class="text-right">
-              <span class="text-lg font-black text-amber-600 block">{{ topEmployees[0].total_score.toFixed(2) }}</span>
-              <span class="text-[10px] font-bold text-amber-800 bg-amber-200/80 px-2.5 py-0.5 rounded-full">Grade A</span>
+            <div class="text-right flex flex-col items-end gap-2">
+              <span class="text-lg font-black text-amber-600 block leading-none">{{ topEmployees[0].total_score.toFixed(2) }}</span>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold text-amber-800 bg-amber-200/80 px-2.5 py-0.5 rounded-full">Grade A</span>
+                <button @click.stop="downloadCertificate(topEmployees[0])" title="Unduh Piagam Penghargaan" class="text-red-500 hover:text-amber-600 p-1.5 rounded-full hover:bg-amber-50 shadow-sm transition-colors no-print">
+                  <i class="pi pi-file-export"></i>
+                </button>
+              </div>
             </div>
           </div>
 
           <table class="min-w-full">
             <tbody class="divide-y divide-gray-100">
-              <tr v-for="(emp, idx) in topEmployees" :key="idx" class="hover:bg-gray-50 transition">
+              <tr v-for="(emp, idx) in topEmployees.slice(1)" :key="idx" class="hover:bg-gray-50 transition cursor-pointer" @click="showEvaluationDetail(emp.evaluation_id)">
                 <td class="px-5 py-2.5 text-sm text-gray-700 font-medium flex items-center gap-2">
-                  <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold font-sans">{{ idx + 1 }}</span>
+                  <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold font-sans">{{ idx + 2 }}</span>
                   <div>
                     <span class="font-medium">{{ emp.name }}</span>
                     <span class="text-xs text-gray-400 block">{{ emp.division_name }}</span>
                   </div>
                 </td>
-                <td class="px-5 py-2.5 text-sm text-right font-bold text-blue-600">{{ emp.total_score.toFixed(2) }}</td>
+                <td class="px-5 py-2.5 text-sm text-right font-bold text-blue-600">
+                  <div class="flex items-center justify-end gap-3">
+                    <span>{{ emp.total_score.toFixed(2) }}</span>
+                    <button @click.stop="downloadCertificate(emp)" title="Unduh Piagam Penghargaan" class="text-red-500 hover:text-amber-600 p-1.5 rounded-full hover:bg-amber-50 transition-colors no-print">
+                      <i class="pi pi-file-export"></i>
+                    </button>
+                  </div>
+                </td>
               </tr>
               <tr v-if="topEmployees.length === 0">
                 <td colspan="2" class="px-5 py-6 text-center text-sm text-gray-400">Belum ada data evaluasi.</td>
@@ -189,6 +201,51 @@
         </div>
       </div>
     </div>
+
+    <Dialog v-model:visible="showDetailDialog" header="Detail Nilai Indikator KPI" :modal="true" :dismissableMask="true" :style="{ width: '50vw' }" :breakpoints="{ '960px': '75vw', '641px': '100vw' }">
+      <div v-if="isDetailLoading" class="flex justify-center p-8">
+        <i class="pi pi-spin pi-spinner text-4xl text-blue-500"></i>
+      </div>
+      <div v-else-if="selectedEvalDetail" class="space-y-4">
+        <div class="bg-blue-50 p-4 rounded-xl flex justify-between items-center border border-blue-100">
+          <div>
+            <p class="text-sm text-blue-600/80 font-semibold mb-1">Pegawai</p>
+            <p class="font-bold text-gray-800 text-lg">{{ selectedEvalDetail.employee_detail?.name }}</p>
+            <p class="text-xs text-gray-500">{{ selectedEvalDetail.employee_detail?.position }} - {{ selectedEvalDetail.employee_detail?.division_name }}</p>
+          </div>
+          <div class="text-right bg-white px-4 py-2 rounded-lg shadow-sm">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Skor Akhir</p>
+            <p class="font-black text-blue-600 text-2xl leading-none">{{ selectedEvalDetail.evaluation_header?.total_score?.toFixed(2) }}</p>
+          </div>
+        </div>
+        
+        <div class="overflow-hidden rounded-xl border border-gray-100">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 border-b border-gray-100">
+              <tr>
+                <th class="p-3 text-left font-bold text-gray-600">Indikator</th>
+                <th class="p-3 text-center font-bold text-gray-600 w-24">Skor (1-5)</th>
+                <th class="p-3 text-center font-bold text-gray-600 w-28">Nilai Bobot</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr v-for="score in selectedEvalDetail.scores" :key="score.id" class="hover:bg-gray-50/50">
+                <td class="p-3">
+                  <p class="font-medium text-gray-800">{{ score.indicator?.name }}</p>
+                  <p v-if="score.notes" class="text-xs text-gray-500 mt-1 italic">"{{ score.notes }}"</p>
+                </td>
+                <td class="p-3 text-center">
+                  <span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md font-bold">{{ score.score }}</span>
+                </td>
+                <td class="p-3 text-center">
+                  <span class="text-blue-600 font-bold text-base">{{ score.converted_score }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </Dialog>
   </div>
 </template>
 
@@ -256,18 +313,24 @@
 
 <script setup lang="ts">
 import { ref, onMounted, reactive, computed } from 'vue'
-import { periodService } from '../services/api'
+import { periodService, myPerformanceService } from '../services/api'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '../stores/auth'
 import Toast from 'primevue/toast'
+import Dialog from 'primevue/dialog'
 import VueApexCharts from 'vue3-apexcharts'
 import type { ApexOptions } from 'apexcharts'
 import { generateDashboardPDF } from '../utils/dashboardReportGenerator'
+import { generateTopAchieverCertificate } from '../utils/certificateGenerator.ts'
 
 const authStore = useAuthStore()
 const toast = useToast()
 const isLoading = ref(true)
 const apexchart = VueApexCharts
+
+const showDetailDialog = ref(false)
+const selectedEvalDetail = ref<any>(null)
+const isDetailLoading = ref(false)
 
 const currentDate = computed(() => {
   return new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
@@ -435,6 +498,40 @@ function printDashboard() {
     } catch (error) {
         console.error(error)
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal mencetak laporan dashboard', life: 3000 })
+    }
+}
+
+function downloadCertificate(emp: any) {
+    const d = new Date()
+    const dateStr = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })
+    
+    generateTopAchieverCertificate({
+        employeeName: emp.name,
+        nip: emp.nip || '-', // Backend currently doesn't return NIP here, might need to handle or it just shows '-'
+        divisionName: emp.division_name,
+        position: emp.position || 'Staf', // Same here
+        date: dateStr
+    })
+    toast.add({ severity: 'success', summary: 'Sukses', detail: 'Sertifikat berhasil diunduh', life: 3000 })
+}
+
+async function showEvaluationDetail(evaluationId: number | undefined) {
+    if (!evaluationId) {
+        toast.add({ severity: 'info', summary: 'Info', detail: 'Tidak ada data evaluasi rinci untuk pegawai ini', life: 3000 })
+        return
+    }
+    showDetailDialog.value = true
+    isDetailLoading.value = true
+    selectedEvalDetail.value = null
+    try {
+        const res = await myPerformanceService.getDetail(evaluationId)
+        selectedEvalDetail.value = res
+    } catch (e) {
+        console.error(e)
+        toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal memuat detail evaluasi', life: 3000 })
+        showDetailDialog.value = false
+    } finally {
+        isDetailLoading.value = false
     }
 }
 

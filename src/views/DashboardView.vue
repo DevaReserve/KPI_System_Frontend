@@ -408,6 +408,45 @@
         </div>
       </div>
       
+      <!-- [BARU] TOP 5 INTERNAL DIVISI -->
+      <div v-if="topDivisionEmployees.length > 0" class="mt-8 bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+        <h3 class="text-lg font-bold text-gray-800 flex items-center mb-4">
+          <i class="pi pi-users text-blue-500 mr-2"></i> Top 5 Kinerja Divisi Internal
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead class="bg-gray-50 border-y border-gray-100">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-16">Rank</th>
+                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Pegawai</th>
+                <th class="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Skor Akhir</th>
+                <th class="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Grade</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr v-for="(emp, idx) in topDivisionEmployees" :key="idx" class="hover:bg-blue-50/50 transition cursor-pointer" @click="showEvaluationDetail(emp.evaluation_id)">
+                <td class="px-4 py-3">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm" 
+                       :class="idx === 0 ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-gray-100 text-gray-600'">
+                    {{ idx + 1 }}
+                  </div>
+                </td>
+                <td class="px-4 py-3 font-medium text-gray-800" :class="{'text-blue-700 font-bold': emp.name === (authStore.user?.employee?.name || authStore.user?.username)}">
+                  {{ emp.name }} <span v-if="emp.name === (authStore.user?.employee?.name || authStore.user?.username)" class="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">Anda</span>
+                </td>
+                <td class="px-4 py-3 text-center font-bold" :class="emp.total_score >= 80 ? 'text-green-600' : 'text-gray-700'">
+                  {{ emp.total_score.toFixed(2) }}
+                </td>
+                <td class="px-4 py-3 text-center">
+                  <span class="px-2.5 py-1 rounded-lg text-xs font-bold" :class="getGradeBarColor(emp.grade)">
+                    Grade {{ emp.grade }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       <div v-else class="bg-white rounded-3xl shadow-sm p-12 text-center border border-gray-200">
         <div class="bg-gray-100 h-24 w-24 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -422,6 +461,51 @@
       </div>
     </div>
 
+    <!-- [BARU] Modal Detail Nilai Indikator (sama dengan Executive Dashboard) -->
+    <Dialog v-model:visible="showDetailDialog" header="Detail Nilai Indikator KPI" :modal="true" :dismissableMask="true" :style="{ width: '50vw' }" :breakpoints="{ '960px': '75vw', '641px': '100vw' }">
+      <div v-if="isDetailLoading" class="flex justify-center p-8">
+        <i class="pi pi-spin pi-spinner text-4xl text-blue-500"></i>
+      </div>
+      <div v-else-if="selectedEvalDetail" class="space-y-4">
+        <div class="bg-blue-50 p-4 rounded-xl flex justify-between items-center border border-blue-100">
+          <div>
+            <p class="text-sm text-blue-600/80 font-semibold mb-1">Pegawai</p>
+            <p class="font-bold text-gray-800 text-lg">{{ selectedEvalDetail.employee_detail?.name }}</p>
+            <p class="text-xs text-gray-500">{{ selectedEvalDetail.employee_detail?.position }} - {{ selectedEvalDetail.employee_detail?.division_name }}</p>
+          </div>
+          <div class="text-right bg-white px-4 py-2 rounded-lg shadow-sm">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Skor Akhir</p>
+            <p class="font-black text-blue-600 text-2xl leading-none">{{ selectedEvalDetail.evaluation_header?.total_score?.toFixed(2) }}</p>
+          </div>
+        </div>
+        
+        <div class="overflow-hidden rounded-xl border border-gray-100">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 border-b border-gray-100">
+              <tr>
+                <th class="p-3 text-left font-bold text-gray-600">Indikator</th>
+                <th class="p-3 text-center font-bold text-gray-600 w-24">Skor (1-5)</th>
+                <th class="p-3 text-center font-bold text-gray-600 w-28">Nilai Bobot</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr v-for="score in selectedEvalDetail.scores" :key="score.id" class="hover:bg-gray-50/50">
+                <td class="p-3">
+                  <p class="font-medium text-gray-800">{{ score.indicator?.name }}</p>
+                  <p v-if="score.notes" class="text-xs text-gray-500 mt-1 italic">"{{ score.notes }}"</p>
+                </td>
+                <td class="p-3 text-center">
+                  <span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md font-bold">{{ score.score }}</span>
+                </td>
+                <td class="p-3 text-center">
+                  <span class="text-blue-600 font-bold text-base">{{ score.converted_score }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </Dialog>
   </div>
 </template>
 
@@ -439,12 +523,17 @@ import {
   warningService
 } from '../services/api'
 import { useAuthStore } from '../stores/auth'
+import Dialog from 'primevue/dialog'
 
 const authStore = useAuthStore()
 const router = useRouter()
 const isLoading = ref(true)
 
-// [BARU] Modal State
+// [BARU] Modal State untuk detail evaluasi
+const showDetailDialog = ref(false)
+const selectedEvalDetail = ref<any>(null)
+const isDetailLoading = ref(false)
+
 const showUnevaluatedModal = ref(false)
 
 const currentDate = computed(() => {
@@ -534,6 +623,7 @@ const managerCharts = reactive({
 const employeeStats = reactive({ hasData: false, score: 0, grade: '', periodName: '' })
 const myWarnings = ref<any[]>([]) // <--- 2. STATE BARU UNTUK WARNING
 const warningPopover = ref<any>(null)
+const topDivisionEmployees = ref<any[]>([]) // <--- [BARU] STATE TOP DIVISI
 const employeeCharts = reactive({
   series: [] as any[],
   options: {
@@ -693,13 +783,15 @@ async function loadManagerData() {
 async function loadEmployeeData() {
   try {
     // 3. LOAD HISTORY & WARNINGS SECARA PARALEL
-    const [history, warnings] = await Promise.all([
+    const [history, warnings, topInDiv] = await Promise.all([
         myPerformanceService.getHistory(),
-        warningService.getMyWarnings()
+        warningService.getMyWarnings().catch(() => []),
+        myPerformanceService.getTopInDivision().catch(() => [])
     ])
     
     // Simpan warnings ke state agar muncul di dashboard
-    myWarnings.value = warnings
+    myWarnings.value = warnings || []
+    topDivisionEmployees.value = topInDiv || []
 
     // Logic History Kinerja
     if (history && history.length > 0) {
@@ -748,13 +840,28 @@ function getGradeFromScore(score: number) {
 
 function getGradeBarColor(grade: string) {
   switch(grade) {
-    case 'A': return 'bg-green-500'
-    case 'B': return 'bg-blue-500'
-    case 'C': return 'bg-yellow-400'
-    case 'D': return 'bg-orange-500'
-    case 'E': return 'bg-red-500'
-    default: return 'bg-gray-300'
+    case 'A': return 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+    case 'B': return 'bg-blue-100 text-blue-700 border border-blue-200'
+    case 'C': return 'bg-amber-100 text-amber-700 border border-amber-200'
+    case 'D': return 'bg-orange-100 text-orange-700 border border-orange-200'
+    default: return 'bg-rose-100 text-rose-700 border border-rose-200'
   }
+}
+
+async function showEvaluationDetail(evaluationId: number | undefined) {
+    if (!evaluationId) return
+    showDetailDialog.value = true
+    isDetailLoading.value = true
+    selectedEvalDetail.value = null
+    try {
+        const res = await myPerformanceService.getDetail(evaluationId)
+        selectedEvalDetail.value = res
+    } catch (e) {
+        console.error(e)
+        // Optionally show toast for error
+    } finally {
+        isDetailLoading.value = false
+    }
 }
 
 function getGradeTextColor(grade: string) {
