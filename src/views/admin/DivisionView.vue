@@ -99,8 +99,13 @@
                   Tidak Perlu Manajer
               </div>
               <div v-else-if="data.manager_id && data.manager_name" class="flex items-center gap-2">
-                  <div class="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">
-                      {{ data.manager_name.charAt(0) }}
+                  <div class="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden border border-gray-200">
+                      <img 
+                          v-if="data.manager_photo" 
+                          :src="getProfilePictureUrl(data.manager_photo)" 
+                          class="w-full h-full object-cover"
+                      />
+                      <span v-else>{{ data.manager_name.charAt(0) }}</span>
                   </div>
                   <span class="text-sm font-medium text-gray-900">{{ data.manager_name }}</span>
               </div>
@@ -229,7 +234,11 @@ async function fetchData() {
 
     divisions.value = divisions.value.map(div => {
       const mgr = allEmployees.value.find(e => e.id === div.manager_id)
-      return { ...div, manager_name: mgr ? mgr.name : null }
+      return { 
+        ...div, 
+        manager_name: mgr ? mgr.name : null,
+        manager_photo: mgr ? mgr.profile_picture_url : null
+      }
     })
 
   } catch (error) { 
@@ -237,6 +246,13 @@ async function fetchData() {
   } finally { 
     isLoading.value = false 
   }
+}
+
+function getProfilePictureUrl(url: string) {
+    if (!url) return ''
+    if (url.startsWith('http')) return url
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080' 
+    return `${baseUrl.replace('/api', '')}${url}`
 }
 
 function openModal(division?: any) {
