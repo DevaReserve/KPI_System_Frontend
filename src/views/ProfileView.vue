@@ -736,23 +736,67 @@
 
         <div v-if="activeTab === 'security'">
              <div class="max-w-xl mx-auto py-4">
-                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-                    <p class="text-sm text-yellow-700">Gunakan password yang kuat untuk menjaga keamanan akun Anda.</p>
+                <div class="mb-6">
+                    <p class="text-sm text-slate-500">Masukkan password baru untuk akun Anda</p>
                 </div>
-                <form @submit.prevent="updatePassword" class="space-y-4">
+                <form @submit.prevent="updatePassword" class="space-y-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Password Lama</label>
-                        <input v-model="passForm.old_password" type="password" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                        <label class="block text-sm font-bold text-slate-800 mb-2">Password Lama</label>
+                        <div class="relative">
+                            <input v-model="passForm.old_password" :type="showOldPass ? 'text' : 'password'" required class="w-full border border-slate-300 px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-700">
+                            <button type="button" @click="showOldPass = !showOldPass" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600">
+                                <i :class="showOldPass ? 'pi pi-eye-slash' : 'pi pi-eye'" class="text-xl"></i>
+                            </button>
+                        </div>
                     </div>
+                    
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
-                        <input v-model="passForm.new_password" type="password" required minlength="6" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                        <label class="block text-sm font-bold text-slate-800 mb-2">Password Baru</label>
+                        <div class="relative">
+                            <input v-model="passForm.new_password" :type="showNewPass ? 'text' : 'password'" required minlength="8" class="w-full border border-slate-300 px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-700 font-medium tracking-[0.2em] placeholder:tracking-normal placeholder:font-normal">
+                            <button type="button" @click="showNewPass = !showNewPass" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600">
+                                <i :class="showNewPass ? 'pi pi-eye-slash' : 'pi pi-eye'" class="text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Indikator Kekuatan Password -->
+                        <div class="mt-3">
+                            <div class="flex gap-2 mb-3">
+                                <div class="h-1.5 w-1/4 rounded-full transition-colors duration-300" :class="passwordStrength >= 1 ? 'bg-blue-500' : 'bg-slate-200'"></div>
+                                <div class="h-1.5 w-1/4 rounded-full transition-colors duration-300" :class="passwordStrength >= 2 ? 'bg-blue-500' : 'bg-slate-200'"></div>
+                                <div class="h-1.5 w-1/4 rounded-full transition-colors duration-300" :class="passwordStrength >= 3 ? 'bg-blue-500' : 'bg-slate-200'"></div>
+                                <div class="h-1.5 w-1/4 rounded-full transition-colors duration-300" :class="passwordStrength >= 4 ? 'bg-blue-500' : 'bg-slate-200'"></div>
+                            </div>
+                            <p class="text-sm mb-4" :class="passwordStrength >= 4 ? 'text-teal-600' : 'text-blue-500'">{{ strengthText }}</p>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4 text-sm">
+                                <div class="flex items-center gap-2" :class="criteriaMet.length ? 'text-teal-600' : 'text-slate-400'">
+                                    <i :class="criteriaMet.length ? 'pi pi-check' : 'pi pi-times-circle'" class="text-[14px]"></i> Minimal 8 karakter
+                                </div>
+                                <div class="flex items-center gap-2" :class="criteriaMet.uppercase ? 'text-teal-600' : 'text-slate-400'">
+                                    <i :class="criteriaMet.uppercase ? 'pi pi-check' : 'pi pi-times-circle'" class="text-[14px]"></i> Mengandung huruf kapital
+                                </div>
+                                <div class="flex items-center gap-2" :class="criteriaMet.number ? 'text-teal-600' : 'text-slate-400'">
+                                    <i :class="criteriaMet.number ? 'pi pi-check' : 'pi pi-times-circle'" class="text-[14px]"></i> Mengandung angka
+                                </div>
+                                <div class="flex items-center gap-2" :class="criteriaMet.special ? 'text-teal-600' : 'text-slate-400'">
+                                    <i :class="criteriaMet.special ? 'pi pi-check' : 'pi pi-times-circle'" class="text-[14px]"></i> Mengandung simbol (!@#$...)
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password Baru</label>
-                        <input v-model="passForm.confirm_password" type="password" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                        <label class="block text-sm font-bold text-slate-800 mb-2 mt-4">Konfirmasi Password</label>
+                        <div class="relative">
+                            <input v-model="passForm.confirm_password" :type="showConfirmPass ? 'text' : 'password'" required placeholder="Masukkan ulang password baru" class="w-full border border-slate-300 px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-700">
+                            <button type="button" @click="showConfirmPass = !showConfirmPass" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600">
+                                <i :class="showConfirmPass ? 'pi pi-eye-slash' : 'pi pi-eye'" class="text-xl"></i>
+                            </button>
+                        </div>
                     </div>
-                    <button type="submit" :disabled="isLoading" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-2 rounded font-bold transition disabled:opacity-50">
+                    
+                    <button type="submit" :disabled="isLoading || passwordStrength < 3" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 mt-4 rounded-xl font-bold transition disabled:opacity-50">
                         {{ isLoading ? 'Menyimpan...' : 'Simpan Password Baru' }}
                     </button>
                 </form>
@@ -864,6 +908,9 @@ const isProcessing = ref(false)
 
 // State Chart & Password
 const passForm = reactive({ old_password: '', new_password: '', confirm_password: '' })
+const showOldPass = ref(false)
+const showNewPass = ref(false)
+const showConfirmPass = ref(false)
 
 // State Cropper
 const showCropModal = ref(false)
@@ -1279,6 +1326,42 @@ async function deleteAchievement(id: number) {
 }
 
 function formatDate(d: string) { if(!d) return '-'; return new Date(d).toLocaleDateString('id-ID'); }
+
+// --- PASSWORD STRENGTH METER ---
+const passwordStrength = computed(() => {
+    let score = 0
+    const pass = passForm.new_password
+    if (!pass) return score
+    
+    if (pass.length >= 8) score++
+    if (/[A-Z]/.test(pass)) score++
+    if (/\d/.test(pass)) score++
+    if (/[^A-Za-z0-9]/.test(pass)) score++
+    
+    return score
+})
+
+const strengthText = computed(() => {
+    if (passwordStrength.value === 0) return 'Sangat lemah — butuh lebih banyak kriteria'
+    if (passwordStrength.value === 1) return 'Lemah — butuh tiga kriteria lagi'
+    if (passwordStrength.value === 2) return 'Sedang — butuh dua kriteria lagi'
+    if (passwordStrength.value === 3) return 'Hampir kuat — satu kriteria lagi'
+    return 'Kuat — password sudah aman'
+})
+
+const strengthColor = computed(() => {
+    return 'bg-blue-500'
+})
+
+const criteriaMet = computed(() => {
+    const pass = passForm.new_password
+    return {
+        length: pass.length >= 8,
+        uppercase: /[A-Z]/.test(pass),
+        number: /\d/.test(pass),
+        special: /[^A-Za-z0-9]/.test(pass)
+    }
+})
 
 async function updatePassword() {
     if (passForm.new_password !== passForm.confirm_password) {
