@@ -46,9 +46,11 @@
               class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition">
               <i class="pi pi-file-pdf"></i> Export PDF
             </button>
-            <button v-if="reportData.length > 0" @click="exportToExcel"
-              class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition">
-              <i class="pi pi-file-excel"></i> Export CSV
+            <button v-if="reportData.length > 0" @click="exportToExcel" :disabled="isExportingExcel"
+              class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition disabled:opacity-60">
+              <i class="pi pi-spin pi-spinner" v-if="isExportingExcel"></i>
+              <i class="pi pi-file-excel" v-else></i>
+              {{ isExportingExcel ? 'Mengunduh...' : 'Export Excel (.xlsx)' }}
             </button>
           </div>
         </div>
@@ -184,7 +186,13 @@
             {{ isComparing ? 'Memuat...' : 'Bandingkan' }}
           </button>
         </div>
-        <div v-if="comparisonData.length > 0" class="flex justify-end mt-3">
+        <div v-if="comparisonData.length > 0" class="flex justify-end gap-2 mt-3">
+          <button @click="exportComparisonExcel" :disabled="isExportingComparisonExcel"
+            class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition disabled:opacity-60">
+            <i class="pi pi-spin pi-spinner" v-if="isExportingComparisonExcel"></i>
+            <i class="pi pi-file-excel" v-else></i>
+            {{ isExportingComparisonExcel ? 'Mengunduh...' : 'Export Excel (.xlsx)' }}
+          </button>
           <button @click="exportComparisonPDF"
             class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition">
             <i class="pi pi-file-pdf"></i> Export PDF
@@ -319,6 +327,7 @@ const searchQuery = ref('')
 const selectedGrades = ref<string[]>([])
 const minScore = ref<number | null>(null)
 const maxScore = ref<number | null>(null)
+const isExportingExcel = ref(false)
 
 // Comparison Tab State
 const comparePeriodA = ref('')
@@ -327,6 +336,7 @@ const comparisonData = ref<any[]>([])
 const isComparing = ref(false)
 const trendFilter = ref('semua')
 const compareSearch = ref('')
+const isExportingComparisonExcel = ref(false)
 
 // ---- Computed ----
 const filteredReport = computed(() => {
@@ -651,27 +661,30 @@ function exportComparisonPDF() {
   }
 }
 
-function exportToExcel() {
-  if (filteredReport.value.length === 0) return
+async function exportToExcel() {
+  if (!selectedPeriodId.value || reportData.value.length === 0) return
+  isExportingExcel.value = true
   try {
-    let csvContent = 'No,NIP,Nama Pegawai,Divisi,Jabatan,Skor Akhir,Grade\n'
-    const sortedData = [...filteredReport.value].sort((a, b) => b.total_score - a.total_score)
-    sortedData.forEach((row, index) => {
-      csvContent += `${index+1},"${row.nip}","${row.employee_name}","${row.division}","${row.position}",${row.total_score.toFixed(2)},"${row.grade}"\n`
-    })
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const link = document.createElement('a')
-    const url = URL.createObjectURL(blob)
-    const periodName = periods.value.find(p => p.id === Number(selectedPeriodId.value))?.name || 'Laporan'
-    link.setAttribute('href', url)
-    link.setAttribute('download', `Rekap_KPI_${periodName.replace(/\s+/g, '_')}.csv`)
-    link.style.visibility = 'hidden'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    toast.add({ severity: 'success', summary: 'Sukses', detail: 'Data CSV berhasil diunduh', life: 3000 })
+    await reportService.exportExcel(Number(selectedPeriodId.value))
+    toast.add({ severity: 'success', summary: 'Sukses', detail: 'File Excel berhasil diunduh', life: 3000 })
   } catch (e) {
-    toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal membuat CSV', life: 3000 })
+    toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal mengunduh file Excel', life: 3000 })
+  } finally {
+    isExportingExcel.value = false
+  }
+}
+
+async function exportComparisonExcel() {
+  if (!comparePeriodA.value || !comparePeriodB.value || comparisonData.value.length === 0) return
+  isExportingComparisonExcel.value = true
+  try {
+    await reportService.exportComparisonExcel(Number(comparePeriodA.value), Number(comparePeriodB.value))
+    toast.add({ severity: 'success', summary: 'Sukses', detail: 'File Excel komparasi berhasil diunduh', life: 3000 })
+  } catch (e) {
+    toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal mengunduh file Excel komparasi', life: 3000 })
+  } finally {
+    isExportingComparisonExcel.value = false
   }
 }
 </script>
+

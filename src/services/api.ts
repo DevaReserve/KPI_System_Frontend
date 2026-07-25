@@ -347,6 +347,42 @@ export const reportService = {
   async getPeriodComparison(periodA: number, periodB: number): Promise<any[]> {
     const response = await api.get<ApiResponse<any[]>>(`/admin/reports/comparison?period_a=${periodA}&period_b=${periodB}`)
     return response.data.data
+  },
+
+  // [BARU] Export Excel Laporan Evaluasi
+  async exportExcel(periodId: number): Promise<void> {
+    const response = await api.get(`/admin/reports/evaluations/export-excel?period_id=${periodId}`, {
+      responseType: 'blob'
+    })
+    const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    const disposition = response.headers['content-disposition'] || ''
+    const match = disposition.match(/filename="(.+)"/)
+    link.download = match ? match[1] : `Laporan_KPI_${periodId}.xlsx`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  },
+
+  // [BARU] Export Excel Komparasi Periode
+  async exportComparisonExcel(periodA: number, periodB: number): Promise<void> {
+    const response = await api.get(`/admin/reports/comparison/export-excel?period_a=${periodA}&period_b=${periodB}`, {
+      responseType: 'blob'
+    })
+    const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    const disposition = response.headers['content-disposition'] || ''
+    const match = disposition.match(/filename="(.+)"/)
+    link.download = match ? match[1] : `Komparasi_KPI.xlsx`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
   }
 }
 

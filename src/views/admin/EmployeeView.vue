@@ -543,3 +543,32 @@ function getProfilePictureUrl(url: string) {
     return `${baseUrl.replace('/api', '')}${url}`
 }
 </script>
+
+<style scoped>
+/* Sembunyikan visual scrollbar widget tetapi data/halaman tetap bisa di-scroll */
+:deep(*)::-webkit-scrollbar,
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+:deep(*),
+div {
+  -ms-overflow-style: none !important; /* IE dan Edge */
+  scrollbar-width: none !important;    /* Firefox */
+}
+
+/* Sembunyikan scrollbar pada container utama saat halaman EmployeeView aktif */
+:global(main::-webkit-scrollbar) {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+:global(main) {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+</style>
+
