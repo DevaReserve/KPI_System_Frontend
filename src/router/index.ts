@@ -239,10 +239,11 @@ router.beforeEach((to, _from, next) => {
       next('/403')
       return
     }
-    // 3. EMPLOYEE ROUTE: Employee & Manager Boleh
-    // (FIX: Tambahkan izin untuk Manager agar bisa lihat raport dirinya)
+    // 3. EMPLOYEE ROUTE: Employee, Manager, & Admin (yang dinilai) Boleh
+    // (FIX: Tambahkan izin untuk Manager & Admin dengan atasan langsung)
     else if (to.meta.role === 'employee') {
-      if (userRole !== 'employee' && userRole !== 'manager') {
+      const hasDirectSupervisor = authStore.hasDirectSupervisor
+      if (userRole !== 'employee' && userRole !== 'manager' && !(userRole === 'admin' && hasDirectSupervisor)) {
         next('/403')
         return
       }

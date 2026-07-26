@@ -22,7 +22,16 @@
       </button>
     </div>
 
-    <nav class="flex-1 overflow-y-auto py-6 px-3 scrollbar-thin scrollbar-track-gray-50 scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400">
+    <!-- Wrapper untuk area navigasi agar bisa diberi indikator scroll absolut -->
+    <div class="relative flex-1 overflow-hidden flex flex-col">
+      
+      <!-- Indikator Scroll Atas (Shadow) -->
+      <div 
+        class="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-gray-50 to-transparent z-10 pointer-events-none transition-opacity duration-300"
+        :class="canScrollUp ? 'opacity-100' : 'opacity-0'"
+      ></div>
+
+      <nav ref="scrollContainer" @scroll="checkScroll" class="flex-1 overflow-y-auto py-6 px-3 hide-scrollbar">
       <ul class="space-y-1">
         
         <li>
@@ -44,27 +53,7 @@
           </li>
         </template>
 
-        <template v-if="authStore.userRole === 'employee' || authStore.userRole === 'manager'">
-          <div class="mt-6 mb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Kinerja Saya</div>
-          <li>
-            <router-link to="/employee/history" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')">
-              <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-              Raport & Tren Kinerja
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/employee/targets" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')">
-              <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" /></svg>
-              Target KPI Saya
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/employee/audit-trail" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')">
-              <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              Audit Trail Saya
-            </router-link>
-          </li>
-        </template>
+
 
         <template v-if="authStore.userRole === 'admin'">
           <div class="mt-6 mb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Master Data</div>
@@ -111,8 +100,45 @@
           </li>
         </template>
 
+        <!-- Kinerja Saya: Muncul untuk employee, manager, atau admin yang memiliki atasan langsung -->
+        <!-- Dipindahkan ke paling bawah agar tidak mengganggu navigasi admin utama -->
+        <template v-if="authStore.userRole === 'employee' || authStore.userRole === 'manager' || (authStore.userRole === 'admin' && authStore.hasDirectSupervisor)">
+          <div class="mt-6 mb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Kinerja Saya</div>
+          <li>
+            <router-link to="/employee/history" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')">
+              <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+              Raport & Tren Kinerja
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/employee/targets" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')">
+              <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" /></svg>
+              Target KPI Saya
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/employee/audit-trail" class="nav-item" active-class="active-link" @click="$emit('closeSidebar')">
+              <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              Audit Trail Saya
+            </router-link>
+          </li>
+        </template>
+
       </ul>
     </nav>
+    
+      <!-- Indikator Scroll Bawah (Panah & Gradient) -->
+      <div 
+        class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-50 via-gray-50/80 to-transparent z-10 pointer-events-none transition-opacity duration-300 flex items-end justify-center pb-1"
+        :class="canScrollDown ? 'opacity-100' : 'opacity-0'"
+      >
+        <div class="animate-bounce bg-white p-1 rounded-full shadow-sm border border-gray-200 text-gray-400">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+        </div>
+      </div>
+    </div>
     
     <div class="p-4 border-t border-gray-200 bg-white text-xs text-gray-400 text-center md:rounded-b-2xl">
       &copy; 2026 KPI System
@@ -121,15 +147,51 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { useAuthStore } from '../../stores/auth';
 
 const authStore = useAuthStore()
 
-defineProps({
+const props = defineProps({
   isOpen: Boolean
 })
 
 defineEmits(['closeSidebar'])
+
+// --- Logika Indikator Scroll ---
+const scrollContainer = ref<HTMLElement | null>(null)
+const canScrollUp = ref(false)
+const canScrollDown = ref(false)
+let resizeObserver: ResizeObserver | null = null
+
+const checkScroll = () => {
+  if (!scrollContainer.value) return
+  const { scrollTop, scrollHeight, clientHeight } = scrollContainer.value
+  canScrollUp.value = scrollTop > 0
+  // Tambahkan margin 2px untuk menghindari masalah pembulatan desimal
+  canScrollDown.value = Math.ceil(scrollTop + clientHeight) < (scrollHeight - 2)
+}
+
+onMounted(() => {
+  // Tunggu sejenak agar DOM selesai render
+  setTimeout(checkScroll, 100)
+  
+  if (scrollContainer.value) {
+    resizeObserver = new ResizeObserver(() => {
+      checkScroll()
+    })
+    resizeObserver.observe(scrollContainer.value)
+  }
+})
+
+onUnmounted(() => {
+  if (resizeObserver) resizeObserver.disconnect()
+})
+
+// Cek ulang scroll ketika role atau state terbuka berubah
+watch(() => [authStore.userRole, props.isOpen], () => {
+  setTimeout(checkScroll, 300)
+})
 </script>
 
 <style scoped>
@@ -143,18 +205,12 @@ defineEmits(['closeSidebar'])
   @apply bg-blue-50 text-blue-700 border-l-4 border-blue-600 shadow-sm font-semibold; 
 }
 
-/* Custom scrollbar menggunakan utilitas CSS (jika tidak menggunakan plugin @tailwindcss/scrollbar) */
-.scrollbar-thin::-webkit-scrollbar {
-  width: 4px;
+/* Menyembunyikan scrollbar widget secara visual, tapi tetap bisa discroll */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: #f9fafb;
-}
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
-}
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 </style>
