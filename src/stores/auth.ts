@@ -158,6 +158,8 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated: computed(() => !!token.value),
     userRole: computed(() => user.value?.role || null),
     isExecutive: computed(() => user.value?.is_executive === true),
+    // True jika user (termasuk admin) memiliki atasan langsung (dinilai oleh seseorang)
+    hasDirectSupervisor: computed(() => !!user.value?.employee?.direct_supervisor_id),
     login,
     logout,
     fetchProfile,

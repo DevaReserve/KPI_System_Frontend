@@ -313,7 +313,8 @@ async function markAsRead(notif: any) {
     }
 
     if (type === 'evaluation' || title.includes('evaluasi') || title.includes('penilaian')) {
-        if (role === 'employee' || role === 'manager') {
+        // Admin dengan atasan langsung juga diarahkan ke halaman kinerja pribadinya
+        if (role === 'employee' || role === 'manager' || (role === 'admin' && authStore.hasDirectSupervisor)) {
             try {
                 // Ambil riwayat evaluasi untuk langsung membuka halaman detail rapor terbaru
                 const history = await myPerformanceService.getMyHistory()
@@ -327,10 +328,11 @@ async function markAsRead(notif: any) {
             router.push('/admin/reports')
         }
     } else if (type === 'appeal' || title.includes('sanggahan')) {
-        if (title.includes('sanggahan baru') || role === 'manager' || role === 'admin') {
+        // Jika notifikasi adalah sanggahan baru (masuk untuk direview)
+        if (title.includes('sanggahan baru') || (role === 'admin' && !authStore.hasDirectSupervisor)) {
             router.push('/manager/team')
         } else {
-            // Untuk pegawai yang menerima notifikasi hasil sanggahan, langsung buka detail rapor terbaru
+            // Untuk user yang dinilai menerima notifikasi hasil sanggahan, langsung buka detail rapor terbaru
             try {
                 const history = await myPerformanceService.getMyHistory()
                 if (history && history.length > 0 && history[0].id) {
@@ -345,8 +347,10 @@ async function markAsRead(notif: any) {
     } else if (type === 'target' || title.includes('target')) {
         if (role === 'manager') {
             router.push('/manager/kpi-targets')
-        } else {
+        } else if (role === 'employee' || (role === 'admin' && authStore.hasDirectSupervisor)) {
             router.push('/employee/targets')
+        } else {
+            router.push('/manager/kpi-targets')
         }
     } else {
         // Fallback default sesuai role
